@@ -1,5 +1,6 @@
 package com.yuccaworld.yuccaslim;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -9,7 +10,14 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.yuccaworld.yuccaslim.data.SlimContract;
+import com.yuccaworld.yuccaslim.data.SlimDBHelper;
+import com.yuccaworld.yuccaslim.data.TestUtil;
+
 public class MainActivity extends AppCompatActivity {
+
+    // Create a local field member of type SQLiteDatabase called mDb
+    private SQLiteDatabase mDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +34,15 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        // Create a SlimDbHelper instance, pass "this" to the constructor as context
+        SlimDBHelper slimDBHelper = new SlimDBHelper(this);
+
+        // Get a writable database reference using getWritableDatabase and store it in mDb
+        mDB = slimDBHelper.getWritableDatabase();
+
+        // call insertFakeData from TestUtil and pass the database reference mDb
+        TestUtil.insertFakeData(mDB);
     }
 
     @Override
