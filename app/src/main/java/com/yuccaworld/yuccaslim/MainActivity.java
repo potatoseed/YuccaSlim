@@ -1,5 +1,6 @@
 package com.yuccaworld.yuccaslim;
 
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -9,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.yuccaworld.yuccaslim.data.SlimContract;
 import com.yuccaworld.yuccaslim.data.SlimDBHelper;
@@ -23,8 +25,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
+/*        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);*/
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -43,6 +46,10 @@ public class MainActivity extends AppCompatActivity {
 
         // call insertFakeData from TestUtil and pass the database reference mDb
         TestUtil.insertFakeData(mDB);
+
+        // Run the getAllGuests function and store the result in a Cursor variable
+        Cursor cursor = getAllUsers();
+        ShowUsers(cursor);
     }
 
     @Override
@@ -65,5 +72,19 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private Cursor getAllUsers(){
+        return mDB.query(SlimContract.SlimDB.TABLE_NAME,null,null,null,null,null,null);
+    }
+
+    private void ShowUsers(Cursor cursor){
+        TextView textView = (TextView) findViewById(R.id.textViewLogo);
+        textView.setText("Show Users" + "\n");
+        while (cursor.moveToNext()){
+            int nameColumnIndex = cursor.getColumnIndex(SlimContract.SlimDB.COLUMN_FIRST_NAME);
+            String first_name = cursor.getString(nameColumnIndex);
+            textView.append("Frist Name:" + first_name + "\n");
+        }
     }
 }

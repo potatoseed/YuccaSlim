@@ -7,7 +7,7 @@ import android.provider.BaseColumns;
  */
 
 public class SlimContract {
-    // TODO (1) Create an inner  class that implements the BaseColumns interface
+    // Create an inner  class that implements the BaseColumns interface
     public static final class SlimDB implements BaseColumns {
         public static final String TABLE_NAME = "User";
         public static final String COLUMN_USER_ID = "user_id";
