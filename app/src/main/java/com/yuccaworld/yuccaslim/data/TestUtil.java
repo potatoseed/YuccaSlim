@@ -36,6 +36,7 @@ public class TestUtil {
         cv.put(SlimContract.SlimDB.COLUMN_WEIGHT, 1.11);
         //cv.put(SlimContract.SlimDB.COLUMN_TIMESTAMP, );
         list.add(cv);
+        //test
 
         //insert all user in one transaction
         try{
