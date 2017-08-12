@@ -11,8 +11,10 @@ public class SlimContract {
     public static final class SlimDB implements BaseColumns {
         public static final String TABLE_NAME = "User";
         public static final String COLUMN_USER_ID = "user_id";
+        public static final String COLUMN_USER_NAME = "user_name";
         public static final String COLUMN_FIRST_NAME = "first_name";
         public static final String COLUMN_LAST_NAME = "[last_name]";
+        public static final String COLUMN_EMAIL = "[last_name]";
         public static final String COLUMN_WEIGHT = "[weight]";
         public static final String COLUMN_AGE = "[age]";
         public static final String COLUMN_GENDER = "[gender]";

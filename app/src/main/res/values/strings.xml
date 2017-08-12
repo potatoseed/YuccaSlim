@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">YuccaSlim</string>
     <string name="action_settings">Settings</string>
+    <string name="registration_email">Email</string>
+    <string name="click_message">object clicked</string>
+    <string name="registration_weight">Weight (kg)</string>
+    <string name="registration_age">Age</string>
+    <string name="registration_name">Name</string>
 </resources>

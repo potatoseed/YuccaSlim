@@ -12,7 +12,11 @@
 USE [YS]
 GO
 
-/****** Object:  Table [dbo].[User]    Script Date: 2017/8/9 14:31:44 ******/
+/****** Object:  Table [dbo].[User]    Script Date: 2017/8/12 13:38:53 ******/
+DROP TABLE [dbo].[User]
+GO
+
+/****** Object:  Table [dbo].[User]    Script Date: 2017/8/12 13:38:53 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -22,17 +26,20 @@ GO
 CREATE TABLE [dbo].[User](
 	[user_id] [uniqueidentifier] NOT NULL,
 	[app_user_id] [int] NOT NULL,
+	[user_name] [nvarchar](100) NULL,
 	[first_name] [nvarchar](100) NULL,
 	[last_name] [nvarchar](100) NULL,
+	[email] [nvarchar](300) NULL,
 	[weight] [decimal](4, 2) NULL,
 	[age] [decimal](3, 1) NULL,
 	[gender] [char](1) NULL,
 	[update_time] [datetime] NULL,
 	[update_by] [datetime] NULL,
- CONSTRAINT [PK_User] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_User] PRIMARY KEY CLUSTERED
 (
 	[user_id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
+
 

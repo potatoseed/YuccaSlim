@@ -31,8 +31,10 @@ public class SlimDBHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_SLIMDB_TABLE = "CREATE TABLE " + SlimDB.TABLE_NAME + " (" +
                 SlimDB._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 SlimDB.COLUMN_USER_ID + " TEXT NOT NULL, " +
-                SlimDB.COLUMN_FIRST_NAME + " TEXT NOT NULL, " +
-                SlimDB.COLUMN_LAST_NAME + " TEXT NOT NULL, " +
+                SlimDB.COLUMN_USER_NAME + " TEXT NOT NULL, " +
+                SlimDB.COLUMN_FIRST_NAME + " TEXT, " +
+                SlimDB.COLUMN_LAST_NAME + " TEXT, " +
+                SlimDB.COLUMN_EMAIL + " TEXT, " +
                 SlimDB.COLUMN_WEIGHT + " REAL NOT NULL, " +
                 SlimDB.COLUMN_AGE + " INTEGER NOT NULL, " +
                 SlimDB.COLUMN_GENDER + " TEXT NOT NULL, " +
@@ -45,6 +47,7 @@ public class SlimDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        db.execSQL("DROP TABLE IF EXISTS " + SlimDB.TABLE_NAME);
+        onCreate(db);
     }
 }
