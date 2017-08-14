@@ -99,6 +99,11 @@ public class MainActivity extends AppActivity {
             @Override
             public void onClick(View view) {
                 validator.validate();
+                if (!(switchFemale.isChecked() || switchMale.isChecked())) {
+                    validated = false;
+                    switchMale.setError(getString(R.string.gender_validation));
+                    switchFemale.setError(getString(R.string.gender_validation));
+                }
                 if (validated) {
                     Snackbar.make(view, "Good input", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
