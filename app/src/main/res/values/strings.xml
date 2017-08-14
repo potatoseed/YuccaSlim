@@ -6,4 +6,28 @@
     <string name="registration_weight">Weight (kg)</string>
     <string name="registration_age">Age</string>
     <string name="registration_name">Name</string>
+
+    <!--for saripaar validation-->
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="phone">Phone</string>
+    <string name="alpha_numeric">Alpha Numeric (Max Length 12)</string>
+    <string name="submit">Submit</string>
+    <string name="confirm_email">Confirm Email</string>
+    <string name="terms_and_conditions">I agree to the terms and conditions</string>
+    <string name="max_value">Max Value (10)</string>
+    <string name="min_value">Min Value(2)</string>
+    <string name="value_range">Value between 2 and 10</string>
+    <string name="first_field">First field to verify</string>
+    <string name="name_validation">Please let me know your name</string>
+    <string name="name_length_validation">Name must not empty nor longer than 100 characters</string>
+    <string name="max_weight_validation">Weight must less than 300kg</string>
+    <string name="min_weight_validation">weight must larger than 10kg</string>
+    <string name="email_validation">Please provide correct email address</string>
+    <string name="confirm_email_validation">Wrong email address</string>
+    <string name="min_age_validation">Baby less than 1 year</string>
+    <string name="max_age_validation">human live over 300 years don\'t need this</string>
+
 </resources>
