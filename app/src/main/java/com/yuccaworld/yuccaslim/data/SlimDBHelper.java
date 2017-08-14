@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.yuccaworld.yuccaslim.data.SlimContract.*;
+import com.yuccaworld.yuccaslim.data.SlimUserContract.*;
 
 /**
  * Created by Yung on 8/2/2017.

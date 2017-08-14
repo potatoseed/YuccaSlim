@@ -1,12 +1,8 @@
 package com.yuccaworld.yuccaslim.data;
 
 import android.content.ContentValues;
-import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.widget.TextView;
-
-import com.yuccaworld.yuccaslim.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,31 +19,31 @@ public class TestUtil {
         //create a list of fake users
         List<ContentValues> list = new ArrayList<ContentValues>();
         ContentValues cv = new ContentValues();
-        cv.put(SlimContract.SlimDB.COLUMN_USER_ID, "");
-        cv.put(SlimContract.SlimDB.COLUMN_AGE, 18);
-        cv.put(SlimContract.SlimDB.COLUMN_FIRST_NAME, "New");
-        cv.put(SlimContract.SlimDB.COLUMN_LAST_NAME, "Friend");
-        cv.put(SlimContract.SlimDB.COLUMN_GENDER, "M");
-        cv.put(SlimContract.SlimDB.COLUMN_WEIGHT, 0.11);
-        //cv.put(SlimContract.SlimDB.COLUMN_TIMESTAMP, );
+        cv.put(SlimUserContract.SlimDB.COLUMN_USER_ID, "");
+        cv.put(SlimUserContract.SlimDB.COLUMN_AGE, 18);
+        cv.put(SlimUserContract.SlimDB.COLUMN_FIRST_NAME, "New");
+        cv.put(SlimUserContract.SlimDB.COLUMN_LAST_NAME, "Friend");
+        cv.put(SlimUserContract.SlimDB.COLUMN_GENDER, "M");
+        cv.put(SlimUserContract.SlimDB.COLUMN_WEIGHT, 0.11);
+        //cv.put(SlimUserContract.SlimDB.COLUMN_TIMESTAMP, );
         list.add(cv);
         cv = new ContentValues();
-        cv.put(SlimContract.SlimDB.COLUMN_USER_ID, "");
-        cv.put(SlimContract.SlimDB.COLUMN_AGE, 18);
-        cv.put(SlimContract.SlimDB.COLUMN_FIRST_NAME, "Old");
-        cv.put(SlimContract.SlimDB.COLUMN_LAST_NAME, "Pal");
-        cv.put(SlimContract.SlimDB.COLUMN_GENDER, "F");
-        cv.put(SlimContract.SlimDB.COLUMN_WEIGHT, 1.11);
-        //cv.put(SlimContract.SlimDB.COLUMN_TIMESTAMP, );
+        cv.put(SlimUserContract.SlimDB.COLUMN_USER_ID, "");
+        cv.put(SlimUserContract.SlimDB.COLUMN_AGE, 18);
+        cv.put(SlimUserContract.SlimDB.COLUMN_FIRST_NAME, "Old");
+        cv.put(SlimUserContract.SlimDB.COLUMN_LAST_NAME, "Pal");
+        cv.put(SlimUserContract.SlimDB.COLUMN_GENDER, "F");
+        cv.put(SlimUserContract.SlimDB.COLUMN_WEIGHT, 1.11);
+        //cv.put(SlimUserContract.SlimDB.COLUMN_TIMESTAMP, );
         list.add(cv);
         //test
 
         //insert all user in one transaction
         try{
             db.beginTransaction();
-            int delete = db.delete(SlimContract.SlimDB.TABLE_NAME,null,null);
+            int delete = db.delete(SlimUserContract.SlimDB.TABLE_NAME, null, null);
             for (ContentValues c: list){
-                db.insert(SlimContract.SlimDB.TABLE_NAME,null,c);
+                db.insert(SlimUserContract.SlimDB.TABLE_NAME, null, c);
             }
             db.setTransactionSuccessful();
         }

@@ -6,7 +6,7 @@ import android.provider.BaseColumns;
  * Created by Yung on 8/2/2017.
  */
 
-public class SlimContract {
+public class SlimUserContract {
     // Create an inner  class that implements the BaseColumns interface
     public static final class SlimDB implements BaseColumns {
         public static final String TABLE_NAME = "User";
