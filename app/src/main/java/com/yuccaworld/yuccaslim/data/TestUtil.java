@@ -1,8 +1,12 @@
 package com.yuccaworld.yuccaslim.data;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.widget.TextView;
+
+import com.yuccaworld.yuccaslim.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,4 +59,6 @@ public class TestUtil {
         }
 
     }
+
+
 }

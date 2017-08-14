@@ -1,30 +1,37 @@
 package com.yuccaworld.yuccaslim;
 
+import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import com.yuccaworld.yuccaslim.data.SlimContract;
 import com.yuccaworld.yuccaslim.data.SlimDBHelper;
-import com.yuccaworld.yuccaslim.data.TestUtil;
 
 public class MainActivity extends AppCompatActivity {
 
     // Create a local field member of type SQLiteDatabase called mDb
     private SQLiteDatabase mDB;
+    private SlimDBHelper mSlimDBHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // Create a SlimDbHelper instance, pass "this" to the constructor as context
+        mSlimDBHelper = new SlimDBHelper(this);
 
         // Set the gender switch only male or female
         final Switch switchMale = (Switch)findViewById(R.id.switchMale);
@@ -55,23 +62,51 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // collect values from UI
+                ContentValues cv = new ContentValues();
+                EditText et = (EditText) findViewById(R.id.editTextName);
+                cv.put(SlimContract.SlimDB.COLUMN_USER_NAME, et.getText().toString().trim());
+                et = (EditText) findViewById(R.id.editTextMail);
+                cv.put(SlimContract.SlimDB.COLUMN_EMAIL, et.getText().toString().trim());
+                et = (EditText) findViewById(R.id.editTextAge);
+                Double d = Double.parseDouble(et.getText().toString().trim());
+                cv.put(SlimContract.SlimDB.COLUMN_AGE, d);
+                et = (EditText) findViewById(R.id.editTextWeight);
+                cv.put(SlimContract.SlimDB.COLUMN_WEIGHT, Double.parseDouble(et.getText().toString().trim()));
+                Switch s = (Switch) findViewById(R.id.switchMale);
+                if (s.isChecked()) {
+                    cv.put(SlimContract.SlimDB.COLUMN_GENDER, "M");
+                } else {
+                    s = (Switch) findViewById(R.id.switchFemale);
+                    if (s.isChecked()) {
+                        cv.put(SlimContract.SlimDB.COLUMN_GENDER, "F");
+                    } else {
+                        cv.put(SlimContract.SlimDB.COLUMN_GENDER, "U");
+                    }
+                }
+                ;
+                insertDB(cv);
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
 
-        // Create a SlimDbHelper instance, pass "this" to the constructor as context
-        SlimDBHelper slimDBHelper = new SlimDBHelper(this);
-
-        // Get a writable database reference using getWritableDatabase and store it in mDb
-        mDB = slimDBHelper.getWritableDatabase();
-
-        // call insertFakeData from TestUtil and pass the database reference mDb
-        TestUtil.insertFakeData(mDB);
 
         // Run the getAllGuests function and store the result in a Cursor variable
-        Cursor cursor = getAllUsers();
-        ShowUsers(cursor);
+        ShowUsers();
+        displayDBInfo(mDB);
+    }
+
+    private void insertDB(ContentValues cv) {
+        mDB = mSlimDBHelper.getWritableDatabase();
+        long newRowID = 0;
+        //TestUtil.insertFakeData(mDB);
+        try {
+            newRowID = mDB.insertOrThrow(SlimContract.SlimDB.TABLE_NAME, null, cv);
+        } catch (SQLException e) {
+            Log.e("Insert fail return code " + String.valueOf(newRowID) + " error message", e.toString());
+        }
+        displayDBInfo(mDB);
     }
 
     @Override
@@ -100,13 +135,39 @@ public class MainActivity extends AppCompatActivity {
         return mDB.query(SlimContract.SlimDB.TABLE_NAME,null,null,null,null,null,null);
     }
 
-    private void ShowUsers(Cursor cursor){
+    private void ShowUsers() {
+        if (mDB == null) {
+            mDB = mSlimDBHelper.getReadableDatabase();
+        }
+        ;
+        Cursor cursor = null;
+        //Cursor cursor = mDB.query(SlimContract.SlimDB.TABLE_NAME,null,null,null,null,null,null);
+        try {
+            cursor = mDB.rawQuery("SELECT * FROM " + SlimContract.SlimDB.TABLE_NAME, null);
+        } catch (SQLiteException e) {
+            Log.e("Select fail ", " Error Message:" + e.toString());
+        }
+
         TextView textView = (TextView) findViewById(R.id.textViewLogo);
         textView.setText("Show Users" + "\n");
         while (cursor.moveToNext()){
-            int nameColumnIndex = cursor.getColumnIndex(SlimContract.SlimDB.COLUMN_FIRST_NAME);
-            String first_name = cursor.getString(nameColumnIndex);
-            textView.append("Frist Name:" + first_name + "\n");
+            int nameColumnIndex = cursor.getColumnIndex(SlimContract.SlimDB.COLUMN_USER_NAME);
+            String name = cursor.getString(nameColumnIndex);
+            textView.append("Name:" + name + "\n");
+        }
+    }
+
+    public void displayDBInfo(SQLiteDatabase db) {
+        if (db == null) {
+            return;
+        }
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + SlimContract.SlimDB.TABLE_NAME, null);
+        try {
+            TextView view = (TextView) findViewById(R.id.textViewLogo);
+            view.append(" No of rows = " + cursor.getCount());
+        } finally {
+            cursor.close();
         }
     }
 }

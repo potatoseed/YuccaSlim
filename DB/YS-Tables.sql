@@ -43,3 +43,26 @@ CREATE TABLE [dbo].[User](
 GO
 
 
+USE [YS]
+GO
+
+/****** Object:  Table [dbo].[Food]    Script Date: 8/14/2017 10:16:24 AM ******/
+DROP TABLE [dbo].[Food]
+GO
+
+/****** Object:  Table [dbo].[Food]    Script Date: 8/14/2017 10:16:24 AM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[Food](
+	[food_id] [uniqueidentifier] NOT NULL,
+	[food_name] [nvarchar](100) NULL,
+ CONSTRAINT [PK_Food] PRIMARY KEY CLUSTERED
+(
+	[food_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO

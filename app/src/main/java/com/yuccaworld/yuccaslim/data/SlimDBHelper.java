@@ -1,8 +1,10 @@
 package com.yuccaworld.yuccaslim.data;
 
 import android.content.Context;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.yuccaworld.yuccaslim.data.SlimContract.*;
 
@@ -30,7 +32,7 @@ public class SlimDBHelper extends SQLiteOpenHelper {
         // Create a table to hold waitlist data
         final String SQL_CREATE_SLIMDB_TABLE = "CREATE TABLE " + SlimDB.TABLE_NAME + " (" +
                 SlimDB._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                SlimDB.COLUMN_USER_ID + " TEXT NOT NULL, " +
+                SlimDB.COLUMN_USER_ID + " TEXT, " +
                 SlimDB.COLUMN_USER_NAME + " TEXT NOT NULL, " +
                 SlimDB.COLUMN_FIRST_NAME + " TEXT, " +
                 SlimDB.COLUMN_LAST_NAME + " TEXT, " +
@@ -42,7 +44,11 @@ public class SlimDBHelper extends SQLiteOpenHelper {
                 "); ";
 
         // COMPLETED (7) Execute the query by calling execSQL on sqLiteDatabase and pass the string query SQL_CREATE_SLIMDB_TABLE
-        db.execSQL(SQL_CREATE_SLIMDB_TABLE);
+        try {
+            db.execSQL(SQL_CREATE_SLIMDB_TABLE);
+        } catch (SQLException e) {
+            Log.e("SQL error", e.toString());
+        }
     }
 
     @Override
