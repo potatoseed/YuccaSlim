@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.yuccaworld.yuccaslim.data.ActivityInfo;
+import com.yuccaworld.yuccaslim.utilities.FakeDataUtils;
+
 /**
  * Created by Yung on 9/3/2017.
  */
@@ -16,6 +19,7 @@ import android.widget.TextView;
 public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapterViewHolder> {
 
     private final Context mContext;
+    private int mNumberItems = 100;
 
     public TodayAdapter(@NonNull Context context) {
         mContext = context;
@@ -30,19 +34,24 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
 
     @Override
     public void onBindViewHolder(TodayAdapterViewHolder holder, int position) {
+        ActivityInfo activityInfo = FakeDataUtils.genFakeActivityInfo();
+        // time text view data
+        holder.timeView.setText(activityInfo.activityTime.toString());
+        holder.hintView.setText("Hint" + String.valueOf(position));
+        holder.ActivityView.setText("Activity" + String.valueOf(position));
 
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mNumberItems;
     }
 
     class TodayAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         final TextView hintView;
         final TextView timeView;
-        final TextView taskView;
+        final TextView ActivityView;
         final ImageView taskIcon;
         final ImageView editIcon;
 
@@ -50,7 +59,7 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
             super(itemView);
             hintView = (TextView) itemView.findViewById(R.id.textViewHint);
             timeView = (TextView) itemView.findViewById(R.id.textViewTime);
-            taskView = (TextView) itemView.findViewById(R.id.textViewActivity);
+            ActivityView = (TextView) itemView.findViewById(R.id.textViewActivity);
             taskIcon = (ImageView) itemView.findViewById(R.id.imageViewActivityType);
             editIcon = (ImageView) itemView.findViewById(R.id.imageViewEdit);
         }
