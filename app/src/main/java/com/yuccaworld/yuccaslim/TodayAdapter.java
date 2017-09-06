@@ -9,8 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.yuccaworld.yuccaslim.data.ActivityInfo;
-import com.yuccaworld.yuccaslim.utilities.FakeDataUtils;
+import com.yuccaworld.yuccaslim.Model.ActivityInfo;
+import com.yuccaworld.yuccaslim.data.SlimActivityContract;
+import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
 /**
  * Created by Yung on 9/3/2017.
@@ -19,7 +20,7 @@ import com.yuccaworld.yuccaslim.utilities.FakeDataUtils;
 public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapterViewHolder> {
 
     private final Context mContext;
-    private int mNumberItems = 100;
+    private int mNumberItems = 20;
 
     public TodayAdapter(@NonNull Context context) {
         mContext = context;
@@ -34,9 +35,9 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
 
     @Override
     public void onBindViewHolder(TodayAdapterViewHolder holder, int position) {
-        ActivityInfo activityInfo = FakeDataUtils.genFakeActivityInfo();
+        ActivityInfo activityInfo = SlimUtils.genFakeActivityInfo();
         // time text view data
-        holder.timeView.setText(activityInfo.activityTime.toString());
+        holder.timeView.setText(activityInfo.getActivityTime().toString());
         holder.hintView.setText("Hint" + String.valueOf(position));
         holder.ActivityView.setText("Activity" + String.valueOf(position));
 
