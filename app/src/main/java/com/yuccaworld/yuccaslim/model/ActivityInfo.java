@@ -1,4 +1,4 @@
-package com.yuccaworld.yuccaslim.Model;
+package com.yuccaworld.yuccaslim.model;
 
 import java.sql.Timestamp;
 

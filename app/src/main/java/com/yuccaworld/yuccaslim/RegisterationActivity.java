@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,8 +22,8 @@ import com.mobsandgeeks.saripaar.annotation.Length;
 import com.mobsandgeeks.saripaar.annotation.Max;
 import com.mobsandgeeks.saripaar.annotation.Min;
 import com.mobsandgeeks.saripaar.annotation.Or;
+import com.yuccaworld.yuccaslim.data.SlimContract;
 import com.yuccaworld.yuccaslim.data.SlimDBHelper;
-import com.yuccaworld.yuccaslim.data.SlimUserContract;
 
 public class RegisterationActivity extends AppActivity {
     private FloatingActionButton submit;
@@ -103,23 +102,23 @@ public class RegisterationActivity extends AppActivity {
                     // collect values from UI
                     ContentValues cv = new ContentValues();
                     EditText et = (EditText) findViewById(R.id.editTextName);
-                    cv.put(SlimUserContract.SlimDB.COLUMN_USER_NAME, et.getText().toString().trim());
+                    cv.put(com.yuccaworld.yuccaslim.data.SlimContract.SlimDB.COLUMN_USER_NAME, et.getText().toString().trim());
                     et = (EditText) findViewById(R.id.editTextMail);
-                    cv.put(SlimUserContract.SlimDB.COLUMN_EMAIL, et.getText().toString().trim());
+                    cv.put(com.yuccaworld.yuccaslim.data.SlimContract.SlimDB.COLUMN_EMAIL, et.getText().toString().trim());
                     et = (EditText) findViewById(R.id.editTextAge);
                     Double d = Double.parseDouble(et.getText().toString().trim());
-                    cv.put(SlimUserContract.SlimDB.COLUMN_AGE, d);
+                    cv.put(com.yuccaworld.yuccaslim.data.SlimContract.SlimDB.COLUMN_AGE, d);
                     et = (EditText) findViewById(R.id.editTextWeight);
-                    cv.put(SlimUserContract.SlimDB.COLUMN_WEIGHT, Double.parseDouble(et.getText().toString().trim()));
+                    cv.put(com.yuccaworld.yuccaslim.data.SlimContract.SlimDB.COLUMN_WEIGHT, Double.parseDouble(et.getText().toString().trim()));
                     Switch s = (Switch) findViewById(R.id.switchMale);
                     if (s.isChecked()) {
-                        cv.put(SlimUserContract.SlimDB.COLUMN_GENDER, "M");
+                        cv.put(com.yuccaworld.yuccaslim.data.SlimContract.SlimDB.COLUMN_GENDER, "M");
                     } else {
                         s = (Switch) findViewById(R.id.switchFemale);
                         if (s.isChecked()) {
-                            cv.put(SlimUserContract.SlimDB.COLUMN_GENDER, "F");
+                            cv.put(com.yuccaworld.yuccaslim.data.SlimContract.SlimDB.COLUMN_GENDER, "F");
                         } else {
-                            cv.put(SlimUserContract.SlimDB.COLUMN_GENDER, "U");
+                            cv.put(SlimContract.SlimDB.COLUMN_GENDER, "U");
                         }
                     }
                     ;
@@ -138,7 +137,7 @@ public class RegisterationActivity extends AppActivity {
         long newRowID = 0;
         //TestUtil.insertFakeData(mDB);
         try {
-            newRowID = mDB.insertOrThrow(SlimUserContract.SlimDB.TABLE_NAME, null, cv);
+            newRowID = mDB.insertOrThrow(com.yuccaworld.yuccaslim.data.SlimContract.SlimDB.TABLE_USER, null, cv);
         } catch (SQLException e) {
             Log.e("Insert fail return code " + String.valueOf(newRowID) + " error message", e.toString());
         }
@@ -146,7 +145,7 @@ public class RegisterationActivity extends AppActivity {
     }
 
     private Cursor getAllUsers() {
-        return mDB.query(SlimUserContract.SlimDB.TABLE_NAME, null, null, null, null, null, null);
+        return mDB.query(com.yuccaworld.yuccaslim.data.SlimContract.SlimDB.TABLE_USER, null, null, null, null, null, null);
     }
 
     private void ShowUsers() {
@@ -155,9 +154,9 @@ public class RegisterationActivity extends AppActivity {
         }
         ;
         Cursor cursor = null;
-        //Cursor cursor = mDB.query(SlimUserContract.SlimDB.TABLE_NAME,null,null,null,null,null,null);
+        //Cursor cursor = mDB.query(SlimContract.SlimDB.TABLE_USER,null,null,null,null,null,null);
         try {
-            cursor = mDB.rawQuery("SELECT * FROM " + SlimUserContract.SlimDB.TABLE_NAME, null);
+            cursor = mDB.rawQuery("SELECT * FROM " + com.yuccaworld.yuccaslim.data.SlimContract.SlimDB.TABLE_USER, null);
         } catch (SQLiteException e) {
             Log.e("Select fail ", " Error Message:" + e.toString());
         }
@@ -165,7 +164,7 @@ public class RegisterationActivity extends AppActivity {
         TextView textView = (TextView) findViewById(R.id.textViewLogo);
         textView.setText("Show Users" + "\n");
         while (cursor.moveToNext()) {
-            int nameColumnIndex = cursor.getColumnIndex(SlimUserContract.SlimDB.COLUMN_USER_NAME);
+            int nameColumnIndex = cursor.getColumnIndex(com.yuccaworld.yuccaslim.data.SlimContract.SlimDB.COLUMN_USER_NAME);
             String name = cursor.getString(nameColumnIndex);
             textView.append("Name:" + name + "\n");
         }
@@ -176,7 +175,7 @@ public class RegisterationActivity extends AppActivity {
             return;
         }
 
-        Cursor cursor = db.rawQuery("SELECT * FROM " + SlimUserContract.SlimDB.TABLE_NAME, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + com.yuccaworld.yuccaslim.data.SlimContract.SlimDB.TABLE_USER, null);
         try {
             TextView view = (TextView) findViewById(R.id.textViewLogo);
             view.append(" No of rows = " + cursor.getCount());

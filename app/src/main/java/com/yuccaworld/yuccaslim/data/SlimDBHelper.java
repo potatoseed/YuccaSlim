@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.yuccaworld.yuccaslim.data.SlimUserContract.*;
+import com.yuccaworld.yuccaslim.data.SlimContract.*;
 
 /**
  * Created by Yung on 8/2/2017.
@@ -29,10 +29,10 @@ public class SlimDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         // COMPLETED (6) Inside, create an String query called SQL_CREATE_SLIMDB_TABLE that will create the table
-        // Create a table to hold waitlist data
-        final String SQL_CREATE_SLIMDB_TABLE = "CREATE TABLE " + SlimDB.TABLE_NAME + " (" +
+        // Create User table to hold waitlist data
+        final String SQL_CREATE_SLIMDB_TABLE = "CREATE TABLE " + SlimDB.TABLE_USER + " (" +
                 SlimDB._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                SlimDB.COLUMN_USER_ID + " TEXT, " +
+                SlimDB.COLUMN_USER_ID + " TEXT NOT NULL, " +
                 SlimDB.COLUMN_USER_NAME + " TEXT NOT NULL, " +
                 SlimDB.COLUMN_FIRST_NAME + " TEXT, " +
                 SlimDB.COLUMN_LAST_NAME + " TEXT, " +
@@ -43,6 +43,19 @@ public class SlimDBHelper extends SQLiteOpenHelper {
                 SlimDB.COLUMN_TIMESTAMP + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
                 "); ";
 
+        // Create Activity table to hold waitlist data
+        final String SQL_CREATE_SLIMDB_ACTIVITY_TABLE = "CREATE TABLE " + SlimDB.TABLE_ACTIVITY + " (" +
+                SlimDB._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                SlimDB.COLUMN_ACTIVITY_ID + " TEXT NOT NULL, " +
+                SlimDB.COLUMN_USER_ID + " TEXT NOT NULL, " +
+                SlimDB.COLUMN_ATIVITY_TYPE_ID + " TEXT NOT NULL, " +
+                SlimDB.COLUMN_ACTIVITY_TIME + " TIMESTAMP, " +
+                SlimDB.COLUMN_EMAIL + " TEXT, " +
+                SlimDB.COLUMN_WEIGHT + " REAL NOT NULL, " +
+                SlimDB.COLUMN_AGE + " INTEGER NOT NULL, " +
+                SlimDB.COLUMN_GENDER + " TEXT NOT NULL, " +
+                SlimDB.COLUMN_TIMESTAMP + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
+                "); ";
         // COMPLETED (7) Execute the query by calling execSQL on sqLiteDatabase and pass the string query SQL_CREATE_SLIMDB_TABLE
         try {
             db.execSQL(SQL_CREATE_SLIMDB_TABLE);
@@ -53,7 +66,7 @@ public class SlimDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + SlimDB.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + SlimDB.TABLE_USER);
         onCreate(db);
     }
 }

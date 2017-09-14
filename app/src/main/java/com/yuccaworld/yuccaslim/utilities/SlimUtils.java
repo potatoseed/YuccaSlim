@@ -1,6 +1,6 @@
 package com.yuccaworld.yuccaslim.utilities;
 
-import com.yuccaworld.yuccaslim.Model.ActivityInfo;
+import com.yuccaworld.yuccaslim.model.ActivityInfo;
 
 import java.sql.Timestamp;
 

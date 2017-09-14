@@ -9,8 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.yuccaworld.yuccaslim.Model.ActivityInfo;
-import com.yuccaworld.yuccaslim.data.SlimActivityContract;
+import com.yuccaworld.yuccaslim.model.ActivityInfo;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
 /**
