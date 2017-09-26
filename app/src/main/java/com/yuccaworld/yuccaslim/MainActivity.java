@@ -13,8 +13,8 @@ public class MainActivity extends AppActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //Intent intent = new Intent(MainActivity.this, RegisterationActivity.class);
-        Intent intent = new Intent(MainActivity.this, TodayActivity.class);
+        Intent intent = new Intent(MainActivity.this, RegisterationActivity.class);
+        //Intent intent = new Intent(MainActivity.this, TodayActivity.class);
         startActivity(intent);
 /*        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);*/

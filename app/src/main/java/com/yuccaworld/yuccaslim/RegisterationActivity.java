@@ -5,9 +5,9 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -24,6 +24,9 @@ import com.mobsandgeeks.saripaar.annotation.Min;
 import com.mobsandgeeks.saripaar.annotation.Or;
 import com.yuccaworld.yuccaslim.data.SlimContract;
 import com.yuccaworld.yuccaslim.data.SlimDBHelper;
+import com.yuccaworld.yuccaslim.utilities.SlimUtils;
+
+import java.util.UUID;
 
 public class RegisterationActivity extends AppActivity {
     private FloatingActionButton submit;
@@ -101,6 +104,9 @@ public class RegisterationActivity extends AppActivity {
 
                     // collect values from UI
                     ContentValues cv = new ContentValues();
+                    UUID uuid = UUID.randomUUID();
+                    byte[] bytes = SlimUtils.toByte(uuid);
+                    cv.put(SlimContract.SlimDB.COLUMN_USER_ID, bytes);
                     EditText et = (EditText) findViewById(R.id.editTextName);
                     cv.put(com.yuccaworld.yuccaslim.data.SlimContract.SlimDB.COLUMN_USER_NAME, et.getText().toString().trim());
                     et = (EditText) findViewById(R.id.editTextMail);
@@ -141,7 +147,7 @@ public class RegisterationActivity extends AppActivity {
         } catch (SQLException e) {
             Log.e("Insert fail return code " + String.valueOf(newRowID) + " error message", e.toString());
         }
-        displayDBInfo(mDB);
+        //displayDBInfo(mDB);
     }
 
     private Cursor getAllUsers() {
@@ -162,11 +168,14 @@ public class RegisterationActivity extends AppActivity {
         }
 
         TextView textView = (TextView) findViewById(R.id.textViewLogo);
-        textView.setText("Show Users" + "\n");
+        textView.setText("Show User ID:" + "\n");
         while (cursor.moveToNext()) {
             int nameColumnIndex = cursor.getColumnIndex(com.yuccaworld.yuccaslim.data.SlimContract.SlimDB.COLUMN_USER_NAME);
-            String name = cursor.getString(nameColumnIndex);
-            textView.append("Name:" + name + "\n");
+            //int userIdColumnIndex = cursor.getColumnIndex(SlimContract.SlimDB.COLUMN_USER_ID);
+            //String name = cursor.getString(userIdColumnIndex);
+            byte[] ids = cursor.getBlob(cursor.getColumnIndex(SlimContract.SlimDB.COLUMN_USER_ID));
+            UUID uuid = SlimUtils.toUUID(ids);
+            textView.append("User ID:" + uuid.toString() + "\n");
         }
     }
 
@@ -191,6 +200,6 @@ public class RegisterationActivity extends AppActivity {
         weight = (EditText) findViewById(R.id.editTextWeight);
         age = (EditText) findViewById(R.id.editTextAge);
         submit = (FloatingActionButton) findViewById(R.id.fab);
-        //  submit.setOnClickListener(this);
+        //submit.setOnClickListener(this);
     }
 }
