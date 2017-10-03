@@ -31,6 +31,9 @@
         <activity
             android:name=".RegisterationActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-    </application>
 
+        <provider
+            android:authorities="com.yuccaworld.yuccaslim"
+            android:name="com.yuccaworld.yuccaslim.data.SlimContentProvider" />
+    </application>
 </manifest>
