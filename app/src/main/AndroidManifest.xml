@@ -24,16 +24,18 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".RegisterationActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".AddWeightActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <provider
-            android:authorities="com.yuccaworld.yuccaslim"
-            android:name="com.yuccaworld.yuccaslim.data.SlimContentProvider" />
+            android:name=".data.SlimContentProvider"
+            android:authorities="com.yuccaworld.yuccaslim" />
     </application>
+
 </manifest>
