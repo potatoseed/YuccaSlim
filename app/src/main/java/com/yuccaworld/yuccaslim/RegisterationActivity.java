@@ -88,7 +88,7 @@ public class RegisterationActivity extends AppActivity {
             }
         });
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabFinishRegistration);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -199,7 +199,7 @@ public class RegisterationActivity extends AppActivity {
         confirmEmail = (EditText) findViewById(R.id.editTextConfrimEmail);
         weight = (EditText) findViewById(R.id.editTextWeight);
         age = (EditText) findViewById(R.id.editTextAge);
-        submit = (FloatingActionButton) findViewById(R.id.fab);
+        submit = (FloatingActionButton) findViewById(R.id.fabFinishRegistration);
         //submit.setOnClickListener(this);
     }
 }
