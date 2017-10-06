@@ -9,7 +9,15 @@ https://stackoverflow.com/questions/23025433/how-to-clear-gradle-cache
 access to data folder
 adb shell su
 chmod -R 777 /data
+adb root
 https://stackoverflow.com/questions/34603355/android-device-monitor-data-folder-is-empty
+sqlite3 slimDB.db
+.table
+.schema Activity
 
 UUID in sqlite
 http://blog.skymxc.com/2017/03/12/android-uuid/
+
+validator tutorial
+https://tutorialwing.com/android-form-validation-using-saripaar-library-tutorial/
+https://github.com/ragunathjawahar/android-saripaar
