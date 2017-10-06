@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -128,7 +129,15 @@ public class RegisterationActivity extends AppActivity {
                         }
                     }
                     ;
-                    insertDB(cv);
+
+                    Uri uri = getContentResolver().insert(SlimContract.SlimDB.CONTENT_USER_URI, cv);
+                    if (uri != null) {
+                        Snackbar.make(view, "uri : " + uri, Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+                    } else {
+                        Snackbar.make(view, "ri is null " + uri, Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+                    }
+
+                    //insertDB(cv);
                 }
             }
         });

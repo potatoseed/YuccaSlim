@@ -2,6 +2,7 @@ package com.yuccaworld.yuccaslim;
 
 import android.content.ContentValues;
 import android.net.ParseException;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -46,7 +47,6 @@ public class AddWeightActivity extends AppActivity {
                         e.printStackTrace();
                         Snackbar.make(view, "Invalid Number Input", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                     }
-
                     ContentValues contentValues = new ContentValues();
                     contentValues.put(SlimContract.SlimDB.COLUMN_VALUE_DECIMAL, weight);
 
@@ -59,6 +59,13 @@ public class AddWeightActivity extends AppActivity {
 
                     // TODO Fill in Hint ID by other logic later
                     contentValues.put(SlimContract.SlimDB.COLUMN_HINT_ID, 1);
+
+                    Uri uri = getContentResolver().insert(SlimContract.SlimDB.CONTENT_ACTIVITY_URI, contentValues);
+                    if (uri != null) {
+                        Snackbar.make(view, "uri : " + uri, Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                    } else {
+                        Snackbar.make(view, "uri is null" + uri, Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                    }
                     //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 }
             }

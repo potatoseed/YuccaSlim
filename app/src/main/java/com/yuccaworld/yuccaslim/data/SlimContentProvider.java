@@ -58,17 +58,25 @@ public class SlimContentProvider extends ContentProvider {
         final SQLiteDatabase database = mSlimDBHelper.getWritableDatabase();
         int match = sUriMatcher.match(uri);
         Uri returnUri;
+        long id;
         switch (match) {
             case ACTIVITY:
-                long id = database.insert(SlimContract.SlimDB.TABLE_ACTIVITY, null, contentValues);
+                id = database.insertOrThrow(SlimContract.SlimDB.TABLE_ACTIVITY, null, contentValues);
                 if (id > 0) {
                     returnUri = ContentUris.withAppendedId(SlimContract.SlimDB.CONTENT_ACTIVITY_URI, id);
                 } else {
                     throw new android.database.SQLException("Failed to insert row into" + uri);
                 }
                 break;
+            case USER:
+                id = database.insert(SlimContract.SlimDB.TABLE_USER, null, contentValues);
+                if (id > 0) {
+                    returnUri = ContentUris.withAppendedId(SlimContract.SlimDB.CONTENT_USER_URI, id);
+                } else {
+                    throw new android.database.SQLException("Failed to insert row into" + uri);
+                }
             default:
-                throw new UnsupportedOperationException("Unknow uri: " + uri);
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
         getContext().getContentResolver().notifyChange(uri, null);
         return returnUri;
