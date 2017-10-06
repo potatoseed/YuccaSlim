@@ -20,7 +20,7 @@ public class SlimDBHelper extends SQLiteOpenHelper {
 
     // COMPLETED (3) Create a static final int called DATABASE_VERSION and set it to 1
     // If you change the database schema, you must increment the database version
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     public SlimDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -50,6 +50,10 @@ public class SlimDBHelper extends SQLiteOpenHelper {
                 SlimDB.COLUMN_USER_ID + " TEXT NOT NULL, " +
                 SlimDB.COLUMN_ATIVITY_TYPE_ID + " TEXT NOT NULL, " +
                 SlimDB.COLUMN_ACTIVITY_TIME + " TIMESTAMP, " +
+                SlimDB.COLUMN_VALUE_DECIMAL + " REAL, " +
+                SlimDB.COLUMN_VALUE_INT + " INTEGER, " +
+                SlimDB.COLUMN_VALUE_TEXT + " TEXT, " +
+                SlimDB.COLUMN_ITEM_ID + " GUID NOT NULL, " +
                 SlimDB.COLUMN_TIMESTAMP + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
                 "); ";
         // COMPLETED (7) Execute the query by calling execSQL on sqLiteDatabase and pass the string query SQL_CREATE_SLIMDB_TABLE
@@ -59,6 +63,9 @@ public class SlimDBHelper extends SQLiteOpenHelper {
         } catch (SQLException e) {
             Log.e("SQL error", e.toString());
         }
+
+        // Init the DB with meta data
+
     }
 
     @Override

@@ -15,7 +15,7 @@
         android:background="@color/colorPrimary"
         android:gravity="center"
         android:padding="4dp"
-        android:text="Weight"
+        android:text="WEIGHT"
         android:textAppearance="@style/TextAppearance.AppCompat.Inverse"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

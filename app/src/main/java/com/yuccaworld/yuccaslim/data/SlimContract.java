@@ -31,7 +31,12 @@ public class SlimContract {
         public static final String COLUMN_ACTIVITY_ID = "activity_id";
         public static final String COLUMN_ATIVITY_TYPE_ID = "activity_type_id";
         public static final String COLUMN_ACTIVITY_TIME = "activity_time";
+        public static final String COLUMN_VALUE_DECIMAL = "value_decimal";
+        public static final String COLUMN_VALUE_INT = "value_int";
+        public static final String COLUMN_VALUE_TEXT = "value_text";
+        public static final String COLUMN_ITEM_ID = "item_id";
         public static final String COLUMN_HINT_ID = "hint_id";
+
 
     }
 }

@@ -1,31 +1,71 @@
 package com.yuccaworld.yuccaslim;
 
 import android.content.ContentValues;
+import android.net.ParseException;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class AddWeightActivity extends AppCompatActivity {
+import com.mobsandgeeks.saripaar.annotation.DecimalMax;
+import com.mobsandgeeks.saripaar.annotation.DecimalMin;
+import com.mobsandgeeks.saripaar.annotation.Or;
+import com.yuccaworld.yuccaslim.data.SlimContract;
+import com.yuccaworld.yuccaslim.utilities.SlimUtils;
+
+import java.util.UUID;
+
+public class AddWeightActivity extends AppActivity {
+
+    @DecimalMin(value = 10, sequence = 1, messageResId = R.string.min_weight_validation)
+    @Or
+    @DecimalMax(value = 300, sequence = 2, messageResId = R.string.max_weight_validation)
+    private EditText weightInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_weight);
 
+        initView();
         Button button = (Button) findViewById(R.id.buttonAdd);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String input = ((EditText) findViewById(R.id.editTextWeightInput)).getText().toString();
-                if (input.length() == 0) {
-                    return;
+                validator.validate();
+                if (validated) {
+                    String input = ((EditText) findViewById(R.id.editTextWeightInput)).getText().toString();
+                    float weight = 0;
+                    if (input.length() == 0) {
+                        return;
+                    }
+                    try {
+                        weight = Float.parseFloat(input);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                        Snackbar.make(view, "Invalid Number Input", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                    }
+
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(SlimContract.SlimDB.COLUMN_VALUE_DECIMAL, weight);
+
+                    UUID uuid = UUID.randomUUID();
+                    byte[] bytes = SlimUtils.toByte(uuid);
+                    contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, bytes);
+
+                    // Activity type id=1 for weight measure
+                    contentValues.put(SlimContract.SlimDB.COLUMN_ATIVITY_TYPE_ID, 1);
+
+                    // TODO Fill in Hint ID by other logic later
+                    contentValues.put(SlimContract.SlimDB.COLUMN_HINT_ID, 1);
+                    //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 }
-                ContentValues contentValues = new ContentValues();
-                //contentValues.put(SlimContract.SlimDB.COLUMN_ATIVITY_TYPE_ID)
-                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         });
+    }
+
+    private void initView() {
+        weightInput = (EditText) findViewById(R.id.editTextWeightInput);
     }
 }
