@@ -66,6 +66,7 @@ public class AddWeightActivity extends AppActivity {
                     } else {
                         Snackbar.make(view, "uri is null" + uri, Snackbar.LENGTH_LONG).setAction("Action", null).show();
                     }
+                    finish();
                     //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 }
             }

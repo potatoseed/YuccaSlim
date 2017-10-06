@@ -1,6 +1,7 @@
 package com.yuccaworld.yuccaslim;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,8 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.yuccaworld.yuccaslim.model.ActivityInfo;
-import com.yuccaworld.yuccaslim.utilities.SlimUtils;
+import com.yuccaworld.yuccaslim.data.SlimContract;
 
 /**
  * Created by Yung on 9/3/2017.
@@ -19,12 +19,23 @@ import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapterViewHolder> {
 
     private final Context mContext;
+    private Cursor mCursor;
     private int mNumberItems = 20;
 
+    /**
+     * Constructor for the CustomCursorAdapter that initializes the Context.
+     *
+     * @param mContext the current Context
+     */
     public TodayAdapter(@NonNull Context context) {
         mContext = context;
     }
 
+    /**
+     * Called when ViewHolders are created to fill a RecyclerView.
+     *
+     * @return A new ViewHolder that holds the view for each task
+     */
     @Override
     public TodayAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.today_list_item, parent, false);
@@ -34,17 +45,49 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
 
     @Override
     public void onBindViewHolder(TodayAdapterViewHolder holder, int position) {
-        ActivityInfo activityInfo = SlimUtils.genFakeActivityInfo();
-        // time text view data
-        holder.timeView.setText(activityInfo.getActivityTime().toString());
-        holder.hintView.setText("Hint" + String.valueOf(position));
+        //ActivityInfo activityInfo = SlimUtils.genFakeActivityInfo();
+
+        int idIndex = mCursor.getColumnIndex(SlimContract.SlimDB._ID);
+        int activityTypeIdIndex = mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_ATIVITY_TYPE_ID);
+        int activityTimeIndex = mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_ACTIVITY_TIME);
+        int activityHintIdIndex = mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_HINT_ID);
+
+        mCursor.moveToPosition(position);
+        int id = mCursor.getInt(idIndex);
+        int activityTypeId = mCursor.getInt(activityTypeIdIndex);
+        int activityHintId = mCursor.getInt(activityHintIdIndex);
+        String activityTimeString = mCursor.getString(activityTimeIndex);
+
+        holder.timeView.setText(activityTimeString);
+        holder.hintView.setText("Hint" + String.valueOf(activityHintId));
         holder.ActivityView.setText("Activity" + String.valueOf(position));
 
     }
 
     @Override
     public int getItemCount() {
-        return mNumberItems;
+        if (mCursor == null) {
+            return 0;
+        }
+        return mCursor.getCount();
+    }
+
+    /**
+     * When data changes and a re-query occurs, this function update the old Cursor
+     * with a newly updated Cursor (Cursor c) that is passed in.
+     */
+    public Cursor updateCursor(Cursor c) {
+        if (mCursor == c) {
+            return null; // bc nothing has changed
+        }
+        Cursor temp = mCursor;
+        this.mCursor = c; // new cursor value assigned
+
+        if (c != null) {
+            this.notifyDataSetChanged();
+            ;
+        }
+        return temp;
     }
 
     class TodayAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

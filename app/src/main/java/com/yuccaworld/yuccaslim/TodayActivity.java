@@ -1,15 +1,25 @@
 package com.yuccaworld.yuccaslim;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 
-public class TodayActivity extends AppCompatActivity {
+import com.yuccaworld.yuccaslim.data.SlimContract;
+
+public class TodayActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final int SLIM_LOADER_ID = 8;
+
     private TodayAdapter mTodayAdapter;
     private RecyclerView mRecyclerView;
     @Override
@@ -37,5 +47,69 @@ public class TodayActivity extends AppCompatActivity {
         mRecyclerView.setHasFixedSize(true);
         mTodayAdapter = new TodayAdapter(this);
         mRecyclerView.setAdapter(mTodayAdapter);
+
+        /*
+        Ensure a loader is initialized and active. If the loader doesn't already exist, one is
+        created, otherwise the last created loader is re-used.
+        */
+        getSupportLoaderManager().initLoader(SLIM_LOADER_ID, null, this);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, final Bundle args) {
+        return new AsyncTaskLoader<Cursor>(this) {
+            // Initialize a Cursor, this will hold all the Activity data
+            Cursor mActivityData = null;
+
+            @Override
+            protected void onStartLoading() {
+                if (mActivityData != null) {
+                    deliverResult(mActivityData);
+                } else {
+                    forceLoad();
+                }
+            }
+
+            @Override
+            public Cursor loadInBackground() {
+                try {
+                    Cursor cursor =
+                            getContentResolver().query(SlimContract.SlimDB.CONTENT_ACTIVITY_URI,
+                                    null,
+                                    null,
+                                    null,
+                                    SlimContract.SlimDB.COLUMN_ACTIVITY_TIME);
+                    return cursor;
+                } catch (Exception e) {
+                    Log.e(TAG, "Failed to asynchronously load data.");
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            @Override
+            public void deliverResult(Cursor data) {
+                mActivityData = data;
+                super.deliverResult(data);
+            }
+        };
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        // Update the data that the adapter uses to create ViewHolders
+        mTodayAdapter.updateCursor(data);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // re-queries for all activities
+        getSupportLoaderManager().restartLoader(SLIM_LOADER_ID, null, this);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }

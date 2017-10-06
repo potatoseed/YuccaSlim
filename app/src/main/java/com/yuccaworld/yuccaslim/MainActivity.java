@@ -8,18 +8,16 @@ import android.view.MenuItem;
 public class MainActivity extends AppActivity {
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //Intent intent = new Intent(MainActivity.this, RegisterationActivity.class);
-        //Intent intent = new Intent(MainActivity.this, TodayActivity.class);
-        Intent intent = new Intent(MainActivity.this, AddWeightActivity.class);
+        Intent intent = new Intent(MainActivity.this, TodayActivity.class);
+        //Intent intent = new Intent(MainActivity.this, AddWeightActivity.class);
         startActivity(intent);
 /*        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);*/
-
     }
 
     @Override
@@ -43,11 +41,4 @@ public class MainActivity extends AppActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-
-
-
-
-
-
 }

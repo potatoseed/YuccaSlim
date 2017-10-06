@@ -16,6 +16,8 @@ public class SlimContract {
     public static final class SlimDB implements BaseColumns {
         public static final Uri CONTENT_USER_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_USER).build();
         public static final Uri CONTENT_ACTIVITY_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_ACTIVITY).build();
+
+        // Table User
         public static final String TABLE_USER = "User";
         public static final String COLUMN_USER_ID = "user_id";
         public static final String COLUMN_USER_NAME = "user_name";
@@ -27,6 +29,7 @@ public class SlimContract {
         public static final String COLUMN_GENDER = "gender";
         public static final String COLUMN_TIMESTAMP = "timestamp";
 
+        // Table Activity
         public static final String TABLE_ACTIVITY = "Activity";
         public static final String COLUMN_ACTIVITY_ID = "activity_id";
         public static final String COLUMN_ATIVITY_TYPE_ID = "activity_type_id";
@@ -37,6 +40,8 @@ public class SlimContract {
         public static final String COLUMN_ITEM_ID = "item_id";
         public static final String COLUMN_HINT_ID = "hint_id";
 
-
+        // Table Activity_Type
+        public static final String TABLE_ACTIVITY_TYPE = "ActivityType";
+        public static final String COLUMN_ATIVITY_TYPE_DESC = "activity_type_desc";
     }
 }
