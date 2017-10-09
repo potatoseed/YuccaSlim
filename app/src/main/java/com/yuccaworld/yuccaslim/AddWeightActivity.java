@@ -8,6 +8,7 @@ import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TimePicker;
 
 import com.mobsandgeeks.saripaar.annotation.DecimalMax;
 import com.mobsandgeeks.saripaar.annotation.DecimalMin;
@@ -15,6 +16,7 @@ import com.mobsandgeeks.saripaar.annotation.Or;
 import com.yuccaworld.yuccaslim.data.SlimContract;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
+import java.util.Calendar;
 import java.util.UUID;
 
 public class AddWeightActivity extends AppActivity {
@@ -56,6 +58,16 @@ public class AddWeightActivity extends AppActivity {
 
                     // Activity type id=1 for weight measure
                     contentValues.put(SlimContract.SlimDB.COLUMN_ATIVITY_TYPE_ID, 1);
+
+                    // get time from time picker
+                    TimePicker timePicker = (TimePicker) findViewById(R.id.timePickerWeightTime);
+                    int hour = timePicker.getCurrentHour();
+                    int min = timePicker.getCurrentMinute();
+                    Calendar weightTime = Calendar.getInstance();
+                    weightTime.set(Calendar.HOUR_OF_DAY, hour);
+                    weightTime.set(Calendar.MINUTE, min);
+                    contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_TIME, weightTime.getTimeInMillis());
+
 
                     // TODO Fill in Hint ID by other logic later
                     contentValues.put(SlimContract.SlimDB.COLUMN_HINT_ID, 1);

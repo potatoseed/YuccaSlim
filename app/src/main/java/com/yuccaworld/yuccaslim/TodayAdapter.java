@@ -12,6 +12,11 @@ import android.widget.TextView;
 
 import com.yuccaworld.yuccaslim.data.SlimContract;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+//import android.icu.text.SimpleDateFormat;
+
 /**
  * Created by Yung on 9/3/2017.
  */
@@ -56,9 +61,14 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
         int id = mCursor.getInt(idIndex);
         int activityTypeId = mCursor.getInt(activityTypeIdIndex);
         int activityHintId = mCursor.getInt(activityHintIdIndex);
-        String activityTimeString = mCursor.getString(activityTimeIndex);
-
-        holder.timeView.setText(activityTimeString);
+        long l = 0;
+        String time = "";
+        l = mCursor.getLong(activityTimeIndex);
+        SimpleDateFormat format = new SimpleDateFormat("h:mm a");
+        if (l != 0) {
+            time = format.format(new Date(l));
+        }
+        holder.timeView.setText(time);
         holder.hintView.setText("Hint" + String.valueOf(activityHintId));
         holder.ActivityView.setText("Activity" + String.valueOf(position));
 
