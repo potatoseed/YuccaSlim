@@ -48,7 +48,7 @@ public class SlimContentProvider extends ContentProvider {
         Cursor retCursor;
         switch (match) {
             case ACTIVITY:
-                retCursor = db.query(SlimContract.SlimDB.TABLE_ACTIVITY,
+                retCursor = db.query(SlimContract.SlimDB.VIEW_TODAY_ACTIVITY,
                         projection,
                         selection,
                         selectionArgs,

@@ -2,6 +2,7 @@ package com.yuccaworld.yuccaslim;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -54,8 +55,11 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
 
         int idIndex = mCursor.getColumnIndex(SlimContract.SlimDB._ID);
         int activityTypeIdIndex = mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_ATIVITY_TYPE_ID);
+        int activityTypeDescIndex = mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_ATIVITY_TYPE_DESC);
+        int activityTypeImagePath = mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_ICON_IMAGE_PATH);
         int activityTimeIndex = mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_ACTIVITY_TIME);
         int activityHintIdIndex = mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_HINT_ID);
+
 
         mCursor.moveToPosition(position);
         int id = mCursor.getInt(idIndex);
@@ -68,6 +72,13 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
         if (l != 0) {
             time = format.format(new Date(l));
         }
+        // Set activity image
+        String imagePath = mCursor.getString(activityTypeImagePath);
+
+        String packageName = mContext.getPackageName();
+        int imageID = mContext.getResources().getIdentifier(imagePath, null, packageName);
+        Drawable image = mContext.getResources().getDrawable(imageID, mContext.getApplicationContext().getTheme());
+        holder.activityTypeIcon.setImageDrawable(image);
         holder.timeView.setText(time);
         holder.hintView.setText("Hint" + String.valueOf(activityHintId));
         holder.ActivityView.setText("Activity" + String.valueOf(position));
@@ -105,7 +116,7 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
         final TextView hintView;
         final TextView timeView;
         final TextView ActivityView;
-        final ImageView taskIcon;
+        final ImageView activityTypeIcon;
         final ImageView editIcon;
 
         public TodayAdapterViewHolder(View itemView) {
@@ -113,7 +124,7 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
             hintView = (TextView) itemView.findViewById(R.id.textViewHint);
             timeView = (TextView) itemView.findViewById(R.id.textViewTime);
             ActivityView = (TextView) itemView.findViewById(R.id.textViewActivity);
-            taskIcon = (ImageView) itemView.findViewById(R.id.imageViewActivityType);
+            activityTypeIcon = (ImageView) itemView.findViewById(R.id.imageViewActivityType);
             editIcon = (ImageView) itemView.findViewById(R.id.imageViewEdit);
         }
 
