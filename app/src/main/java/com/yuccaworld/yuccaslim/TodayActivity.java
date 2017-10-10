@@ -2,6 +2,7 @@ package com.yuccaworld.yuccaslim;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
@@ -11,10 +12,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
 
 import com.yuccaworld.yuccaslim.data.SlimContract;
+
+import static com.yuccaworld.yuccaslim.data.SlimContentProvider.ACTIVITY;
 
 public class TodayActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -48,6 +52,22 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
         mTodayAdapter = new TodayAdapter(this);
         mRecyclerView.setAdapter(mTodayAdapter);
 
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                int id = (int) viewHolder.itemView.getTag();
+                String stringID = Integer.toString(id);
+                Uri uri = SlimContract.SlimDB.CONTENT_ACTIVITY_URI;
+                uri = uri.buildUpon().appendPath(stringID).build();
+                getContentResolver().delete(uri,null,null);
+                getSupportLoaderManager().restartLoader(SLIM_LOADER_ID, null, TodayActivity.this);
+            }
+        }).attachToRecyclerView(mRecyclerView);
         /*
         Ensure a loader is initialized and active. If the loader doesn't already exist, one is
         created, otherwise the last created loader is re-used.

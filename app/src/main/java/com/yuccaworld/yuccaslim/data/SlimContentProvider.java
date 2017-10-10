@@ -48,7 +48,7 @@ public class SlimContentProvider extends ContentProvider {
         Cursor retCursor;
         switch (match) {
             case ACTIVITY:
-                retCursor = db.query(SlimContract.SlimDB.TABLE_ACTIVITY,
+                retCursor = db.query(SlimContract.SlimDB.VIEW_TODAY_ACTIVITY,
                         projection,
                         selection,
                         selectionArgs,
@@ -57,6 +57,23 @@ public class SlimContentProvider extends ContentProvider {
                         sortOrder
                 );
                 break;
+            case ACTIVITY_WITH_ID:
+                // URI: content://<authority>/activity/#
+                // get(1) means the "/# "part
+                String id = uri.getPathSegments().get(1);
+
+                //Selection is the _ID column = ? and the selection args = the row id from the URI
+                String selectionString = "_id=?";
+                String[] SelectionArgsArray = new String[]{id};
+                retCursor = db.query(SlimContract.SlimDB.VIEW_TODAY_ACTIVITY,
+                        projection,
+                        selectionString,
+                        SelectionArgsArray,
+                        null,
+                        null,
+                        sortOrder
+                );
+
             default:
                 throw new UnsupportedOperationException("Unkonwn uri: " + uri);
         }
@@ -102,7 +119,22 @@ public class SlimContentProvider extends ContentProvider {
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String s, @Nullable String[] strings) {
-        return 0;
+        final SQLiteDatabase db = mSlimDBHelper.getWritableDatabase();
+        int match = sUriMatcher.match(uri);
+        int activityDeleted=0;
+
+        switch (match) {
+            case ACTIVITY_WITH_ID:
+                String id = uri.getPathSegments().get(1);
+                activityDeleted = db.delete(SlimContract.SlimDB.TABLE_ACTIVITY, "_id=?", new String[]{id});
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknow uri" + uri);
+        }
+        if (activityDeleted != 0){
+            getContext().getContentResolver().notifyChange(uri,null);
+        }
+        return activityDeleted;
     }
 
     @Override

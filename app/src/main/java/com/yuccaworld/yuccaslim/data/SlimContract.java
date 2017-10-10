@@ -43,5 +43,9 @@ public class SlimContract {
         // Table Activity_Type
         public static final String TABLE_ACTIVITY_TYPE = "ActivityType";
         public static final String COLUMN_ATIVITY_TYPE_DESC = "activity_type_desc";
+        public static final String COLUMN_ICON_IMAGE_PATH = "icon_image_path";
+
+        // View TodayActivity
+        public static final String VIEW_TODAY_ACTIVITY = "vTodayActivity";
     }
 }
