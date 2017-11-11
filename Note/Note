@@ -1,6 +1,7 @@
 Delete the old database file so that onCreate() is run again. This is often preferred at development time where you have control over the installed versions
 and data loss is not an issue. Some ways to to delete the database file:
 Uninstall the application. Use the application manager or adb uninstall your.package.name from shell.
+%LOCALAPPDATA%\Android\sdk\platform-tools\adb.exe
 adb uninstall com.yuccaworld.yuccaslim
 
 Clear build cache

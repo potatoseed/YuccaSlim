@@ -15,17 +15,16 @@ import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.yuccaworld.yuccaslim.data.SlimContract;
 
-import static com.yuccaworld.yuccaslim.data.SlimContentProvider.ACTIVITY;
-
-public class TodayActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class TodayActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, TodayAdapter.TodayAdapterOnClickHandler {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int SLIM_LOADER_ID = 8;
-
     private TodayAdapter mTodayAdapter;
     private RecyclerView mRecyclerView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +48,7 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
                 new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
-        mTodayAdapter = new TodayAdapter(this);
+        mTodayAdapter = new TodayAdapter(this, this);
         mRecyclerView.setAdapter(mTodayAdapter);
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -131,5 +130,10 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    @Override
+    public void onClick(long date) {
+        Toast.makeText(this, "Clicked", Toast.LENGTH_SHORT).show();
     }
 }

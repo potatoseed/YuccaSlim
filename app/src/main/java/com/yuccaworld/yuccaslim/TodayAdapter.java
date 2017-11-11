@@ -2,6 +2,7 @@ package com.yuccaworld.yuccaslim;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.databinding.DataBindingUtil;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -12,8 +13,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.yuccaworld.yuccaslim.data.SlimContract;
+import com.yuccaworld.yuccaslim.databinding.TodayListItemBinding;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 //import android.icu.text.SimpleDateFormat;
@@ -27,15 +30,33 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
     private final Context mContext;
     private Cursor mCursor;
     private int mNumberItems = 20;
+    /*
+  * Below, we've defined an interface to handle clicks on items within this Adapter. In the
+  * constructor of our ForecastAdapter, we receive an instance of a class that has implemented
+  * said interface. We store that instance in this variable to call the onClick method whenever
+  * an item is clicked in the list.
+  */
+    final private TodayAdapterOnClickHandler mClickHandler;
+
+
+    /**
+     * The interface that receives onClick messages.
+     */
+    public interface TodayAdapterOnClickHandler {
+        void onClick(long date);
+    }
 
     /**
      * Constructor for the CustomCursorAdapter that initializes the Context.
      *
      * @param mContext the current Context
+     * @param mClickHandler
      */
-    public TodayAdapter(@NonNull Context context) {
+    public TodayAdapter(@NonNull Context context, TodayAdapterOnClickHandler mClickHandler) {
         mContext = context;
+        this.mClickHandler = mClickHandler;
     }
+
 
     /**
      * Called when ViewHolders are created to fill a RecyclerView.
@@ -45,7 +66,6 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
     @Override
     public TodayAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.today_list_item, parent, false);
-
         return new TodayAdapterViewHolder(view);
     }
 
@@ -124,7 +144,6 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
     }
 
     class TodayAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
         final TextView hintView;
         final TextView timeView;
         final TextView ActivityView;
@@ -133,16 +152,20 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
 
         public TodayAdapterViewHolder(View itemView) {
             super(itemView);
+            //Get references to all new views
             hintView = (TextView) itemView.findViewById(R.id.textViewHint);
             timeView = (TextView) itemView.findViewById(R.id.textViewTime);
             ActivityView = (TextView) itemView.findViewById(R.id.textViewActivity);
             activityTypeIcon = (ImageView) itemView.findViewById(R.id.imageViewActivityType);
             editIcon = (ImageView) itemView.findViewById(R.id.imageViewEdit);
+            itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-
+            int adapterPosition = getAdapterPosition();
+            mCursor.moveToPosition(adapterPosition);
+            mClickHandler.onClick(1);
         }
     }
 }
