@@ -25,5 +25,9 @@ https://github.com/ragunathjawahar/android-saripaar
 
 
 https://developer.android.com/reference/java/text/SimpleDateFormat.html
-
  waiting for debugger Issue
+
+
+ solve "this loader class should be static or leaks might occur"
+ https://stackoverflow.com/questions/44309241/this-asynctask-class-should-be-static-or-leaks-might-occur
+ http://www.jianshu.com/p/398b3f4aa335

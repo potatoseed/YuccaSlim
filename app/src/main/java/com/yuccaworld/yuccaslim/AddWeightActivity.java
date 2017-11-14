@@ -1,10 +1,15 @@
 package com.yuccaworld.yuccaslim;
 
+import android.content.AsyncTaskLoader;
 import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
 import android.net.ParseException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,17 +21,19 @@ import com.mobsandgeeks.saripaar.annotation.Or;
 import com.yuccaworld.yuccaslim.data.SlimContract;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
+import java.lang.ref.WeakReference;
 import java.util.Calendar;
 import java.util.UUID;
 
-public class AddWeightActivity extends AppActivity {
+public class AddWeightActivity extends AppActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     @DecimalMin(value = 10, sequence = 1, messageResId = R.string.min_weight_validation)
     @Or
     @DecimalMax(value = 300, sequence = 2, messageResId = R.string.max_weight_validation)
     private EditText weightInput;
 
-    private Uri mUri;
+    private static Uri mUri;
+    private static final int ID_WEIGHT_LOADER = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +42,7 @@ public class AddWeightActivity extends AppActivity {
 
         initView();
         Button button = (Button) findViewById(R.id.buttonAdd);
+        getSupportLoaderManager().initLoader(ID_WEIGHT_LOADER, null, this);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -92,5 +100,47 @@ public class AddWeightActivity extends AppActivity {
         mUri = getIntent().getData();
         // TODO Continue here
         if (mUri == null) {}
+    }
+
+    private static class WeightAsyncTaskLoader extends AsyncTaskLoader<Cursor> {
+        private final WeakReference<AddWeightActivity> activityWeakReference;
+        private Context mContext;
+
+        public WeightAsyncTaskLoader(AddWeightActivity context) {
+            super(context);
+            activityWeakReference = new WeakReference<AddWeightActivity>(context);
+            mContext = context;
+        }
+
+        @Override
+        public Cursor loadInBackground() {
+            /*
+            try {
+                Cursor cursor = mContext.getContentResolver().query(mUri,)
+            }
+            */
+            return null;
+        }
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        switch (id) {
+            case ID_WEIGHT_LOADER:
+                //return new CursorLoader(this, mUri,null,null,null,null);
+                return null;
+            default:
+                throw new RuntimeException("Loader Not Implemented: " + id);
+        }
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }
