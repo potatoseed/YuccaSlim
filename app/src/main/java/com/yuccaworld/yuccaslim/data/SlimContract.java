@@ -47,5 +47,17 @@ public class SlimContract {
 
         // View TodayActivity
         public static final String VIEW_TODAY_ACTIVITY = "vTodayActivity";
+
+        /**
+         * Builds a URI that adds the activity id to the end of the today activity URI path.
+         * This is used to query details about a single activity entry . This is what we
+         * use for the detail view query.
+         *
+         * @param rowID Row id in the cursor _id
+         * @return Uri to query details about a single weather entry
+         */
+        public static Uri buildWeightAdd(int rowId){
+            return CONTENT_ACTIVITY_URI.buildUpon().appendPath(Integer.toString(rowId)).build();
+        }
     }
 }

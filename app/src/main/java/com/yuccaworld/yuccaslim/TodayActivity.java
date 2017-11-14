@@ -133,7 +133,11 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
     }
 
     @Override
-    public void onClick(long date) {
+    public void onClick(int idIndex) {
         Toast.makeText(this, "Clicked", Toast.LENGTH_SHORT).show();
+        Intent weightIntent = new Intent(TodayActivity.this, AddWeightActivity.class);
+        Uri uriForActivityClicked = SlimContract.SlimDB.buildWeightAdd(idIndex);
+        weightIntent.setData(uriForActivityClicked);
+        startActivity(weightIntent);
     }
 }

@@ -43,13 +43,12 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
      * The interface that receives onClick messages.
      */
     public interface TodayAdapterOnClickHandler {
-        void onClick(long date);
+        void onClick(int idIndex);
     }
 
     /**
      * Constructor for the CustomCursorAdapter that initializes the Context.
      *
-     * @param mContext the current Context
      * @param mClickHandler
      */
     public TodayAdapter(@NonNull Context context, TodayAdapterOnClickHandler mClickHandler) {
@@ -165,7 +164,8 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
         public void onClick(View view) {
             int adapterPosition = getAdapterPosition();
             mCursor.moveToPosition(adapterPosition);
-            mClickHandler.onClick(1);
+            int idIndex = mCursor.getColumnIndex(SlimContract.SlimDB._ID);
+            mClickHandler.onClick(idIndex);
         }
     }
 }

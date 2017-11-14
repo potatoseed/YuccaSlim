@@ -26,6 +26,8 @@ public class AddWeightActivity extends AppActivity {
     @DecimalMax(value = 300, sequence = 2, messageResId = R.string.max_weight_validation)
     private EditText weightInput;
 
+    private Uri mUri;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +69,7 @@ public class AddWeightActivity extends AppActivity {
                     weightTime.set(Calendar.HOUR_OF_DAY, hour);
                     weightTime.set(Calendar.MINUTE, min);
                     contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_TIME, weightTime.getTimeInMillis());
-
+ 
 
                     // TODO Fill in Hint ID by other logic later
                     contentValues.put(SlimContract.SlimDB.COLUMN_HINT_ID, 1);
@@ -87,5 +89,8 @@ public class AddWeightActivity extends AppActivity {
 
     private void initView() {
         weightInput = (EditText) findViewById(R.id.editTextWeightInput);
+        mUri = getIntent().getData();
+        // TODO Continue here
+        if (mUri == null) {}
     }
 }
