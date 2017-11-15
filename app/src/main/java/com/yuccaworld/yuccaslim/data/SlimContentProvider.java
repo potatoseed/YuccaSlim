@@ -73,7 +73,7 @@ public class SlimContentProvider extends ContentProvider {
                         null,
                         sortOrder
                 );
-
+                break;
             default:
                 throw new UnsupportedOperationException("Unkonwn uri: " + uri);
         }
