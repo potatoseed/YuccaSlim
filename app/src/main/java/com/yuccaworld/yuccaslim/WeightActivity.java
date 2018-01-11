@@ -1,8 +1,8 @@
 package com.yuccaworld.yuccaslim;
 
+import android.content.Intent;
 import android.support.v4.content.AsyncTaskLoader;
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.net.ParseException;
 import android.net.Uri;
@@ -26,13 +26,14 @@ import java.lang.ref.WeakReference;
 import java.util.Calendar;
 import java.util.UUID;
 
-public class AddWeightActivity extends AppActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class WeightActivity extends AppActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     @DecimalMin(value = 10, sequence = 1, messageResId = R.string.min_weight_validation)
     @Or
     @DecimalMax(value = 300, sequence = 2, messageResId = R.string.max_weight_validation)
     private EditText weightInput;
 
+    private String mMode = "";
     private static Uri mUri;
     private static final int ID_WEIGHT_LOADER = 101;
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -40,10 +41,24 @@ public class AddWeightActivity extends AppActivity implements LoaderManager.Load
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+        if (intent.hasExtra(Intent.EXTRA_TEXT)){
+            mMode = intent.getStringExtra(Intent.EXTRA_TEXT);
+        }
         setContentView(R.layout.activity_add_weight);
-        initView();
         Button button = (Button) findViewById(R.id.buttonAdd);
-        getSupportLoaderManager().initLoader(ID_WEIGHT_LOADER, null, this);
+        weightInput = (EditText) findViewById(R.id.editTextWeightInput);
+        if ("EDIT".equals(mMode)) {
+            mUri = getIntent().getData();
+            // if no Uri data in the intent, add new weight, no need to load data.
+            LoaderManager loaderManager = getSupportLoaderManager();
+            if (loaderManager == null){
+                loaderManager.initLoader(ID_WEIGHT_LOADER, null, this);
+            } else {
+                loaderManager.restartLoader(ID_WEIGHT_LOADER, null, this);
+            }
+        }
+        
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -96,25 +111,18 @@ public class AddWeightActivity extends AppActivity implements LoaderManager.Load
         });
     }
 
-    private void initView() {
-        weightInput = (EditText) findViewById(R.id.editTextWeightInput);
-        mUri = getIntent().getData();
-        // TODO Continue here
-        if (mUri == null) {}
-    }
-
     private static class WeightAsyncTaskLoader extends AsyncTaskLoader<Cursor> {
-        private WeakReference<AddWeightActivity> activityWeakReference;
+        private WeakReference<WeightActivity> activityWeakReference;
 
-        public WeightAsyncTaskLoader(AddWeightActivity context) {
+        public WeightAsyncTaskLoader(WeightActivity context) {
             super(context);
-            activityWeakReference = new WeakReference<AddWeightActivity>(context);
+            activityWeakReference = new WeakReference<WeightActivity>(context);
         }
 
         @Override
         public Cursor loadInBackground() {
             // get a reference to the activity if it is still there
-            AddWeightActivity activity = activityWeakReference.get();
+            WeightActivity activity = activityWeakReference.get();
             try {
                 Cursor cursor = activity.getContentResolver().query(mUri,null,null,null,null);
                 return cursor;
@@ -144,9 +152,12 @@ public class AddWeightActivity extends AppActivity implements LoaderManager.Load
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        float activityValueDecimalIndex = data.getColumnIndex(SlimContract.SlimDB.COLUMN_VALUE_DECIMAL);
+        int activityValueDecimalIndex = data.getColumnIndex(SlimContract.SlimDB.COLUMN_VALUE_DECIMAL);
         EditText editTextWeight = (EditText) findViewById(R.id.editTextWeightInput);
-        editTextWeight.setText(Float.toString(activityValueDecimalIndex));
+        if (data.moveToFirst()) {
+            float weight = data.getFloat(activityValueDecimalIndex);
+            editTextWeight.setText(Float.toString(weight));
+        }
     }
 
     @Override

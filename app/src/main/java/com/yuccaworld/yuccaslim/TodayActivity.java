@@ -36,7 +36,10 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent addWeightIntent = new Intent(TodayActivity.this, AddWeightActivity.class);
+                Intent addWeightIntent = new Intent(TodayActivity.this, WeightActivity.class);
+                // set weight activity mode to "ADD"
+                String weightActivityMode = "ADD";
+                addWeightIntent.putExtra(Intent.EXTRA_TEXT, weightActivityMode);
                 startActivity(addWeightIntent);
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
@@ -135,7 +138,10 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
     @Override
     public void onClick(int idIndex) {
         Toast.makeText(this, "Clicked", Toast.LENGTH_SHORT).show();
-        Intent weightIntent = new Intent(TodayActivity.this, AddWeightActivity.class);
+        Intent weightIntent = new Intent(TodayActivity.this, WeightActivity.class);
+        // set weight activity mode to "EDIT"
+        String weightActivityMode = "EDIT";
+        weightIntent.putExtra(Intent.EXTRA_TEXT, weightActivityMode);
         Uri uriForActivityClicked = SlimContract.SlimDB.buildWeightAdd(idIndex);
         weightIntent.setData(uriForActivityClicked);
         startActivity(weightIntent);

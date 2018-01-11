@@ -14,7 +14,7 @@ public class MainActivity extends AppActivity {
         setContentView(R.layout.activity_main);
         //Intent intent = new Intent(MainActivity.this, RegisterationActivity.class);
         Intent intent = new Intent(MainActivity.this, TodayActivity.class);
-        //Intent intent = new Intent(MainActivity.this, AddWeightActivity.class);
+        //Intent intent = new Intent(MainActivity.this, WeightActivity.class);
         startActivity(intent);
 /*        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);*/

@@ -31,7 +31,7 @@
             android:name=".RegisterationActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".AddWeightActivity"
+            android:name=".WeightActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <provider
             android:name=".data.SlimContentProvider"
