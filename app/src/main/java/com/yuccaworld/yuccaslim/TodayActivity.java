@@ -142,7 +142,7 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
         // set weight activity mode to "EDIT"
         String weightActivityMode = "EDIT";
         weightIntent.putExtra(Intent.EXTRA_TEXT, weightActivityMode);
-        Uri uriForActivityClicked = SlimContract.SlimDB.buildWeightAdd(idIndex);
+        Uri uriForActivityClicked = SlimContract.SlimDB.buildWeightAdd(idIndex+1);
         weightIntent.setData(uriForActivityClicked);
         startActivity(weightIntent);
     }
