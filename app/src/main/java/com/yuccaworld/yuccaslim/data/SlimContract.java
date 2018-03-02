@@ -59,5 +59,9 @@ public class SlimContract {
         public static Uri buildWeightAdd(int rowId){
             return CONTENT_ACTIVITY_URI.buildUpon().appendPath(Integer.toString(rowId)).build();
         }
+
+        public static Uri buildWeightEdit(int rowID){
+            return CONTENT_ACTIVITY_URI.buildUpon().appendPath(Integer.toString(rowID)).build();
+        }
     }
 }

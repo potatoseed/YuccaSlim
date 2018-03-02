@@ -18,6 +18,7 @@ import com.yuccaworld.yuccaslim.databinding.TodayListItemBinding;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 
 //import android.icu.text.SimpleDateFormat;
 
@@ -43,17 +44,17 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
      * The interface that receives onClick messages.
      */
     public interface TodayAdapterOnClickHandler {
-        void onClick(int idIndex);
+        void onClick(int rowID);
     }
 
     /**
      * Constructor for the CustomCursorAdapter that initializes the Context.
      *
-     * @param mClickHandler
+     * @param ClickHandler
      */
-    public TodayAdapter(@NonNull Context context, TodayAdapterOnClickHandler mClickHandler) {
+    public TodayAdapter(@NonNull Context context, TodayAdapterOnClickHandler ClickHandler) {
         mContext = context;
-        this.mClickHandler = mClickHandler;
+        this.mClickHandler = ClickHandler;
     }
 
 
@@ -111,8 +112,8 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
         holder.activityTypeIcon.setImageDrawable(image);
         holder.timeView.setText(time);
         holder.hintView.setText("Hint" + String.valueOf(activityHintId));
-        holder.ActivityView.setText(activityTypeDesc + " " + String.valueOf(valueDecimal) + "kg");
-
+        holder.ActivityView.setText(activityTypeDesc + " "  );
+        holder.ValueView.setText(String.valueOf(valueDecimal) + " kg");
 
     }
 
@@ -146,6 +147,7 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
         final TextView hintView;
         final TextView timeView;
         final TextView ActivityView;
+        final TextView ValueView;
         final ImageView activityTypeIcon;
         final ImageView editIcon;
 
@@ -155,6 +157,7 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
             hintView = (TextView) itemView.findViewById(R.id.textViewHint);
             timeView = (TextView) itemView.findViewById(R.id.textViewTime);
             ActivityView = (TextView) itemView.findViewById(R.id.textViewActivity);
+            ValueView = (TextView) itemView.findViewById(R.id.textViewValue);
             activityTypeIcon = (ImageView) itemView.findViewById(R.id.imageViewActivityType);
             editIcon = (ImageView) itemView.findViewById(R.id.imageViewEdit);
             itemView.setOnClickListener(this);
@@ -164,8 +167,9 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
         public void onClick(View view) {
             int adapterPosition = getAdapterPosition();
             mCursor.moveToPosition(adapterPosition);
-            int idIndex = mCursor.getColumnIndex(SlimContract.SlimDB._ID);
-            mClickHandler.onClick(idIndex);
+            //String activityUUID = mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_ACTIVITY_ID));
+            int rowID = mCursor.getInt(mCursor.getColumnIndex(SlimContract.SlimDB._ID));
+            mClickHandler.onClick(rowID);
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.yuccaworld.yuccaslim;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -21,7 +22,7 @@ import com.yuccaworld.yuccaslim.data.SlimContract;
 
 public class TodayActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, TodayAdapter.TodayAdapterOnClickHandler {
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final int SLIM_LOADER_ID = 8;
+    private static final int TODAY_ACTIVITY_LOADER_ID = 8;
     private TodayAdapter mTodayAdapter;
     private RecyclerView mRecyclerView;
 
@@ -67,18 +68,25 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
                 Uri uri = SlimContract.SlimDB.CONTENT_ACTIVITY_URI;
                 uri = uri.buildUpon().appendPath(stringID).build();
                 getContentResolver().delete(uri,null,null);
-                getSupportLoaderManager().restartLoader(SLIM_LOADER_ID, null, TodayActivity.this);
+                getSupportLoaderManager().restartLoader(TODAY_ACTIVITY_LOADER_ID, null, TodayActivity.this);
             }
         }).attachToRecyclerView(mRecyclerView);
         /*
         Ensure a loader is initialized and active. If the loader doesn't already exist, one is
         created, otherwise the last created loader is re-used.
         */
-        getSupportLoaderManager().initLoader(SLIM_LOADER_ID, null, this);
+        getSupportLoaderManager().initLoader(TODAY_ACTIVITY_LOADER_ID, null, this);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, final Bundle args) {
+        switch (id) {
+            case TODAY_ACTIVITY_LOADER_ID:
+                return new TodayActivityAsyncTaskLoader(this);
+            default:
+                throw new RuntimeException("Loader Not Implemented: " + id);
+        }
+/*
         return new AsyncTaskLoader<Cursor>(this) {
             // Initialize a Cursor, this will hold all the Activity data
             Cursor mActivityData = null;
@@ -115,6 +123,48 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
                 super.deliverResult(data);
             }
         };
+*/
+    }
+    public static class TodayActivityAsyncTaskLoader extends AsyncTaskLoader<Cursor>{
+        // Initialize a Cursor, this will hold all the Activity data
+        Cursor mActivityData = null;
+
+        public TodayActivityAsyncTaskLoader(Context context) {
+            super(context);
+        }
+
+        @Override
+        protected void onStartLoading() {
+            super.onStartLoading();
+            if (mActivityData != null) {
+                deliverResult(mActivityData);
+            } else {
+                forceLoad();
+            }
+        }
+
+        @Override
+        public Cursor loadInBackground() {
+            try {
+                Cursor cursor =
+                        getContext().getContentResolver().query(SlimContract.SlimDB.CONTENT_ACTIVITY_URI,
+                                null,
+                                null,
+                                null,
+                                SlimContract.SlimDB.COLUMN_ACTIVITY_TIME);
+                return cursor;
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to asynchronously load data.");
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        public void deliverResult(Cursor data) {
+            mActivityData = data;
+            super.deliverResult(data);
+        }
     }
 
     @Override
@@ -127,7 +177,7 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
     protected void onResume() {
         super.onResume();
         // re-queries for all activities
-        getSupportLoaderManager().restartLoader(SLIM_LOADER_ID, null, this);
+        getSupportLoaderManager().restartLoader(TODAY_ACTIVITY_LOADER_ID, null, this);
     }
 
     @Override
@@ -136,13 +186,13 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
     }
 
     @Override
-    public void onClick(int idIndex) {
-        Toast.makeText(this, "Clicked", Toast.LENGTH_SHORT).show();
+    public void onClick(int rowID) {
+        Toast.makeText(this, "Clicked" + rowID, Toast.LENGTH_SHORT).show();
         Intent weightIntent = new Intent(TodayActivity.this, WeightActivity.class);
         // set weight activity mode to "EDIT"
         String weightActivityMode = "EDIT";
         weightIntent.putExtra(Intent.EXTRA_TEXT, weightActivityMode);
-        Uri uriForActivityClicked = SlimContract.SlimDB.buildWeightAdd(idIndex+1);
+        Uri uriForActivityClicked = SlimContract.SlimDB.buildWeightEdit(rowID);
         weightIntent.setData(uriForActivityClicked);
         startActivity(weightIntent);
     }

@@ -57,8 +57,9 @@ public class WeightActivity extends AppActivity implements LoaderManager.LoaderC
             } else {
                 loaderManager.restartLoader(ID_WEIGHT_LOADER, null, this);
             }
+            button.setText(R.string.button_label_change);
         }
-        
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -93,17 +94,23 @@ public class WeightActivity extends AppActivity implements LoaderManager.LoaderC
                     weightTime.set(Calendar.HOUR_OF_DAY, hour);
                     weightTime.set(Calendar.MINUTE, min);
                     contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_TIME, weightTime.getTimeInMillis());
- 
+
 
                     // TODO Fill in Hint ID by other logic later
                     contentValues.put(SlimContract.SlimDB.COLUMN_HINT_ID, 1);
-
-                    Uri uri = getContentResolver().insert(SlimContract.SlimDB.CONTENT_ACTIVITY_URI, contentValues);
-                    if (uri != null) {
-                        Snackbar.make(view, "uri : " + uri, Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                    Uri uri = null;
+                    int updatedRow = 0;
+                    if ("EDIT".equals(mMode)) {
+                        updatedRow = getContentResolver().update(mUri,contentValues,null,null);
                     } else {
-                        Snackbar.make(view, "uri is null" + uri, Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                        uri = getContentResolver().insert(SlimContract.SlimDB.CONTENT_ACTIVITY_URI, contentValues);
+                        if (uri != null) {
+                            Snackbar.make(view, "uri : " + uri, Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                        } else {
+                            Snackbar.make(view, "uri is null" + uri, Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                        }
                     }
+
                     finish();
                     //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 }

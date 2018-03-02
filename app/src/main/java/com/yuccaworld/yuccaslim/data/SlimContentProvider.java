@@ -139,6 +139,20 @@ public class SlimContentProvider extends ContentProvider {
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues contentValues, @Nullable String s, @Nullable String[] strings) {
-        return 0;
+        final SQLiteDatabase db = mSlimDBHelper.getWritableDatabase();
+        int match = sUriMatcher.match(uri);
+        int activityUpdated=0;
+        switch (match) {
+            case ACTIVITY_WITH_ID:
+                String id = uri.getPathSegments().get(1);
+                activityUpdated = db.update(SlimContract.SlimDB.TABLE_ACTIVITY, contentValues, "_id=?", new String[]{id});
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknow uri" + uri);
+        }
+        if (activityUpdated != 0){
+            getContext().getContentResolver().notifyChange(uri,null);
+        }
+        return activityUpdated;
     }
 }
