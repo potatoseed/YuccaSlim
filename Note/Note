@@ -34,3 +34,6 @@ https://developer.android.com/reference/java/text/SimpleDateFormat.html
 
  solve "initLoader Parameter specified as non-null is null: method kotlin.jvm.internal.Intrinsics.checkParameterIsNotNull, parameter args"
  https://stackoverflow.com/questions/38868625/checkparameterisnotnull-error-in-login-activity-sample
+
+ Time Picker
+ https://android--examples.blogspot.hk/2015/05/how-to-use-timepicker-in-android.html

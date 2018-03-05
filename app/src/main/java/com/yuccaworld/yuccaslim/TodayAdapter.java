@@ -112,7 +112,7 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
         holder.activityTypeIcon.setImageDrawable(image);
         holder.timeView.setText(time);
         holder.hintView.setText("Hint" + String.valueOf(activityHintId));
-        holder.ActivityView.setText(activityTypeDesc + " "  );
+        //holder.ActivityView.setText(activityTypeDesc + " "  );
         holder.ValueView.setText(String.valueOf(valueDecimal) + " kg");
 
     }
@@ -149,7 +149,7 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
         final TextView ActivityView;
         final TextView ValueView;
         final ImageView activityTypeIcon;
-        final ImageView editIcon;
+        //final ImageView editIcon;
 
         public TodayAdapterViewHolder(View itemView) {
             super(itemView);
@@ -159,7 +159,7 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
             ActivityView = (TextView) itemView.findViewById(R.id.textViewActivity);
             ValueView = (TextView) itemView.findViewById(R.id.textViewValue);
             activityTypeIcon = (ImageView) itemView.findViewById(R.id.imageViewActivityType);
-            editIcon = (ImageView) itemView.findViewById(R.id.imageViewEdit);
+            //editIcon = (ImageView) itemView.findViewById(R.id.imageViewEdit);
             itemView.setOnClickListener(this);
         }
 

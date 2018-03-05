@@ -23,7 +23,9 @@ import com.yuccaworld.yuccaslim.data.SlimContract;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.UUID;
 
 public class WeightActivity extends AppActivity implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -51,6 +53,7 @@ public class WeightActivity extends AppActivity implements LoaderManager.LoaderC
         if ("EDIT".equals(mMode)) {
             mUri = getIntent().getData();
             // if no Uri data in the intent, add new weight, no need to load data.
+
             LoaderManager loaderManager = getSupportLoaderManager();
             if (loaderManager == null){
                 loaderManager.initLoader(ID_WEIGHT_LOADER, null, this);
@@ -164,6 +167,14 @@ public class WeightActivity extends AppActivity implements LoaderManager.LoaderC
         if (data.moveToFirst()) {
             float weight = data.getFloat(activityValueDecimalIndex);
             editTextWeight.setText(Float.toString(weight));
+
+            // retrieve the time from database and Set the timepicker to that time
+            long l = data.getLong(data.getColumnIndex(SlimContract.SlimDB.COLUMN_ACTIVITY_TIME));
+            Calendar c = Calendar.getInstance();
+            c.setTimeInMillis(l);
+            TimePicker timePicker = (TimePicker) findViewById(R.id.timePickerWeightTime);
+            timePicker.setCurrentHour(c.get(c.HOUR_OF_DAY));
+            timePicker.setCurrentMinute(c.get(c.MINUTE));
         }
     }
 
