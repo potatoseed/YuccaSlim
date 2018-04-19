@@ -118,7 +118,7 @@ public class SlimDBHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(SlimDB.COLUMN_ATIVITY_TYPE_ID, 1);
         values.put(SlimDB.COLUMN_ATIVITY_TYPE_DESC, "Weight");
-        values.put(SlimDB.COLUMN_ICON_IMAGE_PATH, "@drawable/ic_weight_kilogram");
+        values.put(SlimDB.COLUMN_ICON_IMAGE_PATH, "@drawable/ic_speedometer");
 
         try {
             long newRowId = db.insertOrThrow(SlimDB.TABLE_ACTIVITY_TYPE, null, values);

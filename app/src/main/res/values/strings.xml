@@ -30,7 +30,8 @@
     <string name="min_age_validation">Baby less than 1 year</string>
     <string name="max_age_validation">human live over 300 years don\'t need this</string>
     <string name="gender_validation">Please select your gender</string>
-    <string name="title_activity_today">Today Activities</string>
+    <string name="title_activity_today">Today</string>
     <string name="button_label_change">Change</string>
+    <string name="action_add_weight">Add</string>
 
 </resources>

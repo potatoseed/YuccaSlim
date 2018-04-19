@@ -15,6 +15,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -30,8 +32,8 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_today);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabAddWeight);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -76,6 +78,29 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
         created, otherwise the last created loader is re-used.
         */
         getSupportLoaderManager().initLoader(TODAY_ACTIVITY_LOADER_ID, null, this);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_today_activity, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int menuItemSelected = item.getItemId();
+        switch (menuItemSelected) {
+            case R.id.add_weight :
+                Intent addWeightIntent = new Intent(TodayActivity.this, WeightActivity.class);
+                // set weight activity mode to "ADD"
+                String weightActivityMode = "ADD";
+                addWeightIntent.putExtra(Intent.EXTRA_TEXT, weightActivityMode);
+                startActivity(addWeightIntent);
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
