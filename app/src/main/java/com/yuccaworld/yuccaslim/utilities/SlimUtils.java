@@ -1,5 +1,8 @@
 package com.yuccaworld.yuccaslim.utilities;
 
+import android.support.annotation.StringRes;
+import android.support.design.widget.Snackbar;
+
 import com.yuccaworld.yuccaslim.model.ActivityInfo;
 
 import java.nio.ByteBuffer;
@@ -69,5 +72,6 @@ public class SlimUtils {
         }
         return sb.toString();
     }
+
 
 }

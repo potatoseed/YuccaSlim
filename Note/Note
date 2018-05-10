@@ -37,3 +37,8 @@ https://developer.android.com/reference/java/text/SimpleDateFormat.html
 
  Time Picker
  https://android--examples.blogspot.hk/2015/05/how-to-use-timepicker-in-android.html
+
+ Firebase auth
+ I/AuthChimeraService: Error description received from server: Access Not Configured. Google Identity Toolkit API has not been used in project
+ You can activate the Identity Toolkit API from this link. replace with your project id. It is something like friendlychat-1234d
+ https://console.developers.google.com/apis/library/identitytoolkit.googleapis.com/?project=
