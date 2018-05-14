@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.ErrorCodes;
+import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -22,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppActivity {
-
+    private static final String TAG = "MainActivity";
     private static final int RC_SIGN_IN = 333;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
@@ -44,7 +46,8 @@ public class MainActivity extends AppActivity {
     private void setupInitalView() {
         if (mFirebaseUser != null) {
             // user is sign in
-            Snackbar.make(findViewById(R.id.activityMainCoordinatorLayout), "you are now singed in", Snackbar.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "you are now singed in",
+                    Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(MainActivity.this, TodayActivity.class);
             startActivity(intent);
         } else {
@@ -74,6 +77,43 @@ public class MainActivity extends AppActivity {
                         // ...
                     }
                 });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_SIGN_IN) {
+            handleSignInResponse(resultCode, data);
+        }
+    }
+
+    private void handleSignInResponse(int resultCode, Intent data) {
+        IdpResponse response = IdpResponse.fromResultIntent(data);
+
+        // Successfully signed in
+        if (resultCode == RESULT_OK) {
+            Intent intent = new Intent(MainActivity.this, TodayActivity.class);
+            startActivity(intent);
+            finish();
+        } else {
+            // Sign in failed
+            if (response == null) {
+                // User pressed back button
+                Toast.makeText(MainActivity.this, "Sign in Cancelled",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
+                Toast.makeText(MainActivity.this, "No Network",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Toast.makeText(MainActivity.this, "Unknown Error",
+                    Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Sign-in error: ", response.getError());
+        }
     }
 
     public void signIn() {

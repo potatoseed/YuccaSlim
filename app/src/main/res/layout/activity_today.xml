@@ -6,13 +6,6 @@
     android:layout_height="match_parent"
     tools:context="com.yuccaworld.yuccaslim.TodayActivity">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-    </android.support.design.widget.AppBarLayout>
-
     <include
         layout="@layout/content_today"
         android:id="@+id/include" />
@@ -24,5 +17,13 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@drawable/ic_add_white_48px" />
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_activity_today"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/TodayActivityTheme" />
 
 </android.support.design.widget.CoordinatorLayout>

@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
 import com.yuccaworld.yuccaslim.data.SlimContract;
 
 public class TodayActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, TodayAdapter.TodayAdapterOnClickHandler {
@@ -32,8 +33,8 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_today);
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_activity_today);
+        setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabAddWeight);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -98,6 +99,11 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
                 startActivity(addWeightIntent);
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
+            case R.id.logout:
+                AuthUI.getInstance().signOut(this);
+                Intent mainIntent = new Intent(TodayActivity.this, MainActivity.class);
+                startActivity(mainIntent);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

@@ -33,5 +33,6 @@
     <string name="title_activity_today">Today</string>
     <string name="button_label_change">Change</string>
     <string name="action_add_weight">Add</string>
+    <string name="action_logout">Logout</string>
 
 </resources>
