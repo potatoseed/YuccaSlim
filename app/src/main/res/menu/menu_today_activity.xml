@@ -8,7 +8,7 @@
         app:showAsAction="never" />
     <item
         android:id="@+id/add_weight"
-        android:icon="@drawable/ic_speedometer"
+        android:icon="@drawable/ic_meter_24dp"
         android:title="@string/action_add_weight"
         app:showAsAction="ifRoom" />
 </menu>

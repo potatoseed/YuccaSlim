@@ -21,7 +21,7 @@
         <activity
             android:name=".TodayActivity"
             android:label="@string/title_activity_today"
-            android:theme="@style/TodayActivityTheme">
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

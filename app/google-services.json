@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1016168586579",
+    "firebase_url": "https://yuccaslim.firebaseio.com",
+    "project_id": "yuccaslim",
+    "storage_bucket": "yuccaslim.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1016168586579:android:835d55aaa50e2afc",
+        "android_client_info": {
+          "package_name": "com.yuccaworld.yuccaslim"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1016168586579-ud1cakknfc6vddm98bjji3d3fek99gqd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.yuccaworld.yuccaslim",
+            "certificate_hash": "f0d3c236c7d35325b94a7ad32918a6eb95f9b6ad"
+          }
+        },
+        {
+          "client_id": "1016168586579-p1n7gshf3kteel3cnf6qj8vt2g3qgt7b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBE4u3axB2w8_s3IG2gbSGPtITkKupIUCY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1016168586579-p1n7gshf3kteel3cnf6qj8vt2g3qgt7b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
