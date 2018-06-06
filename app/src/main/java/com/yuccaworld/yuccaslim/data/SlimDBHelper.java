@@ -5,15 +5,20 @@ import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 
+import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 import com.yuccaworld.yuccaslim.data.SlimContract.SlimDB;
+import com.yuccaworld.yuccaslim.model.Food;
+
+import java.util.List;
 
 /**
  * Created by Yung on 8/2/2017.
  */
 
-public class SlimDBHelper extends SQLiteOpenHelper {
+public class SlimDBHelper extends SQLiteAssetHelper {
 
     // COMPLETED (2) Create a static final String called DATABASE_NAME and set it to "slimDB.db"
     // The database name
@@ -21,12 +26,14 @@ public class SlimDBHelper extends SQLiteOpenHelper {
 
     // COMPLETED (3) Create a static final int called DATABASE_VERSION and set it to 1
     // If you change the database schema, you must increment the database version
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 1;
 
     public SlimDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+
+    /*  Comment out as change to user SQLiteAssetHelper
     @Override
     public void onCreate(SQLiteDatabase db) {
         // COMPLETED (6) Inside, create an String query called SQL_CREATE_SLIMDB_TABLE that will create the table
@@ -60,7 +67,7 @@ public class SlimDBHelper extends SQLiteOpenHelper {
                 "); ";
 
         // Create Today Activity View
-        /*
+        *//*
         CREATE VIEW vTodayActivity AS
         SELECT
                    A.activity_id
@@ -75,7 +82,7 @@ public class SlimDBHelper extends SQLiteOpenHelper {
                    ,AT.activity_type_desc
                    ,AT.icon_image_path
         FROM ACTIVITY A INNER JOIN ActivityType AT ON A.activity_type_id = AT.activity_type_id
-         */
+         *//*
         final String SQL_CREATE_SLIMDB_VIEW_TODAY_ACTIVITY = "CREATE VIEW " + SlimDB.VIEW_TODAY_ACTIVITY + " AS SELECT" +
                 " A." + SlimDB._ID + " as " + SlimDB._ID +
                 ", A." + SlimDB.COLUMN_ACTIVITY_ID + " as " + SlimDB.COLUMN_ACTIVITY_ID +
@@ -125,6 +132,16 @@ public class SlimDBHelper extends SQLiteOpenHelper {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }*/
+
+    public List<Food> getFood()
+    {
+        SQLiteDatabase db = getReadableDatabase();
+        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+        //String[] sqlSelect = ("");
+        qb.setTables(SlimDB.TABLE_FOOD);
+        return null;
+
     }
 
     @Override

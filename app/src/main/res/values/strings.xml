@@ -34,5 +34,6 @@
     <string name="button_label_change">Change</string>
     <string name="action_add_weight">Add</string>
     <string name="action_logout">Logout</string>
+    <string name="text_lable_unit">g</string>
 
 </resources>

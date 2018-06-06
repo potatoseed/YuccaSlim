@@ -79,6 +79,42 @@ public class MainActivity extends AppActivity {
                 });
     }
 
+    private List<AuthUI.IdpConfig> getSelectedProviders() {
+        List<AuthUI.IdpConfig> selectedProviders = new ArrayList<>();
+//        selectedProviders.add(
+//                new AuthUI.IdpConfig.GoogleBuilder().setScopes(getGoogleScopes())
+//                        .build());
+
+//      selectedProviders.add(new AuthUI.IdpConfig.FacebookBuilder()
+//                    .setPermissions(getFacebookPermissions())
+//                    .build());
+
+//      selectedProviders.add(new AuthUI.IdpConfig.TwitterBuilder().build());
+
+        selectedProviders.add(new AuthUI.IdpConfig.EmailBuilder()
+                .setRequireName(false)
+                .setAllowNewAccounts(false)
+                .build());
+
+        selectedProviders.add(new AuthUI.IdpConfig.PhoneBuilder().build());
+
+        return selectedProviders;
+    }
+
+    public void signIn() {
+        startActivityForResult(
+                AuthUI.getInstance().createSignInIntentBuilder()
+//                        .setTheme(getSelectedTheme())
+//                        .setLogo(getSelectedLogo())
+                        .setAvailableProviders(getSelectedProviders())
+//                        .setTosUrl(getSelectedTosUrl())
+//                        .setPrivacyPolicyUrl(getSelectedPrivacyPolicyUrl())
+                        .setIsSmartLockEnabled(false,
+                                true)
+                        .build(),
+                RC_SIGN_IN);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -116,41 +152,7 @@ public class MainActivity extends AppActivity {
         }
     }
 
-    public void signIn() {
-        startActivityForResult(
-                AuthUI.getInstance().createSignInIntentBuilder()
-//                        .setTheme(getSelectedTheme())
-//                        .setLogo(getSelectedLogo())
-                        .setAvailableProviders(getSelectedProviders())
-//                        .setTosUrl(getSelectedTosUrl())
-//                        .setPrivacyPolicyUrl(getSelectedPrivacyPolicyUrl())
-                        .setIsSmartLockEnabled(false,
-                                true)
-                        .build(),
-                RC_SIGN_IN);
-    }
 
-    private List<AuthUI.IdpConfig> getSelectedProviders() {
-        List<AuthUI.IdpConfig> selectedProviders = new ArrayList<>();
-
-        selectedProviders.add(
-                    new AuthUI.IdpConfig.GoogleBuilder().setScopes(getGoogleScopes()).build());
-
-//      selectedProviders.add(new AuthUI.IdpConfig.FacebookBuilder()
-//                    .setPermissions(getFacebookPermissions())
-//                    .build());
-
-//      selectedProviders.add(new AuthUI.IdpConfig.TwitterBuilder().build());
-
-        selectedProviders.add(new AuthUI.IdpConfig.EmailBuilder()
-                    .setRequireName(false)
-                    .setAllowNewAccounts(true)
-                    .build());
-
-        selectedProviders.add(new AuthUI.IdpConfig.PhoneBuilder().build());
-
-        return selectedProviders;
-    }
 
     private List<String> getGoogleScopes() {
         List<String> result = new ArrayList<>();

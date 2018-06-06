@@ -22,6 +22,8 @@ public class SlimContentProvider extends ContentProvider {
     public static final int ACTIVITY_WITH_ID = 101;
     public static final int USER = 200;
     public static final int USER_WITH_ID = 201;
+    public static final int FOOD = 300;
+    public static final int FOOD_WITH_ID = 201;
     private static UriMatcher sUriMatcher = buildUriMatcher();
 
     public static UriMatcher buildUriMatcher() {
@@ -30,6 +32,8 @@ public class SlimContentProvider extends ContentProvider {
         uriMatcher.addURI(SlimContract.AUTHORITY, SlimContract.PATH_ACTIVITY + "/#", ACTIVITY_WITH_ID);
         uriMatcher.addURI(SlimContract.AUTHORITY, SlimContract.PATH_USER, USER);
         uriMatcher.addURI(SlimContract.AUTHORITY, SlimContract.PATH_USER + "/#", USER_WITH_ID);
+        uriMatcher.addURI(SlimContract.AUTHORITY, SlimContract.PATH_FOOD, FOOD);
+        uriMatcher.addURI(SlimContract.AUTHORITY, SlimContract.PATH_FOOD + "/#", FOOD_WITH_ID);
         return uriMatcher;
     }
 
@@ -73,6 +77,9 @@ public class SlimContentProvider extends ContentProvider {
                         null,
                         sortOrder
                 );
+                break;
+            case FOOD:
+                retCursor = db.query(SlimContract.SlimDB.TABLE_FOOD,projection,selection,selectionArgs,null,null,sortOrder);
                 break;
             default:
                 throw new UnsupportedOperationException("Unkonwn uri: " + uri);

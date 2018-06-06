@@ -12,6 +12,7 @@ public class SlimContract {
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
     public static final String PATH_ACTIVITY = "Activity";
     public static final String PATH_USER = "User";
+    public static final String PATH_FOOD = "Food";
     // Create an inner  class that implements the BaseColumns interface
     public static final class SlimDB implements BaseColumns {
         public static final Uri CONTENT_USER_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_USER).build();
@@ -44,6 +45,11 @@ public class SlimContract {
         public static final String TABLE_ACTIVITY_TYPE = "ActivityType";
         public static final String COLUMN_ATIVITY_TYPE_DESC = "activity_type_desc";
         public static final String COLUMN_ICON_IMAGE_PATH = "icon_image_path";
+
+        // Table Food
+        public static final String TABLE_FOOD = "Food";
+        public static final String COLUMN_FOOD_ID = "food_id";
+        public static final String COLUMN_FOOD_NAME = "food_name";
 
         // View TodayActivity
         public static final String VIEW_TODAY_ACTIVITY = "vTodayActivity";

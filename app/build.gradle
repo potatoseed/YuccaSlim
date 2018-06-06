@@ -37,6 +37,7 @@ dependencies {
     implementation 'com.mobsandgeeks:android-saripaar:2.0.3'
     testImplementation 'junit:junit:4.12'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.readystatesoftware.sqliteasset:sqliteassethelper:+'
 }
 repositories {
     mavenCentral()
