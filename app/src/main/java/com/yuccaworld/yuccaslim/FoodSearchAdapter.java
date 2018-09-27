@@ -12,12 +12,15 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.mancj.materialsearchbar.MaterialSearchBar;
+import com.yuccaworld.yuccaslim.data.SlimContract;
 
 
 public class FoodSearchAdapter extends RecyclerView.Adapter<FoodSearchAdapter.FoodSearchViewHolder> {
     private final Context mContext;
     private Cursor mCursor;
     private int mNumberItems = 20;
+
 
     public FoodSearchAdapter(Context mContext) {
         this.mContext = mContext;
@@ -33,12 +36,17 @@ public class FoodSearchAdapter extends RecyclerView.Adapter<FoodSearchAdapter.Fo
 
     @Override
     public void onBindViewHolder(@NonNull FoodSearchViewHolder holder, int position) {
+        mCursor.moveToPosition(position);
+        holder.foodNameView.setText(mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_FOOD_NAME)));
 
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        if (mCursor == null) {
+            return 0;
+        }
+        return mCursor.getCount();
     }
 
     class FoodSearchViewHolder extends RecyclerView.ViewHolder{
@@ -52,5 +60,22 @@ public class FoodSearchAdapter extends RecyclerView.Adapter<FoodSearchAdapter.Fo
             foodQtyEditText = (EditText) itemView.findViewById(R.id.editTextFoodQty);
             addToMealImage = (ImageView) itemView.findViewById(R.id.imageViewAddToMeal);
         }
+    }
+
+    /**
+     * When data changes and a re-query occurs, this function update the old Cursor
+     * with a newly updated Cursor (Cursor c) that is passed in.
+     */
+    public Cursor updateCursor(Cursor c) {
+        if (mCursor == c) {
+            return null; // bc nothing has changed
+        }
+        Cursor temp = mCursor;
+        this.mCursor = c; // new cursor value assigned
+
+        if (c != null) {
+            this.notifyDataSetChanged();
+        }
+        return temp;
     }
 }

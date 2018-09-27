@@ -23,7 +23,7 @@ public class SlimContentProvider extends ContentProvider {
     public static final int USER = 200;
     public static final int USER_WITH_ID = 201;
     public static final int FOOD = 300;
-    public static final int FOOD_WITH_ID = 201;
+    public static final int FOOD_WITH_ID = 301;
     private static UriMatcher sUriMatcher = buildUriMatcher();
 
     public static UriMatcher buildUriMatcher() {

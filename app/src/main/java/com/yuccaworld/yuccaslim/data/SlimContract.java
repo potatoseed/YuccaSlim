@@ -17,6 +17,7 @@ public class SlimContract {
     public static final class SlimDB implements BaseColumns {
         public static final Uri CONTENT_USER_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_USER).build();
         public static final Uri CONTENT_ACTIVITY_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_ACTIVITY).build();
+        public static final Uri CONTENT_FOOD_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_FOOD).build();
 
         // Table User
         public static final String TABLE_USER = "User";

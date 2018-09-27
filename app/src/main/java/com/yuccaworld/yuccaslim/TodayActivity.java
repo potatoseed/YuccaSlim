@@ -62,6 +62,7 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
         mTodayAdapter = new TodayAdapter(this, this);
         mRecyclerView.setAdapter(mTodayAdapter);
 
+        // Handel the swap to delete
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
@@ -78,6 +79,7 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
                 getSupportLoaderManager().restartLoader(TODAY_ACTIVITY_LOADER_ID, null, TodayActivity.this);
             }
         }).attachToRecyclerView(mRecyclerView);
+
         /*
         Ensure a loader is initialized and active. If the loader doesn't already exist, one is
         created, otherwise the last created loader is re-used.

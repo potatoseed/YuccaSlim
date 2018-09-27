@@ -144,12 +144,14 @@ public class SlimDBHelper extends SQLiteAssetHelper {
 
     }
 
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + SlimDB.TABLE_USER);
-        db.execSQL("DROP TABLE IF EXISTS " + SlimDB.TABLE_ACTIVITY);
-        db.execSQL("DROP TABLE IF EXISTS " + SlimDB.TABLE_ACTIVITY_TYPE);
-        db.execSQL("DROP VIEW IF EXISTS " + SlimDB.VIEW_TODAY_ACTIVITY);
-        onCreate(db);
+
+//        db.execSQL("DROP TABLE IF EXISTS " + SlimDB.TABLE_USER);
+//        db.execSQL("DROP TABLE IF EXISTS " + SlimDB.TABLE_ACTIVITY);
+//        db.execSQL("DROP TABLE IF EXISTS " + SlimDB.TABLE_ACTIVITY_TYPE);
+//        db.execSQL("DROP VIEW IF EXISTS " + SlimDB.VIEW_TODAY_ACTIVITY);
+//        onCreate(db);
     }
 }

@@ -19,6 +19,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +33,7 @@ public class MainActivity extends AppActivity {
     private static final int RC_SIGN_IN = 333;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +47,7 @@ public class MainActivity extends AppActivity {
         setupInitalView();
 /*        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);*/
+
     }
 
     private void setupInitalView() {
@@ -48,7 +55,8 @@ public class MainActivity extends AppActivity {
             // user is sign in
             Toast.makeText(MainActivity.this, "you are now singed in",
                     Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(MainActivity.this, TodayActivity.class);
+            //Intent intent = new Intent(MainActivity.this, TodayActivity.class);
+            Intent intent = new Intent(MainActivity.this, FoodSearchActivity.class);
             startActivity(intent);
         } else {
             signIn();
@@ -129,6 +137,7 @@ public class MainActivity extends AppActivity {
         // Successfully signed in
         if (resultCode == RESULT_OK) {
             Intent intent = new Intent(MainActivity.this, TodayActivity.class);
+            //Intent intent = new Intent(MainActivity.this, FoodSearchActivity.class);
             startActivity(intent);
             finish();
         } else {
