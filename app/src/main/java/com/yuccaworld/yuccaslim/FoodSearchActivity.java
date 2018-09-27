@@ -26,6 +26,7 @@ public class FoodSearchActivity extends AppCompatActivity implements LoaderManag
     MaterialSearchBar mMaterialSearchBar;
     private static final int FOOD_SEARCH_ACTIVITY_LOADER_ID = 12;
     List<String> suggestList = new ArrayList<>();
+    private static String mSearchInput = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,12 +72,13 @@ public class FoodSearchActivity extends AppCompatActivity implements LoaderManag
             @Override
             public void onSearchStateChanged(boolean enabled) {
                 if (!enabled){
-                    //mRecyclerView.setAdapter(m);
+                    mRecyclerView.setAdapter(mAdapter);
                 }
             }
 
             @Override
             public void onSearchConfirmed(CharSequence text) {
+                startSearch(text.toString());
 
             }
 
@@ -85,6 +87,14 @@ public class FoodSearchActivity extends AppCompatActivity implements LoaderManag
 
             }
         });
+    }
+
+    private void startSearch(String s) {
+        mSearchInput = s;
+        getSupportLoaderManager().getLoader(FOOD_SEARCH_ACTIVITY_LOADER_ID).forceLoad();
+        //getSupportLoaderManager().restartLoader(FOOD_SEARCH_ACTIVITY_LOADER_ID, null,this);
+        mAdapter = new FoodSearchAdapter(this);
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     public static class SearchActivityAsyncTaskLoader extends AsyncTaskLoader<Cursor> {
@@ -103,7 +113,11 @@ public class FoodSearchActivity extends AppCompatActivity implements LoaderManag
         @Override
         public Cursor loadInBackground() {
             try {
-                Cursor cursor = getContext().getContentResolver().query(SlimContract.SlimDB.CONTENT_FOOD_URI, null, null, null, SlimContract.SlimDB.COLUMN_FOOD_NAME);
+                Cursor cursor;
+                if (mSearchInput == null)
+                    cursor = getContext().getContentResolver().query(SlimContract.SlimDB.CONTENT_FOOD_URI, null, null, null, SlimContract.SlimDB.COLUMN_FOOD_NAME);
+                else
+                    cursor = getContext().getContentResolver().query(SlimContract.SlimDB.CONTENT_FOOD_URI, null, "food_name like '%" +mSearchInput+"%'", null, SlimContract.SlimDB.COLUMN_FOOD_NAME);
                 return cursor;
             } catch (Exception e) {
                 Log.e(TAG, "Failed to asynchronously load data.");
