@@ -80,6 +80,7 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
         int activityTimeIndex = mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_ACTIVITY_TIME);
         int activityValueDecimalIndex = mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_VALUE_DECIMAL);
         int activityHintIdIndex = mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_HINT_ID);
+        int foodIDIndex = mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_FOOD_ID);
 
 
         mCursor.moveToPosition(position);
@@ -110,8 +111,18 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
         valueDecimal = mCursor.getFloat(activityValueDecimalIndex);
 
         holder.activityTypeIcon.setImageDrawable(image);
+        switch(activityTypeId){
+            //TODO change to value from DB
+            case 1: holder.ActivityView.setText("Weight");
+                break;
+            case 2: holder.ActivityView.setText(mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_FOOD_NAME)));
+                break;
+            default:
+        }
+
         holder.timeView.setText(time);
         holder.hintView.setText("Hint" + String.valueOf(activityHintId));
+        String s = mCursor.getString(foodIDIndex);
         //holder.ActivityView.setText(activityTypeDesc + " "  );
         holder.ValueView.setText(String.valueOf(valueDecimal) + " kg");
 

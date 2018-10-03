@@ -105,6 +105,11 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
                 startActivity(addWeightIntent);
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
+                break;
+            case R.id.add_food :
+                Intent intent = new Intent(TodayActivity.this, FoodSearchActivity.class);
+                startActivity(intent);
+                break;
             case R.id.logout:
                 AuthUI.getInstance().signOut(this)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -121,10 +126,11 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
                                 }
                             }
                         });
-                return true;
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
+        return true;
     }
 
     @Override

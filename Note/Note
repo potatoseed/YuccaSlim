@@ -43,3 +43,7 @@ https://developer.android.com/reference/java/text/SimpleDateFormat.html
  I/AuthChimeraService: Error description received from server: Access Not Configured. Google Identity Toolkit API has not been used in project
  You can activate the Identity Toolkit API from this link. replace with your project id. It is something like friendlychat-1234d
  https://console.developers.google.com/apis/library/identitytoolkit.googleapis.com/?project=
+
+
+ Runtime error android.os.TransactionTooLargeException: data parcel size FAILED BINDER TRANSACTION !!! (parcel size =
+ https://stackoverflow.com/questions/48453172/transactiontoolargeexception-even-when-file-size-is-super-small

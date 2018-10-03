@@ -26,10 +26,11 @@ public class SlimDBHelper extends SQLiteAssetHelper {
 
     // COMPLETED (3) Create a static final int called DATABASE_VERSION and set it to 1
     // If you change the database schema, you must increment the database version
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     public SlimDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        setForcedUpgrade();
     }
 
 
@@ -134,15 +135,6 @@ public class SlimDBHelper extends SQLiteAssetHelper {
         }
     }*/
 
-    public List<Food> getFood()
-    {
-        SQLiteDatabase db = getReadableDatabase();
-        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-        //String[] sqlSelect = ("");
-        qb.setTables(SlimDB.TABLE_FOOD);
-        return null;
-
-    }
 
 
     @Override
@@ -153,5 +145,7 @@ public class SlimDBHelper extends SQLiteAssetHelper {
 //        db.execSQL("DROP TABLE IF EXISTS " + SlimDB.TABLE_ACTIVITY_TYPE);
 //        db.execSQL("DROP VIEW IF EXISTS " + SlimDB.VIEW_TODAY_ACTIVITY);
 //        onCreate(db);
+
+
     }
 }

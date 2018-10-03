@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:elevation="8dp"
     android:layout_margin="8dp"
     >
 
@@ -26,7 +27,7 @@
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginTop="8dp"
-        android:text="@string/text_lable_unit"
+        android:text="@string/text_label_unit"
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="@+id/imageViewAddToMeal"
         app:layout_constraintEnd_toStartOf="@+id/imageViewAddToMeal"
@@ -63,10 +64,18 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/imageViewAddToMeal"
         app:layout_constraintEnd_toStartOf="@+id/editTextFoodQty"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/imageViewAddToMeal"
         tools:text="Steamed White Rice" />
+
+    <TextView
+        android:id="@+id/textViewFoodID"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="TextView"
+        android:visibility="invisible" />
 
 </android.support.constraint.ConstraintLayout>

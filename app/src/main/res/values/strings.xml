@@ -25,6 +25,8 @@
     <string name="name_length_validation">Name must not empty nor longer than 100 characters</string>
     <string name="max_weight_validation">Weight must less than 300kg</string>
     <string name="min_weight_validation">weight must larger than 10kg</string>
+    <string name="max_food_validation">Food Input must less than 1000g</string>
+    <string name="min_food_validation">Food input must larger than 1g</string>
     <string name="email_validation">Please provide correct email address</string>
     <string name="confirm_email_validation">Wrong email address</string>
     <string name="min_age_validation">Baby less than 1 year</string>
@@ -32,8 +34,9 @@
     <string name="gender_validation">Please select your gender</string>
     <string name="title_activity_today">Today</string>
     <string name="button_label_change">Change</string>
-    <string name="action_add_weight">Add</string>
+    <string name="action_add_weight">Weight</string>
     <string name="action_logout">Logout</string>
-    <string name="text_lable_unit">g</string>
+    <string name="text_label_unit">g</string>
+    <string name="action_add_food">Add Food</string>
 
 </resources>

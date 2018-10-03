@@ -9,16 +9,17 @@
         android:minHeight="?android:attr/listPreferredItemHeight"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:paddingTop="16dp">
+        android:paddingTop="8dp">
 
         <ImageView
             android:id="@+id/imageViewActivityType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/guideline"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/guideline"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_weight_kilogram" />
 
         <android.support.constraint.Guideline
@@ -29,58 +30,51 @@
             app:layout_constraintGuide_percent="0.5" />
 
         <TextView
-            android:id="@+id/textViewTime"
+            android:id="@+id/textViewActivity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            app:layout_constraintBottom_toBottomOf="@+id/textViewActivity"
-            app:layout_constraintStart_toEndOf="@+id/textViewValue"
-            app:layout_constraintTop_toTopOf="@+id/textViewActivity"
+            app:layout_constraintStart_toEndOf="@+id/imageViewActivityType"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Wake Up" />
+
+        <TextView
+            android:id="@+id/textViewTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="10:10am" />
 
         <TextView
             android:id="@+id/textViewHint"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            app:layout_constraintBottom_toBottomOf="@+id/textViewActivity"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textViewTime"
-            app:layout_constraintTop_toTopOf="@+id/textViewActivity"
+            app:layout_constraintStart_toStartOf="@+id/textViewActivity"
+            app:layout_constraintTop_toBottomOf="@+id/textViewActivity"
             tools:text="Good Job!" />
 
-        <TextView
-            android:id="@+id/textViewActivity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            app:layout_constraintBottom_toBottomOf="@+id/imageViewActivityType"
-            app:layout_constraintStart_toEndOf="@+id/imageViewActivityType"
-            app:layout_constraintTop_toTopOf="@+id/imageViewActivityType"
-            app:layout_constraintVertical_bias="0.49"
-            tools:text="Wake Up" />
 
         <TextView
             android:id="@+id/textViewValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:textAppearance="@android:style/TextAppearance.Widget.PopupMenu.Large"
-            app:layout_constraintBottom_toBottomOf="@+id/textViewActivity"
-            app:layout_constraintStart_toEndOf="@+id/textViewActivity"
-            app:layout_constraintTop_toTopOf="@+id/textViewActivity"
+            android:layout_marginEnd="16dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/browser_actions_text_color"
+            app:layout_constraintEnd_toStartOf="@+id/textViewTime"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="80 kg" />
+
     </android.support.constraint.ConstraintLayout>
 </layout>

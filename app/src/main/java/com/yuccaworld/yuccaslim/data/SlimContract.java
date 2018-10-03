@@ -51,6 +51,7 @@ public class SlimContract {
         public static final String TABLE_FOOD = "Food";
         public static final String COLUMN_FOOD_ID = "food_id";
         public static final String COLUMN_FOOD_NAME = "food_name";
+        public static final String COLUMN_IND3 = "ind3";
 
         // View TodayActivity
         public static final String VIEW_TODAY_ACTIVITY = "vTodayActivity";
