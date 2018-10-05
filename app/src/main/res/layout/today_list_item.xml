@@ -31,11 +31,16 @@
 
         <TextView
             android:id="@+id/textViewActivity"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:maxLines="2"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            app:layout_constraintEnd_toStartOf="@+id/textViewValue"
             app:layout_constraintStart_toEndOf="@+id/imageViewActivityType"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Wake Up" />
@@ -66,10 +71,10 @@
 
         <TextView
             android:id="@+id/textViewValue"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@color/browser_actions_text_color"
             app:layout_constraintEnd_toStartOf="@+id/textViewTime"
