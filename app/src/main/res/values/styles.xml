@@ -37,5 +37,11 @@
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/colorAccent</item>
     </style>
-
+    <style name="MyToggle" parent="@android:style/Widget.Material.Light.Button.Toggle">
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="colorAccent">#0288d1</item>
+        <item name="android:colorControlNormal">#f9a825</item>
+        <item name="android:colorControlHighlight">#880e4f</item>
+        <item name="android:colorButtonNormal">#FF4081</item>
+    </style>
 </resources>

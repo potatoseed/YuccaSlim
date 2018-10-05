@@ -107,8 +107,12 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
 //                        .setAction("Action", null).show();
                 break;
             case R.id.add_food :
-                Intent intent = new Intent(TodayActivity.this, FoodSearchActivity.class);
-                startActivity(intent);
+                Intent addFoodIntent = new Intent(TodayActivity.this, FoodSearchActivity.class);
+                startActivity(addFoodIntent);
+                break;
+            case R.id.menu_add_sleep :
+                Intent addSleepIntent = new Intent(TodayActivity.this, SleepActivity.class);
+                startActivity(addSleepIntent);
                 break;
             case R.id.logout:
                 AuthUI.getInstance().signOut(this)
@@ -263,7 +267,15 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
                 foodIntent.setData(uriForActivityClicked);
                 startActivity(foodIntent);
                 break;
-            default:;
+            case 3:
+                Intent sleepIntent = new Intent(TodayActivity.this, FoodSearchActivity.class);
+                activityMode = "EDIT";
+                sleepIntent.putExtra(Intent.EXTRA_TEXT, activityMode);
+                uriForActivityClicked = SlimContract.SlimDB.buildFoodEdit(rowID);
+                sleepIntent.setData(uriForActivityClicked);
+                startActivity(sleepIntent);
+                break;
+            default:
                 Log.w(TAG, "No matching type");
         }
 

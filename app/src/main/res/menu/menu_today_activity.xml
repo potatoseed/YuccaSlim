@@ -16,4 +16,9 @@
         android:icon="@drawable/ic_meter_24dp"
         android:title="@string/action_add_weight"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_add_sleep"
+        android:icon="@drawable/ic_sleep_black_24dp"
+        android:title="@string/text_sleep"
+        app:showAsAction="always" />
 </menu>

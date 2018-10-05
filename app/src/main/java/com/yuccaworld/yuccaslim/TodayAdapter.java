@@ -122,6 +122,10 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
                 holder.ActivityView.setText(mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_FOOD_NAME)));
                 holder.ValueView.setText(String.valueOf(Math.round(valueDecimal)) + " g");
                 break;
+            case 3: // Sleep
+                holder.ActivityView.setText(mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_VALUE_TEXT)));
+                //holder.ValueView.setText(String.valueOf(Math.round(valueDecimal)) + " g");
+                break;
             default:
         }
 

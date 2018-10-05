@@ -41,6 +41,7 @@
             android:authorities="com.yuccaworld.yuccaslim" />
 
         <activity android:name=".FoodSearchActivity" />
+        <activity android:name=".SleepActivity"></activity>
     </application>
 
 </manifest>

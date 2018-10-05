@@ -56,7 +56,7 @@ public class MainActivity extends AppActivity {
             Toast.makeText(MainActivity.this, "you are now singed in",
                     Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(MainActivity.this, TodayActivity.class);
-            //Intent intent = new Intent(MainActivity.this, FoodSearchActivity.class);
+            //Intent intent = new Intent(MainActivity.this, SleepActivity.class);
             startActivity(intent);
         } else {
             signIn();

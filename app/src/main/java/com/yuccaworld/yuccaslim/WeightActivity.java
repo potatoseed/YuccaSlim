@@ -43,11 +43,11 @@ public class WeightActivity extends AppActivity implements LoaderManager.LoaderC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_add_weight);
         Intent intent = getIntent();
         if (intent.hasExtra(Intent.EXTRA_TEXT)){
             mMode = intent.getStringExtra(Intent.EXTRA_TEXT);
         }
-        setContentView(R.layout.activity_add_weight);
         Button button = (Button) findViewById(R.id.buttonAdd);
         weightInput = (EditText) findViewById(R.id.editTextWeightInput);
         if ("EDIT".equals(mMode)) {

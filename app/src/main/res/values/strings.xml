@@ -38,5 +38,9 @@
     <string name="action_logout">Logout</string>
     <string name="text_label_unit">g</string>
     <string name="action_add_food">Add Food</string>
+    <string name="title_sleep">Sleep OR Weak Up</string>
+    <string name="text_sleep">SLEEP</string>
+    <string name="text_wakeup">WAKE UP</string>
+    <string name="button_add">Add</string>
 
 </resources>
