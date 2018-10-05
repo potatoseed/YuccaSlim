@@ -1,6 +1,7 @@
 package com.yuccaworld.yuccaslim;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.net.ParseException;
 import android.net.Uri;
 import android.support.design.widget.Snackbar;
@@ -42,6 +43,8 @@ public class FoodSearchActivity extends AppActivity implements LoaderManager.Loa
 
     private TextView mTextViewFoodID;
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static Uri mUri;
+    private String mMode = "";
     RecyclerView mRecyclerView;
     FoodSearchAdapter mAdapter;
     MaterialSearchBar mMaterialSearchBar;
@@ -53,6 +56,19 @@ public class FoodSearchActivity extends AppActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_search);
+        Intent intent = getIntent();
+        if (intent.hasExtra(Intent.EXTRA_TEXT)){
+            mMode = intent.getStringExtra(Intent.EXTRA_TEXT);
+        }
+        if ("EDIT".equals(mMode)) {
+            mUri = getIntent().getData();
+            LoaderManager loaderManager = getSupportLoaderManager();
+            if (loaderManager == null){
+                loaderManager.initLoader(FOOD_SEARCH_ACTIVITY_LOADER_ID, null, this);
+            } else {
+                loaderManager.restartLoader(FOOD_SEARCH_ACTIVITY_LOADER_ID, null, this);
+            }
+        }
 
         mRecyclerView = findViewById(R.id.search_suggestion);
         LinearLayoutManager layoutManager =
@@ -181,11 +197,15 @@ public class FoodSearchActivity extends AppActivity implements LoaderManager.Loa
 
             Uri uri = null;
             int updatedRow = 0;
-            uri = getContentResolver().insert(SlimContract.SlimDB.CONTENT_ACTIVITY_URI, contentValues);
-            if (uri != null)
-                Toast.makeText(this, "Clicked" + clickedPosition + "  Input qty is: "+ foodQty + " uri: " + uri, Toast.LENGTH_SHORT).show();
-             else
-                Toast.makeText(this, "uri is null" + uri, Toast.LENGTH_SHORT).show();
+            if ("EDIT".equals(mMode)) {
+                updatedRow = getContentResolver().update(mUri,contentValues,null,null);
+            } else {
+                uri = getContentResolver().insert(SlimContract.SlimDB.CONTENT_ACTIVITY_URI, contentValues);
+                if (uri == null)
+                    Toast.makeText(this, "uri is null" + uri, Toast.LENGTH_SHORT).show();
+                //else Toast.makeText(this, "Clicked" + clickedPosition + "  Input qty is: " + foodQty + " uri: " + uri, Toast.LENGTH_SHORT).show();
+
+            }
             finish();
         }
 

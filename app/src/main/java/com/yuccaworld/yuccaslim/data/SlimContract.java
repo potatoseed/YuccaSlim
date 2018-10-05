@@ -71,5 +71,9 @@ public class SlimContract {
         public static Uri buildWeightEdit(int rowID){
             return CONTENT_ACTIVITY_URI.buildUpon().appendPath(Integer.toString(rowID)).build();
         }
+
+        public static Uri buildFoodEdit(int rowID){
+            return CONTENT_ACTIVITY_URI.buildUpon().appendPath(Integer.toString(rowID)).build();
+        }
     }
 }

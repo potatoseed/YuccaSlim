@@ -44,7 +44,7 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
      * The interface that receives onClick messages.
      */
     public interface TodayAdapterOnClickHandler {
-        void onClick(int rowID);
+        void onClick(int rowID, int typeID);
     }
 
     /**
@@ -113,9 +113,14 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
         holder.activityTypeIcon.setImageDrawable(image);
         switch(activityTypeId){
             //TODO change to value from DB
-            case 1: holder.ActivityView.setText("Weight");
+            case 1:  //Weight
+                activityTypeDesc = mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_ATIVITY_TYPE_DESC));
+                holder.ActivityView.setText(activityTypeDesc);
+                holder.ValueView.setText(String.valueOf(valueDecimal) + " kg");
                 break;
-            case 2: holder.ActivityView.setText(mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_FOOD_NAME)));
+            case 2: // Food
+                holder.ActivityView.setText(mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_FOOD_NAME)));
+                holder.ValueView.setText(String.valueOf(Math.round(valueDecimal)) + " g");
                 break;
             default:
         }
@@ -123,8 +128,7 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
         holder.timeView.setText(time);
         holder.hintView.setText("Hint" + String.valueOf(activityHintId));
         String s = mCursor.getString(foodIDIndex);
-        //holder.ActivityView.setText(activityTypeDesc + " "  );
-        holder.ValueView.setText(String.valueOf(valueDecimal) + " kg");
+
 
     }
 
@@ -180,7 +184,8 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
             mCursor.moveToPosition(adapterPosition);
             //String activityUUID = mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_ACTIVITY_ID));
             int rowID = mCursor.getInt(mCursor.getColumnIndex(SlimContract.SlimDB._ID));
-            mClickHandler.onClick(rowID);
+            int typeID = mCursor.getInt(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_ATIVITY_TYPE_ID));
+            mClickHandler.onClick(rowID, typeID);
         }
     }
 }

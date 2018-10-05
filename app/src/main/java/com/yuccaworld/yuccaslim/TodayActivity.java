@@ -241,14 +241,31 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
     }
 
     @Override
-    public void onClick(int rowID) {
-        Toast.makeText(this, "Clicked" + rowID, Toast.LENGTH_SHORT).show();
-        Intent weightIntent = new Intent(TodayActivity.this, WeightActivity.class);
-        // set weight activity mode to "EDIT"
-        String weightActivityMode = "EDIT";
-        weightIntent.putExtra(Intent.EXTRA_TEXT, weightActivityMode);
-        Uri uriForActivityClicked = SlimContract.SlimDB.buildWeightEdit(rowID);
-        weightIntent.setData(uriForActivityClicked);
-        startActivity(weightIntent);
+    public void onClick(int rowID, int typeID) {
+        //Toast.makeText(this, "Clicked" + rowID, Toast.LENGTH_SHORT).show();
+        String activityMode;
+        Uri uriForActivityClicked;
+        switch(typeID){
+            case 1:
+                Intent weightIntent = new Intent(TodayActivity.this, WeightActivity.class);
+                // set weight activity mode to "EDIT"
+                activityMode = "EDIT";
+                weightIntent.putExtra(Intent.EXTRA_TEXT, activityMode);
+                uriForActivityClicked = SlimContract.SlimDB.buildWeightEdit(rowID);
+                weightIntent.setData(uriForActivityClicked);
+                startActivity(weightIntent);
+                break;
+            case 2:
+                Intent foodIntent = new Intent(TodayActivity.this, FoodSearchActivity.class);
+                activityMode = "EDIT";
+                foodIntent.putExtra(Intent.EXTRA_TEXT, activityMode);
+                uriForActivityClicked = SlimContract.SlimDB.buildFoodEdit(rowID);
+                foodIntent.setData(uriForActivityClicked);
+                startActivity(foodIntent);
+                break;
+            default:;
+                Log.w(TAG, "No matching type");
+        }
+
     }
 }
