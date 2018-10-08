@@ -268,7 +268,7 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
                 startActivity(foodIntent);
                 break;
             case 3:
-                Intent sleepIntent = new Intent(TodayActivity.this, FoodSearchActivity.class);
+                Intent sleepIntent = new Intent(TodayActivity.this, SleepActivity.class);
                 activityMode = "EDIT";
                 sleepIntent.putExtra(Intent.EXTRA_TEXT, activityMode);
                 uriForActivityClicked = SlimContract.SlimDB.buildFoodEdit(rowID);

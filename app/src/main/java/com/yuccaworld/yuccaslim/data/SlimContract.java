@@ -56,6 +56,10 @@ public class SlimContract {
         // View TodayActivity
         public static final String VIEW_TODAY_ACTIVITY = "vTodayActivity";
 
+        // Application Constant
+        public static final String TEXT_VALUE_SLEEP = "SLEEP";
+        public static final String TEXT_VALUE_WAKEUP = "WAKE UP";
+
         /**
          * Builds a URI that adds the activity id to the end of the today activity URI path.
          * This is used to query details about a single activity entry . This is what we
@@ -73,6 +77,10 @@ public class SlimContract {
         }
 
         public static Uri buildFoodEdit(int rowID){
+            return CONTENT_ACTIVITY_URI.buildUpon().appendPath(Integer.toString(rowID)).build();
+        }
+
+        public static Uri buildSleepEdit(int rowID){
             return CONTENT_ACTIVITY_URI.buildUpon().appendPath(Integer.toString(rowID)).build();
         }
     }

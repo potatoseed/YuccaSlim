@@ -2,42 +2,51 @@ package com.yuccaworld.yuccaslim;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.net.ParseException;
+import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
 
 import com.yuccaworld.yuccaslim.data.SlimContract;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
+import java.lang.ref.WeakReference;
 import java.util.Calendar;
 import java.util.UUID;
 
-public class SleepActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Object> {
+import static com.yuccaworld.yuccaslim.data.SlimContract.SlimDB.TEXT_VALUE_WAKEUP;
+
+public class SleepActivity extends AppActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private String mMode = "";
     private static Uri mUri;
     private static final int ID_SLEEP = 130;
+
     private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sleep);
+
         Intent intent = getIntent();
         if (intent.hasExtra(Intent.EXTRA_TEXT)){
             mMode = intent.getStringExtra(Intent.EXTRA_TEXT);
         }
+
+        // Change or Add Button for edit or add sleep activity
         Button button = (Button) findViewById(R.id.buttonAddSleep);
         if ("EDIT".equals(mMode)) {
             mUri = getIntent().getData();
@@ -50,6 +59,7 @@ public class SleepActivity extends AppCompatActivity implements LoaderManager.Lo
             }
             button.setText(R.string.button_label_change);
         }
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -74,8 +84,8 @@ public class SleepActivity extends AppCompatActivity implements LoaderManager.Lo
                 ToggleButton toggleButton = findViewById(R.id.toggleButtonSleep);
                 String sleepORWake;
                 if(toggleButton.isChecked())
-                    sleepORWake = getString(R.string.text_wakeup);
-                else sleepORWake = getString(R.string.text_sleep);
+                    sleepORWake = SlimContract.SlimDB.TEXT_VALUE_WAKEUP;
+                else sleepORWake = SlimContract.SlimDB.TEXT_VALUE_SLEEP;
                 contentValues.put(SlimContract.SlimDB.COLUMN_VALUE_TEXT, sleepORWake);
 
                 // TODO Fill in Hint ID by other logic later
@@ -95,21 +105,97 @@ public class SleepActivity extends AppCompatActivity implements LoaderManager.Lo
                 finish();
             }
         });
+
+        // Toggle button status change trigger the Icon changes
+        ToggleButton toggleButton = findViewById(R.id.toggleButtonSleep);
+        final ImageView imageView = findViewById(R.id.imageViewSleepIcon);
+        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    imageView.setImageResource(R.drawable.ic_wake_up_48dp);
+                } else {
+                    imageView.setImageResource(R.drawable.ic_sleep_black_48dp);
+                }
+            }
+        });
+    }
+
+    private static class sleepAsyncTaskLoader extends AsyncTaskLoader<Cursor>{
+        private WeakReference<SleepActivity> activityWeakReference;
+
+        public sleepAsyncTaskLoader(SleepActivity context) {
+            super(context);
+            activityWeakReference = new WeakReference<SleepActivity>(context);
+        }
+
+        @Override
+        protected void onStartLoading() {
+            super.onStartLoading();
+            forceLoad();
+        }
+
+        @Nullable
+        @Override
+        public Cursor loadInBackground() {
+            // get a reference to the activity if it is still there
+            SleepActivity activity = activityWeakReference.get();
+            try {
+                Cursor cursor = activity.getContentResolver().query(mUri,null,null,null,null);
+                return cursor;
+            }catch (Exception e) {
+                Log.e(TAG, "Failed to asynchronously load data.");
+                e.printStackTrace();
+                return null;
+            }
+        }
     }
 
     @NonNull
     @Override
-    public Loader<Object> onCreateLoader(int id, @Nullable Bundle args) {
-        return null;
+    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
+        switch (id) {
+            case ID_SLEEP:
+                return new sleepAsyncTaskLoader(this);
+            default:
+                throw new RuntimeException("Loader Not Implemented: " + id);
+        }
     }
 
     @Override
-    public void onLoadFinished(@NonNull Loader<Object> loader, Object data) {
-
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+        ToggleButton toggleButton = findViewById(R.id.toggleButtonSleep);
+        ImageView imageView = findViewById(R.id.imageViewSleepIcon);
+        if (data.moveToFirst()) {
+            String sleepORWakeup = data.getString(data.getColumnIndex(SlimContract.SlimDB.COLUMN_VALUE_TEXT));
+            if (sleepORWakeup.equals(TEXT_VALUE_WAKEUP)) {
+                toggleButton.setChecked(true);
+                imageView.setImageResource(R.drawable.ic_wake_up_48dp);
+            }
+            else {
+                toggleButton.setChecked(false);
+                imageView.setImageResource(R.drawable.ic_sleep_black_48dp);
+            }
+            toggleButton.requestLayout();
+            // retrieve the time from database and Set the timepicker to that time
+            long l = data.getLong(data.getColumnIndex(SlimContract.SlimDB.COLUMN_ACTIVITY_TIME));
+            Calendar c = Calendar.getInstance();
+            c.setTimeInMillis(l);
+            TimePicker timePicker = (TimePicker) findViewById(R.id.timePickerSleep);
+            timePicker.setCurrentHour(c.get(c.HOUR_OF_DAY));
+            timePicker.setCurrentMinute(c.get(c.MINUTE));
+        }
     }
 
     @Override
-    public void onLoaderReset(@NonNull Loader<Object> loader) {
-
+    protected void onRestart() {
+        super.onRestart();
+        ToggleButton toggleButton = findViewById(R.id.toggleButtonSleep);
     }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+        ToggleButton toggleButton = findViewById(R.id.toggleButtonSleep);
+    }
+
 }

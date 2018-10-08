@@ -20,6 +20,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
+import static com.yuccaworld.yuccaslim.data.SlimContract.SlimDB.TEXT_VALUE_SLEEP;
+
 //import android.icu.text.SimpleDateFormat;
 
 /**
@@ -124,6 +126,11 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
                 break;
             case 3: // Sleep
                 holder.ActivityView.setText(mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_VALUE_TEXT)));
+                if (mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_VALUE_TEXT)).equals(TEXT_VALUE_SLEEP)) {
+                    holder.activityTypeIcon.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_sleep_black_24dp));
+                } else {
+                    holder.activityTypeIcon.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_wake_up_24dp));
+                }
                 //holder.ValueView.setText(String.valueOf(Math.round(valueDecimal)) + " g");
                 break;
             default:
