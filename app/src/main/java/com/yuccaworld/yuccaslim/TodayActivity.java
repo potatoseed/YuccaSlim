@@ -30,6 +30,7 @@ import com.yuccaworld.yuccaslim.data.SlimContract;
 public class TodayActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, TodayAdapter.TodayAdapterOnClickHandler {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int TODAY_ACTIVITY_LOADER_ID = 8;
+    private static int mHoursToDisplay = 36;
     private TodayAdapter mTodayAdapter;
     private RecyclerView mRecyclerView;
 
@@ -206,11 +207,11 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
         public Cursor loadInBackground() {
             try {
                 Cursor cursor =
-                        getContext().getContentResolver().query(SlimContract.SlimDB.CONTENT_ACTIVITY_URI,
-                                null,
-                                null,
-                                null,
-                                SlimContract.SlimDB.COLUMN_ACTIVITY_TIME);
+                                getContext().getContentResolver().query(SlimContract.SlimDB.CONTENT_ACTIVITY_URI,
+                                        null,
+                                        "hours_from_now <= " + Integer.toString(mHoursToDisplay),
+                                        null,
+                                        SlimContract.SlimDB.COLUMN_ACTIVITY_TIME);
                 return cursor;
             } catch (Exception e) {
                 Log.e(TAG, "Failed to asynchronously load data.");
