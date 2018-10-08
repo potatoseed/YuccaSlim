@@ -42,5 +42,8 @@
     <string name="text_sleep">SLEEP</string>
     <string name="text_wakeup">WAKE UP</string>
     <string name="button_add">Add</string>
+    <string name="menu_item_last_week">Last Week</string>
+    <string name="menu_item_last_month">Last Month</string>
+    <string name="text_today">Today</string>
 
 </resources>

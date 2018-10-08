@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import static com.yuccaworld.yuccaslim.data.SlimContract.SlimDB.TEXT_VALUE_SLEEP;
 
@@ -91,14 +92,21 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
         int activityTypeId = mCursor.getInt(activityTypeIdIndex);
         int activityHintId = mCursor.getInt(activityHintIdIndex);
         long l = 0;
-        String time = "";
+        String time = "", day = "";
         String activityTypeDesc="";
         float valueDecimal = 0;
         // Get Activity time
         l = mCursor.getLong(activityTimeIndex);
-        SimpleDateFormat format = new SimpleDateFormat("h:mm a");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM");
         if (l != 0) {
-            time = format.format(new Date(l));
+            time = timeFormat.format(new Date(l));
+            long nowInMS= System.currentTimeMillis();
+            if (TimeUnit.MILLISECONDS.toHours(Math.abs(l - nowInMS)) < 24) {
+                day = mContext.getResources().getString(R.string.text_today);
+            } else {
+                day = dateFormat.format(new Date(l));
+            }
         }
         // Set activity image
         String imagePath = mCursor.getString(activityTypeImagePath);
@@ -137,6 +145,7 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
         }
 
         holder.timeView.setText(time);
+        holder.dayView.setText(day);
         holder.hintView.setText("Hint" + String.valueOf(activityHintId));
         String s = mCursor.getString(foodIDIndex);
 
@@ -172,6 +181,7 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
     class TodayAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         final TextView hintView;
         final TextView timeView;
+        final TextView dayView;
         final TextView ActivityView;
         final TextView ValueView;
         final ImageView activityTypeIcon;
@@ -182,6 +192,7 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
             //Get references to all new views
             hintView = (TextView) itemView.findViewById(R.id.textViewHint);
             timeView = (TextView) itemView.findViewById(R.id.textViewTime);
+            dayView = itemView.findViewById(R.id.textViewActivityDay);
             ActivityView = (TextView) itemView.findViewById(R.id.textViewActivity);
             ValueView = (TextView) itemView.findViewById(R.id.textViewValue);
             activityTypeIcon = (ImageView) itemView.findViewById(R.id.imageViewActivityType);

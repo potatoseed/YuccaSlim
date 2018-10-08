@@ -115,6 +115,14 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
                 Intent addSleepIntent = new Intent(TodayActivity.this, SleepActivity.class);
                 startActivity(addSleepIntent);
                 break;
+            case R.id.last_week :
+                mHoursToDisplay = 170;
+                getSupportLoaderManager().restartLoader(TODAY_ACTIVITY_LOADER_ID, null, TodayActivity.this);
+                break;
+            case R.id.last_month :
+                mHoursToDisplay = 5208;
+                getSupportLoaderManager().restartLoader(TODAY_ACTIVITY_LOADER_ID, null, TodayActivity.this);
+                break;
             case R.id.logout:
                 AuthUI.getInstance().signOut(this)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {

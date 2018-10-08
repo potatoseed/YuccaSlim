@@ -7,6 +7,14 @@
         android:title="@string/action_logout"
         app:showAsAction="never" />
     <item
+        android:id="@+id/last_week"
+        android:title="@string/menu_item_last_week"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/last_month"
+        android:title="@string/menu_item_last_month"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/add_food"
         android:icon="@drawable/ic_food_24"
         android:title="@string/action_add_food"
