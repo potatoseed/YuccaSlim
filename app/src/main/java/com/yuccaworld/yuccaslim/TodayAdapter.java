@@ -6,6 +6,7 @@ import android.databinding.DataBindingUtil;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 
 import com.yuccaworld.yuccaslim.data.SlimContract;
 import com.yuccaworld.yuccaslim.databinding.TodayListItemBinding;
+import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -102,12 +104,20 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
         if (l != 0) {
             time = timeFormat.format(new Date(l));
             long nowInMS= System.currentTimeMillis();
-            if (TimeUnit.MILLISECONDS.toHours(Math.abs(l - nowInMS)) < 24) {
+            if (DateUtils.isToday(l)) {
                 day = mContext.getResources().getString(R.string.text_today);
+            } else if (SlimUtils.isYesterday(l)){
+                day = mContext.getResources().getString(R.string.text_yesterday);
             } else {
                 day = dateFormat.format(new Date(l));
             }
         }
+//            if (TimeUnit.MILLISECONDS.toHours(Math.abs(l - nowInMS)) < 24) {
+//                day = mContext.getResources().getString(R.string.text_today);
+//            } else {
+//                day = dateFormat.format(new Date(l));
+//            }
+
         // Set activity image
         String imagePath = mCursor.getString(activityTypeImagePath);
         String packageName = mContext.getPackageName();
@@ -148,8 +158,6 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
         holder.dayView.setText(day);
         holder.hintView.setText("Hint" + String.valueOf(activityHintId));
         String s = mCursor.getString(foodIDIndex);
-
-
     }
 
     @Override

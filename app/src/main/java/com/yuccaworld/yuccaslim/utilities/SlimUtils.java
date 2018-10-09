@@ -2,11 +2,14 @@ package com.yuccaworld.yuccaslim.utilities;
 
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
+import android.text.format.DateUtils;
 
 import com.yuccaworld.yuccaslim.model.ActivityInfo;
 
 import java.nio.ByteBuffer;
 import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -73,5 +76,15 @@ public class SlimUtils {
         return sb.toString();
     }
 
+    public static boolean isYesterday(long date) {
+        Calendar now = Calendar.getInstance();
+        Calendar cdate = Calendar.getInstance();
+        cdate.setTimeInMillis(date);
 
+        now.add(Calendar.DATE,-1);
+
+        return now.get(Calendar.YEAR) == cdate.get(Calendar.YEAR)
+                && now.get(Calendar.MONTH) == cdate.get(Calendar.MONTH)
+                && now.get(Calendar.DATE) == cdate.get(Calendar.DATE);
+    }
 }

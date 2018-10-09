@@ -47,3 +47,8 @@ https://developer.android.com/reference/java/text/SimpleDateFormat.html
 
  Runtime error android.os.TransactionTooLargeException: data parcel size FAILED BINDER TRANSACTION !!! (parcel size =
  https://stackoverflow.com/questions/48453172/transactiontoolargeexception-even-when-file-size-is-super-small
+
+To check if date is today, use Android utils library
+DateUtils.isToday(long timeInMilliseconds)
+This utils class also offers human readable strings for relative times. For example,
+DateUtils.getRelativeTimeSpanString(long timeInMilliseconds) -> "42 minutes ago"

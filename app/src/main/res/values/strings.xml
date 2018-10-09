@@ -45,5 +45,6 @@
     <string name="menu_item_last_week">Last Week</string>
     <string name="menu_item_last_month">Last Month</string>
     <string name="text_today">Today</string>
+    <string name="text_yesterday">Yesterday</string>
 
 </resources>
