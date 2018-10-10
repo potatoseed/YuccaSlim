@@ -45,11 +45,13 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent addWeightIntent = new Intent(TodayActivity.this, WeightActivity.class);
-                // set weight activity mode to "ADD"
-                String weightActivityMode = "ADD";
-                addWeightIntent.putExtra(Intent.EXTRA_TEXT, weightActivityMode);
-                startActivity(addWeightIntent);
+//                Intent addWeightIntent = new Intent(TodayActivity.this, WeightActivity.class);
+//                // set weight activity mode to "ADD"
+//                String weightActivityMode = "ADD";
+//                addWeightIntent.putExtra(Intent.EXTRA_TEXT, weightActivityMode);
+                Intent addFoodIntent = new Intent(TodayActivity.this, FoodSearchActivity.class);
+                startActivity(addFoodIntent);
+                //startActivity(addWeightIntent);
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
             }

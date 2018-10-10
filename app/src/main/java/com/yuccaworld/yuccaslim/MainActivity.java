@@ -23,6 +23,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Logger;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class MainActivity extends AppActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         intstantiateUser();
-
+        FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
         //Intent intent = new Intent(MainActivity.this, RegisterationActivity.class);
         //Intent intent = new Intent(MainActivity.this, WeightActivity.class);
         //startActivity(intent);

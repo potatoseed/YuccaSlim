@@ -4,6 +4,8 @@ import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.text.format.DateUtils;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.yuccaworld.yuccaslim.model.ActivityInfo;
 
 import java.nio.ByteBuffer;
@@ -17,12 +19,12 @@ import java.util.UUID;
  */
 
 public class SlimUtils {
+    public static String gUid;
+    public static String gUserEmail;
     public static ActivityInfo genFakeActivityInfo() {
         ActivityInfo activityInfo = new ActivityInfo();
-        activityInfo.setActivityDescription("Dummy Activity");
         activityInfo.setHint("Dummy Hint");
         long now = System.currentTimeMillis();
-        activityInfo.setActivityTime(new Timestamp(now));
         return activityInfo;
     }
 

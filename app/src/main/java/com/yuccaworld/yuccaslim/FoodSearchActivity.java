@@ -10,7 +10,6 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.content.Context;
 import android.database.Cursor;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,12 +21,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Logger;
 import com.mancj.materialsearchbar.MaterialSearchBar;
-import com.mobsandgeeks.saripaar.Validator;
 import com.mobsandgeeks.saripaar.annotation.DecimalMax;
 import com.mobsandgeeks.saripaar.annotation.DecimalMin;
 import com.mobsandgeeks.saripaar.annotation.Or;
 import com.yuccaworld.yuccaslim.data.SlimContract;
+import com.yuccaworld.yuccaslim.model.ActivityInfo;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
 import java.util.ArrayList;
@@ -51,11 +54,16 @@ public class FoodSearchActivity extends AppActivity implements LoaderManager.Loa
     private static final int FOOD_SEARCH_ACTIVITY_LOADER_ID = 12;
     List<String> suggestList = new ArrayList<>();
     private static String mSearchInput = null;
+    private DatabaseReference mFirebaseDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_search);
+        SlimUtils.gUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        SlimUtils.gUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        mFirebaseDB = FirebaseDatabase.getInstance().getReference();
+
         Intent intent = getIntent();
         if (intent.hasExtra(Intent.EXTRA_TEXT)){
             mMode = intent.getStringExtra(Intent.EXTRA_TEXT);
@@ -152,9 +160,12 @@ public class FoodSearchActivity extends AppActivity implements LoaderManager.Loa
         validator.validate();
         if (validated) {
             ContentValues contentValues = new ContentValues();
-            UUID uuid = UUID.randomUUID();
-            byte[] bytes = SlimUtils.toByte(uuid);
-            contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, bytes);
+
+//            UUID uuid = UUID.randomUUID();
+//            byte[] activityID = SlimUtils.toByte(uuid);
+//            contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, activityID);
+            String uid = UUID.randomUUID().toString();
+            contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, uid);
 
             // Activity type id=2 for food taken
             contentValues.put(SlimContract.SlimDB.COLUMN_ATIVITY_TYPE_ID, 2);
@@ -195,6 +206,7 @@ public class FoodSearchActivity extends AppActivity implements LoaderManager.Loa
             contentValues.put(SlimContract.SlimDB.COLUMN_VALUE_DECIMAL, foodQty);
             contentValues.put(SlimContract.SlimDB.COLUMN_FOOD_ID, foodID);
 
+            // Insert in Sqlite DB
             Uri uri = null;
             int updatedRow = 0;
             if ("EDIT".equals(mMode)) {
@@ -206,6 +218,12 @@ public class FoodSearchActivity extends AppActivity implements LoaderManager.Loa
                 //else Toast.makeText(this, "Clicked" + clickedPosition + "  Input qty is: " + foodQty + " uri: " + uri, Toast.LENGTH_SHORT).show();
 
             }
+
+            // Upload to real time DB
+            ActivityInfo activityInfo = new ActivityInfo(uid.toString(),SlimUtils.gUid,SlimUtils.gUserEmail,2,
+                    inpuTime.getTimeInMillis(),foodID, 0,foodQty,"",0,"",0,0);
+            mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(uid.toString()).setValue(activityInfo);
+
             finish();
         }
 
