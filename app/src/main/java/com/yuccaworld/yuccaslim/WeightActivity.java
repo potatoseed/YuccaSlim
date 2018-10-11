@@ -16,10 +16,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TimePicker;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.mobsandgeeks.saripaar.annotation.DecimalMax;
 import com.mobsandgeeks.saripaar.annotation.DecimalMin;
 import com.mobsandgeeks.saripaar.annotation.Or;
 import com.yuccaworld.yuccaslim.data.SlimContract;
+import com.yuccaworld.yuccaslim.model.ActivityInfo;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
 import java.lang.ref.WeakReference;
@@ -39,14 +43,19 @@ public class WeightActivity extends AppActivity implements LoaderManager.LoaderC
     private static Uri mUri;
     private static final int ID_WEIGHT_LOADER = 101;
     private static final String TAG = MainActivity.class.getSimpleName();
+    private String mActivityID ="";
+    private DatabaseReference mFirebaseDB = FirebaseDatabase.getInstance().getReference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_weight);
         Intent intent = getIntent();
+        SlimUtils.gUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        SlimUtils.gUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         if (intent.hasExtra(Intent.EXTRA_TEXT)){
             mMode = intent.getStringExtra(Intent.EXTRA_TEXT);
+            mActivityID = intent.getStringExtra(Intent.EXTRA_UID);
         }
         Button button = (Button) findViewById(R.id.buttonAdd);
         weightInput = (EditText) findViewById(R.id.editTextWeightInput);
@@ -82,9 +91,10 @@ public class WeightActivity extends AppActivity implements LoaderManager.LoaderC
                     ContentValues contentValues = new ContentValues();
                     contentValues.put(SlimContract.SlimDB.COLUMN_VALUE_DECIMAL, weight);
 
-                    UUID uuid = UUID.randomUUID();
-                    byte[] bytes = SlimUtils.toByte(uuid);
-                    contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, bytes);
+//                    UUID uuid = UUID.randomUUID();
+//                    byte[] bytes = SlimUtils.toByte(uuid);
+                    String uid = UUID.randomUUID().toString();
+                    contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, uid);
 
                     // Activity type id=1 for weight measure
                     contentValues.put(SlimContract.SlimDB.COLUMN_ATIVITY_TYPE_ID, 1);
@@ -101,13 +111,22 @@ public class WeightActivity extends AppActivity implements LoaderManager.LoaderC
 
                     // TODO Fill in Hint ID by other logic later
                     contentValues.put(SlimContract.SlimDB.COLUMN_HINT_ID, 1);
+
+                    // Insert in Sqlite DB and Upload to firebase realtime DB
+                    if (mActivityID == "") {mActivityID = uid.toString();}
+                    ActivityInfo activityInfo = new ActivityInfo(mActivityID,SlimUtils.gUid,SlimUtils.gUserEmail,1,
+                            weightTime.getTimeInMillis(),0, 0,weight,"",0,"",0,0);
                     Uri uri = null;
                     int updatedRow = 0;
                     if ("EDIT".equals(mMode)) {
                         updatedRow = getContentResolver().update(mUri,contentValues,null,null);
+                        if (updatedRow != 0) {
+                            mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(mActivityID).setValue(activityInfo);
+                        }
                     } else {
                         uri = getContentResolver().insert(SlimContract.SlimDB.CONTENT_ACTIVITY_URI, contentValues);
                         if (uri != null) {
+                            mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(uid.toString()).setValue(activityInfo);
                             Snackbar.make(view, "uri : " + uri, Snackbar.LENGTH_LONG).setAction("Action", null).show();
                         } else {
                             Snackbar.make(view, "uri is null" + uri, Snackbar.LENGTH_LONG).setAction("Action", null).show();

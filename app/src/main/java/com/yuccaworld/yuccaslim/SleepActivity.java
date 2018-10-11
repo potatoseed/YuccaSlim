@@ -19,7 +19,11 @@ import android.widget.ImageView;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.yuccaworld.yuccaslim.data.SlimContract;
+import com.yuccaworld.yuccaslim.model.ActivityInfo;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
 import java.lang.ref.WeakReference;
@@ -33,7 +37,8 @@ public class SleepActivity extends AppActivity implements LoaderManager.LoaderCa
     private String mMode = "";
     private static Uri mUri;
     private static final int ID_SLEEP = 130;
-
+    private String mActivityID ="";
+    private DatabaseReference mFirebaseDB = FirebaseDatabase.getInstance().getReference();
     private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
@@ -41,9 +46,12 @@ public class SleepActivity extends AppActivity implements LoaderManager.LoaderCa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sleep);
 
+        SlimUtils.gUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        SlimUtils.gUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         Intent intent = getIntent();
         if (intent.hasExtra(Intent.EXTRA_TEXT)){
             mMode = intent.getStringExtra(Intent.EXTRA_TEXT);
+            mActivityID = intent.getStringExtra(Intent.EXTRA_UID);
         }
 
         // Change or Add Button for edit or add sleep activity
@@ -66,9 +74,10 @@ public class SleepActivity extends AppActivity implements LoaderManager.LoaderCa
                 Snackbar.make(view, "button clicked", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 ContentValues contentValues = new ContentValues();
 
-                UUID uuid = UUID.randomUUID();
-                byte[] bytes = SlimUtils.toByte(uuid);
-                contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, bytes);
+//                UUID uuid = UUID.randomUUID();
+//                byte[] bytes = SlimUtils.toByte(uuid);
+                String uid = UUID.randomUUID().toString();
+                contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, uid);
 
                 // Activity type id=3 for sleep or wake up
                 contentValues.put(SlimContract.SlimDB.COLUMN_ATIVITY_TYPE_ID, 3);
@@ -90,13 +99,22 @@ public class SleepActivity extends AppActivity implements LoaderManager.LoaderCa
 
                 // TODO Fill in Hint ID by other logic later
                 contentValues.put(SlimContract.SlimDB.COLUMN_HINT_ID, 1);
+
+                // Insert in Sqlite DB and Upload to firebase realtime DB
+                if (mActivityID == "") {mActivityID = uid.toString();}
+                ActivityInfo activityInfo = new ActivityInfo(mActivityID,SlimUtils.gUid,SlimUtils.gUserEmail,3,
+                        sleepTime.getTimeInMillis(),0, 0,0,"",0,sleepORWake,0,0);
                 Uri uri = null;
                 int updatedRow = 0;
                 if ("EDIT".equals(mMode)) {
                     updatedRow = getContentResolver().update(mUri,contentValues,null,null);
+                    if (updatedRow != 0) {
+                        mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(mActivityID).setValue(activityInfo);
+                    }
                 } else {
                     uri = getContentResolver().insert(SlimContract.SlimDB.CONTENT_ACTIVITY_URI, contentValues);
                     if (uri != null) {
+                        mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(uid.toString()).setValue(activityInfo);
                         Snackbar.make(view, "uri : " + uri, Snackbar.LENGTH_LONG).setAction("Action", null).show();
                     } else {
                         Snackbar.make(view, "uri is null" + uri, Snackbar.LENGTH_LONG).setAction("Action", null).show();

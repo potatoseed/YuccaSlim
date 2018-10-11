@@ -25,7 +25,11 @@ import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.yuccaworld.yuccaslim.data.SlimContract;
+import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
 public class TodayActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, TodayAdapter.TodayAdapterOnClickHandler {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -33,6 +37,8 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
     private static int mHoursToDisplay = 36;
     private TodayAdapter mTodayAdapter;
     private RecyclerView mRecyclerView;
+    private static Cursor mActivityData = null;
+    private DatabaseReference mFirebaseDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +46,9 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
         setContentView(R.layout.activity_today);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_activity_today);
         setSupportActionBar(toolbar);
+        SlimUtils.gUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        SlimUtils.gUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        mFirebaseDB = FirebaseDatabase.getInstance().getReference();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabAddWeight);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -79,7 +88,12 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
                 Uri uri = SlimContract.SlimDB.CONTENT_ACTIVITY_URI;
                 uri = uri.buildUpon().appendPath(stringID).build();
                 getContentResolver().delete(uri,null,null);
+                int position = viewHolder.getAdapterPosition();
+                mActivityData.moveToPosition(position);
+                String activityID = mActivityData.getString(mActivityData.getColumnIndex(SlimContract.SlimDB.COLUMN_ACTIVITY_ID));
+                mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(activityID).setValue(null);
                 getSupportLoaderManager().restartLoader(TODAY_ACTIVITY_LOADER_ID, null, TodayActivity.this);
+                getSupportLoaderManager().getLoader(TODAY_ACTIVITY_LOADER_ID).forceLoad();
             }
         }).attachToRecyclerView(mRecyclerView);
 
@@ -197,7 +211,7 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
     }
     public static class TodayActivityAsyncTaskLoader extends AsyncTaskLoader<Cursor>{
         // Initialize a Cursor, this will hold all the Activity data
-        Cursor mActivityData = null;
+//        Cursor mActivityData = null;
 
         public TodayActivityAsyncTaskLoader(Context context) {
             super(context);
@@ -248,6 +262,7 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
         super.onResume();
         // re-queries for all activities
         getSupportLoaderManager().restartLoader(TODAY_ACTIVITY_LOADER_ID, null, this);
+        getSupportLoaderManager().getLoader(TODAY_ACTIVITY_LOADER_ID).forceLoad();
     }
 
     @Override
@@ -260,12 +275,14 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
         //Toast.makeText(this, "Clicked" + rowID, Toast.LENGTH_SHORT).show();
         String activityMode;
         Uri uriForActivityClicked;
+        String activityID = mActivityData.getString(mActivityData.getColumnIndex(SlimContract.SlimDB.COLUMN_ACTIVITY_ID));
         switch(typeID){
             case 1:
                 Intent weightIntent = new Intent(TodayActivity.this, WeightActivity.class);
                 // set weight activity mode to "EDIT"
                 activityMode = "EDIT";
                 weightIntent.putExtra(Intent.EXTRA_TEXT, activityMode);
+                weightIntent.putExtra(Intent.EXTRA_UID, activityID);
                 uriForActivityClicked = SlimContract.SlimDB.buildWeightEdit(rowID);
                 weightIntent.setData(uriForActivityClicked);
                 startActivity(weightIntent);
@@ -274,6 +291,7 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
                 Intent foodIntent = new Intent(TodayActivity.this, FoodSearchActivity.class);
                 activityMode = "EDIT";
                 foodIntent.putExtra(Intent.EXTRA_TEXT, activityMode);
+                foodIntent.putExtra(Intent.EXTRA_UID, activityID);
                 uriForActivityClicked = SlimContract.SlimDB.buildFoodEdit(rowID);
                 foodIntent.setData(uriForActivityClicked);
                 startActivity(foodIntent);
@@ -282,6 +300,7 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
                 Intent sleepIntent = new Intent(TodayActivity.this, SleepActivity.class);
                 activityMode = "EDIT";
                 sleepIntent.putExtra(Intent.EXTRA_TEXT, activityMode);
+                sleepIntent.putExtra(Intent.EXTRA_UID, activityID);
                 uriForActivityClicked = SlimContract.SlimDB.buildFoodEdit(rowID);
                 sleepIntent.setData(uriForActivityClicked);
                 startActivity(sleepIntent);
@@ -290,5 +309,11 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
                 Log.w(TAG, "No matching type");
         }
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        getSupportLoaderManager().getLoader(TODAY_ACTIVITY_LOADER_ID).forceLoad();
     }
 }

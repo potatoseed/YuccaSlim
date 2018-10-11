@@ -29,9 +29,11 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="ic_wake_up_24dp" />
+                            <entry key="height" value="56" />
+                            <entry key="outputName" value="ic_sleep_56px_white" />
                             <entry key="overrideSize" value="true" />
-                            <entry key="sourceFile" value="D:\Development\AP\Resource\Icon\human-handsup.svg" />
+                            <entry key="sourceFile" value="D:\Development\AP\SVG\baseline-local_hotel-24px-white.svg" />
+                            <entry key="width" value="56" />
                           </map>
                         </option>
                       </PersistentState>

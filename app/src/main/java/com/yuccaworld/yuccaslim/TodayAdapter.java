@@ -34,7 +34,7 @@ import static com.yuccaworld.yuccaslim.data.SlimContract.SlimDB.TEXT_VALUE_SLEEP
 public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapterViewHolder> {
 
     private final Context mContext;
-    private Cursor mCursor;
+    public Cursor mCursor;
     private int mNumberItems = 20;
     /*
   * Below, we've defined an interface to handle clicks on items within this Adapter. In the
@@ -75,7 +75,7 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
     }
 
     @Override
-    public void onBindViewHolder(TodayAdapterViewHolder holder, int position) {
+    public void onBindViewHolder(TodayAdapterViewHolder holder, final int position) {
         //ActivityInfo activityInfo = SlimUtils.genFakeActivityInfo();
 
         int idIndex = mCursor.getColumnIndex(SlimContract.SlimDB._ID);
@@ -157,7 +157,6 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
         holder.timeView.setText(time);
         holder.dayView.setText(day);
         holder.hintView.setText("Hint" + String.valueOf(activityHintId));
-        String s = mCursor.getString(foodIDIndex);
     }
 
     @Override

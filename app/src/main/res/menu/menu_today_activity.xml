@@ -26,7 +26,7 @@
         app:showAsAction="always" />
     <item
         android:id="@+id/menu_add_sleep"
-        android:icon="@drawable/ic_sleep_black_24dp"
+        android:icon="@drawable/ic_sleep_black_48dp"
         android:title="@string/text_sleep"
         app:showAsAction="always" />
 </menu>

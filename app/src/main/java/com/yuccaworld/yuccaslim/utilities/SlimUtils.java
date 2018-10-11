@@ -1,11 +1,15 @@
 package com.yuccaworld.yuccaslim.utilities;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.text.format.DateUtils;
+import android.util.Log;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
 import com.yuccaworld.yuccaslim.model.ActivityInfo;
 
 import java.nio.ByteBuffer;
@@ -89,4 +93,17 @@ public class SlimUtils {
                 && now.get(Calendar.MONTH) == cdate.get(Calendar.MONTH)
                 && now.get(Calendar.DATE) == cdate.get(Calendar.DATE);
     }
+
+    // Check token logic, change to method if it was required in future.
+//    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser(); // mAuth is your current firebase auth instance
+//        user.getIdToken(true).addOnCompleteListener(this, new OnCompleteListener<GetTokenResult>() {
+//        @Override
+//        public void onComplete(@NonNull Task<GetTokenResult> task) {
+//            if (task.isSuccessful()) {
+//                Log.d(TAG, "token=" + task.getResult().getToken());
+//            } else {
+//                Log.e(TAG, "exception=" +task.getException().toString());
+//            }
+//        }
+//    });
 }

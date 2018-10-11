@@ -61,3 +61,7 @@ npm ERR! errno -4058
 
 https://github.com/firebase/firebase-tools/issues/654
 This is a known problem with the Firebase CLI 3.17.0 through at least 3.17.3, but only on Windows. You can fix this on your machine by editing firebase.json at the root of your project and replacing $RESOURCE_DIR with %RESOURCE_DIR% in the npm commands you see there. The former is the unix syntax way to use an environment variable, whereas the latter is the Windows command shell syntax. Since you're using Windows, you need to use the Windows syntax.
+
+
+Firebase token issue:
+https://stackoverflow.com/questions/37620081/firebase-addvalueeventlistener-only-working-for-a-couple-of-hours

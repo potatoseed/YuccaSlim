@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.net.ParseException;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -21,7 +22,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Logger;
@@ -45,7 +50,7 @@ public class FoodSearchActivity extends AppActivity implements LoaderManager.Loa
     private EditText mEditTextFoodQty;
 
     private TextView mTextViewFoodID;
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = FoodSearchActivity.class.getSimpleName();
     private static Uri mUri;
     private String mMode = "";
     RecyclerView mRecyclerView;
@@ -55,6 +60,7 @@ public class FoodSearchActivity extends AppActivity implements LoaderManager.Loa
     List<String> suggestList = new ArrayList<>();
     private static String mSearchInput = null;
     private DatabaseReference mFirebaseDB;
+    private String mActivityID ="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +73,7 @@ public class FoodSearchActivity extends AppActivity implements LoaderManager.Loa
         Intent intent = getIntent();
         if (intent.hasExtra(Intent.EXTRA_TEXT)){
             mMode = intent.getStringExtra(Intent.EXTRA_TEXT);
+            mActivityID = intent.getStringExtra(Intent.EXTRA_UID);
         }
         if ("EDIT".equals(mMode)) {
             mUri = getIntent().getData();
@@ -206,23 +213,27 @@ public class FoodSearchActivity extends AppActivity implements LoaderManager.Loa
             contentValues.put(SlimContract.SlimDB.COLUMN_VALUE_DECIMAL, foodQty);
             contentValues.put(SlimContract.SlimDB.COLUMN_FOOD_ID, foodID);
 
-            // Insert in Sqlite DB
+            // Insert in Sqlite DB and Upload to firebase realtime DB
+            if (mActivityID == "") {mActivityID = uid.toString();}
+            contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, mActivityID);
+            ActivityInfo activityInfo = new ActivityInfo(mActivityID,SlimUtils.gUid,SlimUtils.gUserEmail,2,
+                    inpuTime.getTimeInMillis(),foodID, 0,foodQty,"",0,"",0,0);
             Uri uri = null;
             int updatedRow = 0;
             if ("EDIT".equals(mMode)) {
                 updatedRow = getContentResolver().update(mUri,contentValues,null,null);
+                if (updatedRow != 0) {
+                    mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(mActivityID).setValue(activityInfo);
+                }
             } else {
                 uri = getContentResolver().insert(SlimContract.SlimDB.CONTENT_ACTIVITY_URI, contentValues);
                 if (uri == null)
                     Toast.makeText(this, "uri is null" + uri, Toast.LENGTH_SHORT).show();
-                //else Toast.makeText(this, "Clicked" + clickedPosition + "  Input qty is: " + foodQty + " uri: " + uri, Toast.LENGTH_SHORT).show();
-
+                else {
+                    Toast.makeText(this, "Clicked" + clickedPosition + "  Input qty is: " + foodQty + " uri: " + uri, Toast.LENGTH_SHORT).show();
+                    mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(uid.toString()).setValue(activityInfo);
+                }
             }
-
-            // Upload to real time DB
-            ActivityInfo activityInfo = new ActivityInfo(uid.toString(),SlimUtils.gUid,SlimUtils.gUserEmail,2,
-                    inpuTime.getTimeInMillis(),foodID, 0,foodQty,"",0,"",0,0);
-            mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(uid.toString()).setValue(activityInfo);
 
             finish();
         }
