@@ -1,11 +1,13 @@
 package com.yuccaworld.yuccaslim;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
@@ -26,10 +28,17 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.yuccaworld.yuccaslim.data.SlimContract;
+import com.yuccaworld.yuccaslim.model.ActivityInfo;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
+
+import java.util.Map;
 
 public class TodayActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, TodayAdapter.TodayAdapterOnClickHandler {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -39,6 +48,8 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
     private RecyclerView mRecyclerView;
     private static Cursor mActivityData = null;
     private DatabaseReference mFirebaseDB;
+    private ChildEventListener mChildEventListener;
+    private ValueEventListener mValueEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +107,61 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
                 getSupportLoaderManager().getLoader(TODAY_ACTIVITY_LOADER_ID).forceLoad();
             }
         }).attachToRecyclerView(mRecyclerView);
+
+        mChildEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+//                    Map<String, String> activityData = (Map)ds.getValue();
+//                }
+                ActivityInfo activityInfo = dataSnapshot.getValue(ActivityInfo.class);
+                Map<String, String> activityData = (Map)dataSnapshot.getValue();
+                // Update the Sqlite and adapter
+                String activityID = activityInfo.getActivityID();
+                String hintText = activityInfo.getHint();
+                int hintID = activityInfo.getHintID();
+                int ind1 = activityInfo.getInd1();
+                int updatedRow = 0;
+
+                if (activityID != null) {
+                    Uri uri = SlimContract.SlimDB.CONTENT_ACTIVITY_URI;
+                    uri = uri.buildUpon().appendPath(activityID).build();
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(SlimContract.SlimDB.COLUMN_IND1, ind1);
+                    contentValues.put(SlimContract.SlimDB.COLUMN_HINT_ID, hintID);
+                    contentValues.put(SlimContract.SlimDB.COLUMN_HINT_TEXT, hintText);
+                    updatedRow = getContentResolver().update(uri, contentValues, null, null);
+
+                    // Force load to refresh and see the hint
+                    getSupportLoaderManager().getLoader(TODAY_ACTIVITY_LOADER_ID).forceLoad();
+                }
+
+                Log.v(TAG, "DataInSnap:" + dataSnapshot.getValue());
+//                Log.v(TAG, "DataInMap:" + activityInfo);
+                Log.v(TAG, "DataInFields : HindID="+hintID+" ActivityID="+activityID+" ind1="+ind1+" UpdateRow="+updatedRow);
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+        mFirebaseDB.child("Activity").child(SlimUtils.gUid).addChildEventListener(mChildEventListener);
 
         /*
         Ensure a loader is initialized and active. If the loader doesn't already exist, one is

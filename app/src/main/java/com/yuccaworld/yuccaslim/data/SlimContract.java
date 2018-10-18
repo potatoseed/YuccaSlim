@@ -42,6 +42,9 @@ public class SlimContract {
         public static final String COLUMN_VALUE_TEXT = "value_text";
         public static final String COLUMN_ITEM_ID = "item_id";
         public static final String COLUMN_HINT_ID = "hint_id";
+        public static final String COLUMN_HINT_TEXT = "hint_text";
+        public static final String COLUMN_IND1 = "ind1";
+        public static final String COLUMN_IND2 = "ind2";
 
 
         // Table Activity_Type

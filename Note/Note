@@ -65,3 +65,13 @@ This is a known problem with the Firebase CLI 3.17.0 through at least 3.17.3, bu
 
 Firebase token issue:
 https://stackoverflow.com/questions/37620081/firebase-addvalueeventlistener-only-working-for-a-couple-of-hours
+
+Add new node in firebase console while in read only mode
+https://medium.com/@justintulk/editing-data-in-firebase-when-blocked-by-read-only-non-realtime-mode-1ce103f178e5
+
+Get childen from the firebase realtime DB
+//                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+//                    Map<String, String> activityData = (Map)ds.getValue();
+//                    Log.v(TAG, "DataInSnapChild:" + ds);
+//                    Log.v(TAG, "DataInSnapChildMap:" + activityData);
+//                }

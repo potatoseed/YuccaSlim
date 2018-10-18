@@ -47,12 +47,13 @@ public class FoodSearchAdapter extends RecyclerView.Adapter<FoodSearchAdapter.Fo
         mCursor.moveToPosition(position);
         holder.foodNameView.setText(mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_FOOD_NAME)));
         holder.foodIDview.setText(mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_FOOD_ID)));
-        int ind3 = mCursor.getInt(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_IND3));
-        if(ind3 <= 10)
-            holder.foodNameView.setTextColor(mContext.getResources().getColor(R.color.green));
-        else if (ind3 <= 20)
-            holder.foodNameView.setTextColor(mContext.getResources().getColor(R.color.yellow));
-        else holder.foodNameView.setTextColor(mContext.getResources().getColor(R.color.colorAccent));
+
+//        int ind3 = mCursor.getInt(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_IND3));
+//        if(ind3 <= 10)
+//            holder.foodNameView.setTextColor(mContext.getResources().getColor(R.color.green));
+//        else if (ind3 <= 20)
+//            holder.foodNameView.setTextColor(mContext.getResources().getColor(R.color.yellow));
+//        else holder.foodNameView.setTextColor(mContext.getResources().getColor(R.color.colorAccent));
 
     }
 

@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.yuccaworld.yuccaslim.data.SlimContract;
 import com.yuccaworld.yuccaslim.databinding.TodayListItemBinding;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
@@ -36,6 +38,7 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
     private final Context mContext;
     public Cursor mCursor;
     private int mNumberItems = 20;
+
     /*
   * Below, we've defined an interface to handle clicks on items within this Adapter. In the
   * constructor of our ForecastAdapter, we receive an instance of a class that has implemented
@@ -87,8 +90,10 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
         int activityHintIdIndex = mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_HINT_ID);
         int foodIDIndex = mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_FOOD_ID);
 
-
+        // Get data from cursor
         mCursor.moveToPosition(position);
+        String hintText = mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_HINT_TEXT));
+        int ind1 = mCursor.getInt(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_IND1));
         int id = mCursor.getInt(idIndex);
         holder.itemView.setTag(id);
         int activityTypeId = mCursor.getInt(activityTypeIdIndex);
@@ -141,6 +146,18 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
             case 2: // Food
                 holder.ActivityView.setText(mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_FOOD_NAME)));
                 holder.ValueView.setText(String.valueOf(Math.round(valueDecimal)) + " g");
+                switch (ind1) {
+                    case 1:
+                        holder.ActivityView.setTextColor(mContext.getResources().getColor(R.color.green));
+                        break;
+                    case 2:
+                        holder.ActivityView.setTextColor(mContext.getResources().getColor(R.color.yellow));
+                        break;
+                    case 3:
+                        holder.ActivityView.setTextColor(mContext.getResources().getColor(R.color.colorAccent));
+                        break;
+                    default:
+                }
                 break;
             case 3: // Sleep
                 holder.ActivityView.setText(mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_VALUE_TEXT)));
@@ -156,7 +173,7 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
 
         holder.timeView.setText(time);
         holder.dayView.setText(day);
-        holder.hintView.setText("Hint" + String.valueOf(activityHintId));
+        holder.hintView.setText(hintText);
     }
 
     @Override
