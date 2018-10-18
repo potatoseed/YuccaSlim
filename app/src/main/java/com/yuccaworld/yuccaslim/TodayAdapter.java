@@ -89,11 +89,12 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
         int activityValueDecimalIndex = mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_VALUE_DECIMAL);
         int activityHintIdIndex = mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_HINT_ID);
         int foodIDIndex = mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_FOOD_ID);
+        int ind1Index = mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_IND1);
 
         // Get data from cursor
         mCursor.moveToPosition(position);
         String hintText = mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_HINT_TEXT));
-        int ind1 = mCursor.getInt(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_IND1));
+        int ind1 = mCursor.getInt(ind1Index);
         int id = mCursor.getInt(idIndex);
         holder.itemView.setTag(id);
         int activityTypeId = mCursor.getInt(activityTypeIdIndex);
@@ -136,6 +137,7 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
         valueDecimal = mCursor.getFloat(activityValueDecimalIndex);
 
         holder.activityTypeIcon.setImageDrawable(image);
+        holder.hintView.setText(hintText);
         switch(activityTypeId){
             //TODO change to value from DB
             case 1:  //Weight
@@ -149,12 +151,15 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
                 switch (ind1) {
                     case 1:
                         holder.ActivityView.setTextColor(mContext.getResources().getColor(R.color.green));
+                        holder.hintView.setTextColor(mContext.getResources().getColor(R.color.DarkGreen));
                         break;
                     case 2:
                         holder.ActivityView.setTextColor(mContext.getResources().getColor(R.color.yellow));
+                        holder.hintView.setTextColor(mContext.getResources().getColor(R.color.Orange));
                         break;
                     case 3:
                         holder.ActivityView.setTextColor(mContext.getResources().getColor(R.color.colorAccent));
+                        holder.hintView.setTextColor(mContext.getResources().getColor(R.color.colorAccent));
                         break;
                     default:
                 }
@@ -173,7 +178,7 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
 
         holder.timeView.setText(time);
         holder.dayView.setText(day);
-        holder.hintView.setText(hintText);
+
     }
 
     @Override
@@ -197,7 +202,6 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
 
         if (c != null) {
             this.notifyDataSetChanged();
-            ;
         }
         return temp;
     }

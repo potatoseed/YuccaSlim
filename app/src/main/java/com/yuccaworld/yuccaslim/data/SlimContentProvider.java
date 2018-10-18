@@ -29,7 +29,7 @@ public class SlimContentProvider extends ContentProvider {
     public static UriMatcher buildUriMatcher() {
         UriMatcher uriMatcher = new UriMatcher((UriMatcher.NO_MATCH));
         uriMatcher.addURI(SlimContract.AUTHORITY, SlimContract.PATH_ACTIVITY, ACTIVITY);
-        uriMatcher.addURI(SlimContract.AUTHORITY, SlimContract.PATH_ACTIVITY + "/#", ACTIVITY_WITH_ID);
+        uriMatcher.addURI(SlimContract.AUTHORITY, SlimContract.PATH_ACTIVITY + "/*", ACTIVITY_WITH_ID);
         uriMatcher.addURI(SlimContract.AUTHORITY, SlimContract.PATH_USER, USER);
         uriMatcher.addURI(SlimContract.AUTHORITY, SlimContract.PATH_USER + "/#", USER_WITH_ID);
         uriMatcher.addURI(SlimContract.AUTHORITY, SlimContract.PATH_FOOD, FOOD);
@@ -153,7 +153,7 @@ public class SlimContentProvider extends ContentProvider {
         switch (match) {
             case ACTIVITY_WITH_ID:
                 String id = uri.getPathSegments().get(1);
-                activityUpdated = db.update(SlimContract.SlimDB.TABLE_ACTIVITY, contentValues, "_id=?", new String[]{id});
+                activityUpdated = db.update(SlimContract.SlimDB.TABLE_ACTIVITY, contentValues, "activity_id=?", new String[]{id});
                 break;
             default:
                 throw new UnsupportedOperationException("Unknow uri" + uri);
