@@ -75,3 +75,7 @@ Get childen from the firebase realtime DB
 //                    Log.v(TAG, "DataInSnapChild:" + ds);
 //                    Log.v(TAG, "DataInSnapChildMap:" + activityData);
 //                }
+
+Generate UUID
+//                UUID uuid = UUID.randomUUID();
+//                byte[] bytes = SlimUtils.toByte(uuid);

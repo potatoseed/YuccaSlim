@@ -71,17 +71,7 @@ public class SleepActivity extends AppActivity implements LoaderManager.LoaderCa
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "button clicked", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                ContentValues contentValues = new ContentValues();
-
-//                UUID uuid = UUID.randomUUID();
-//                byte[] bytes = SlimUtils.toByte(uuid);
-                String uid = UUID.randomUUID().toString();
-                contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, uid);
-
-                // Activity type id=3 for sleep or wake up
-                contentValues.put(SlimContract.SlimDB.COLUMN_ATIVITY_TYPE_ID, 3);
-
+                //Snackbar.make(view, "button clicked", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 // get time from time picker
                 TimePicker timePicker = findViewById(R.id.timePickerSleep);
                 int hour = timePicker.getCurrentHour();
@@ -89,33 +79,45 @@ public class SleepActivity extends AppActivity implements LoaderManager.LoaderCa
                 Calendar sleepTime = Calendar.getInstance();
                 sleepTime.set(Calendar.HOUR_OF_DAY, hour);
                 sleepTime.set(Calendar.MINUTE, min);
-                contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_TIME, sleepTime.getTimeInMillis());
                 ToggleButton toggleButton = findViewById(R.id.toggleButtonSleep);
                 String sleepORWake;
                 if(toggleButton.isChecked())
                     sleepORWake = SlimContract.SlimDB.TEXT_VALUE_WAKEUP;
                 else sleepORWake = SlimContract.SlimDB.TEXT_VALUE_SLEEP;
-                contentValues.put(SlimContract.SlimDB.COLUMN_VALUE_TEXT, sleepORWake);
 
-                // TODO Fill in Hint ID by other logic later
+                ContentValues contentValues = new ContentValues();
+                // Activity type id=3 for sleep or wake up
+                contentValues.put(SlimContract.SlimDB.COLUMN_ATIVITY_TYPE_ID, 3);
+                contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_TIME, sleepTime.getTimeInMillis());
+                contentValues.put(SlimContract.SlimDB.COLUMN_VALUE_TEXT, sleepORWake);
+                contentValues.put(SlimContract.SlimDB.COLUMN_FOOD_ID, 0);
+                contentValues.put(SlimContract.SlimDB.COLUMN_VALUE_INT, 0);
+                contentValues.put(SlimContract.SlimDB.COLUMN_VALUE_DECIMAL, 0);
+                contentValues.put(SlimContract.SlimDB.COLUMN_IND1, 0);
+                contentValues.put(SlimContract.SlimDB.COLUMN_IND2, 0);
+                // Hint ID update from cloud
                 contentValues.put(SlimContract.SlimDB.COLUMN_HINT_ID, 0);
 
                 // Insert in Sqlite DB and Upload to firebase realtime DB
-                if (mActivityID == "") {mActivityID = uid.toString();}
-                ActivityInfo activityInfo = new ActivityInfo(mActivityID,SlimUtils.gUid,SlimUtils.gUserEmail,3,
-                        sleepTime.getTimeInMillis(),0, 0,0,sleepORWake,0,"",0,0);
                 Uri uri = null;
                 int updatedRow = 0;
                 if ("EDIT".equals(mMode)) {
+                    contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, mActivityID);
+                    ActivityInfo activityInfo = new ActivityInfo(mActivityID,SlimUtils.gUid,SlimUtils.gUserEmail,3,
+                            sleepTime.getTimeInMillis(),0, 0,0,sleepORWake,0,"",0,0);
                     updatedRow = getContentResolver().update(mUri,contentValues,null,null);
                     if (updatedRow != 0) {
                         mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(mActivityID).setValue(activityInfo);
                     }
                 } else {
+                    String uid = UUID.randomUUID().toString();
+                    contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, uid);
+                    ActivityInfo activityInfo = new ActivityInfo(uid,SlimUtils.gUid,SlimUtils.gUserEmail,3,
+                            sleepTime.getTimeInMillis(),0, 0,0,sleepORWake,0,"",0,0);
                     uri = getContentResolver().insert(SlimContract.SlimDB.CONTENT_ACTIVITY_URI, contentValues);
                     if (uri != null) {
-                        mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(uid.toString()).setValue(activityInfo);
-                        Snackbar.make(view, "uri : " + uri, Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                        mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(uid).setValue(activityInfo);
+                        //Snackbar.make(view, "uri : " + uri, Snackbar.LENGTH_LONG).setAction("Action", null).show();
                     } else {
                         Snackbar.make(view, "uri is null" + uri, Snackbar.LENGTH_LONG).setAction("Action", null).show();
                     }

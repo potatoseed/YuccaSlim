@@ -40,7 +40,7 @@ public class MainActivity extends AppActivity {
     private static final int RC_SIGN_IN = 333;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
-    private DatabaseReference mFirebaseDB = FirebaseDatabase.getInstance().getReference();
+    private DatabaseReference mFirebaseDB;
     private ValueEventListener mValueEventListener;
 
 
@@ -48,8 +48,9 @@ public class MainActivity extends AppActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
+        mFirebaseDB = FirebaseDatabase.getInstance().getReference();
         intstantiateUser();
-        //FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
         //Intent intent = new Intent(MainActivity.this, RegisterationActivity.class);
         //Intent intent = new Intent(MainActivity.this, WeightActivity.class);
         //startActivity(intent);
