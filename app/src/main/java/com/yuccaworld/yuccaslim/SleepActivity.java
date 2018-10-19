@@ -98,12 +98,12 @@ public class SleepActivity extends AppActivity implements LoaderManager.LoaderCa
                 contentValues.put(SlimContract.SlimDB.COLUMN_VALUE_TEXT, sleepORWake);
 
                 // TODO Fill in Hint ID by other logic later
-                contentValues.put(SlimContract.SlimDB.COLUMN_HINT_ID, 1);
+                contentValues.put(SlimContract.SlimDB.COLUMN_HINT_ID, 0);
 
                 // Insert in Sqlite DB and Upload to firebase realtime DB
                 if (mActivityID == "") {mActivityID = uid.toString();}
                 ActivityInfo activityInfo = new ActivityInfo(mActivityID,SlimUtils.gUid,SlimUtils.gUserEmail,3,
-                        sleepTime.getTimeInMillis(),0, 0,0,"",0,sleepORWake,0,0);
+                        sleepTime.getTimeInMillis(),0, 0,0,sleepORWake,0,"",0,0);
                 Uri uri = null;
                 int updatedRow = 0;
                 if ("EDIT".equals(mMode)) {

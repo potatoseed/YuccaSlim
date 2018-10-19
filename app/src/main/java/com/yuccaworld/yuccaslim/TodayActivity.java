@@ -49,7 +49,7 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
     private static Cursor mActivityData = null;
     private DatabaseReference mFirebaseDB;
     private ChildEventListener mChildEventListener;
-    private ValueEventListener mValueEventListener;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +66,6 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
             @Override
             public void onClick(View view) {
 //                Intent addWeightIntent = new Intent(TodayActivity.this, WeightActivity.class);
-//                // set weight activity mode to "ADD"
-//                String weightActivityMode = "ADD";
 //                addWeightIntent.putExtra(Intent.EXTRA_TEXT, weightActivityMode);
                 Intent addFoodIntent = new Intent(TodayActivity.this, FoodSearchActivity.class);
                 startActivity(addFoodIntent);
@@ -102,7 +100,8 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
                 int position = viewHolder.getAdapterPosition();
                 mActivityData.moveToPosition(position);
                 String activityID = mActivityData.getString(mActivityData.getColumnIndex(SlimContract.SlimDB.COLUMN_ACTIVITY_ID));
-                mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(activityID).setValue(null);
+                //mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(activityID).setValue(null);
+                mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(activityID).removeValue();
                 getSupportLoaderManager().restartLoader(TODAY_ACTIVITY_LOADER_ID, null, TodayActivity.this);
                 getSupportLoaderManager().getLoader(TODAY_ACTIVITY_LOADER_ID).forceLoad();
             }
@@ -120,7 +119,6 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
 //                    Map<String, String> activityData = (Map)ds.getValue();
 //                }
                 ActivityInfo activityInfo = dataSnapshot.getValue(ActivityInfo.class);
-                Map<String, String> activityData = (Map)dataSnapshot.getValue();
                 // Update the Sqlite and adapter
                 String activityID = activityInfo.getActivityID();
                 String hintText = activityInfo.getHint();
@@ -138,6 +136,7 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
                     updatedRow = getContentResolver().update(uri, contentValues, null, null);
 
                     // Force load to refresh and see the hint
+                    getSupportLoaderManager().restartLoader(TODAY_ACTIVITY_LOADER_ID, null, TodayActivity.this);
                     getSupportLoaderManager().getLoader(TODAY_ACTIVITY_LOADER_ID).forceLoad();
                 }
 
@@ -168,6 +167,7 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
         created, otherwise the last created loader is re-used.
         */
         getSupportLoaderManager().initLoader(TODAY_ACTIVITY_LOADER_ID, null, this);
+        getSupportLoaderManager().getLoader(TODAY_ACTIVITY_LOADER_ID).forceLoad();
     }
 
     @Override

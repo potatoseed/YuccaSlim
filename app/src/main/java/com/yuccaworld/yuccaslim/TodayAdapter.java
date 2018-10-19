@@ -135,9 +135,9 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
 
         //Get Activity Value
         valueDecimal = mCursor.getFloat(activityValueDecimalIndex);
-
         holder.activityTypeIcon.setImageDrawable(image);
         holder.hintView.setText(hintText);
+        holder.ActivityView.setTextColor(mContext.getResources().getColor(R.color.browser_actions_text_color));
         switch(activityTypeId){
             //TODO change to value from DB
             case 1:  //Weight

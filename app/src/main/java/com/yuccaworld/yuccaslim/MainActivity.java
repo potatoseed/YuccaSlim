@@ -1,6 +1,9 @@
 package com.yuccaworld.yuccaslim;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -25,6 +28,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Logger;
 import com.google.firebase.database.ValueEventListener;
+import com.yuccaworld.yuccaslim.data.SlimContract;
+import com.yuccaworld.yuccaslim.model.ActivityInfo;
+import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +40,8 @@ public class MainActivity extends AppActivity {
     private static final int RC_SIGN_IN = 333;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
+    private DatabaseReference mFirebaseDB = FirebaseDatabase.getInstance().getReference();
+    private ValueEventListener mValueEventListener;
 
 
     @Override
@@ -41,7 +49,7 @@ public class MainActivity extends AppActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         intstantiateUser();
-        FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
+        //FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
         //Intent intent = new Intent(MainActivity.this, RegisterationActivity.class);
         //Intent intent = new Intent(MainActivity.this, WeightActivity.class);
         //startActivity(intent);
@@ -61,8 +69,35 @@ public class MainActivity extends AppActivity {
             startActivity(intent);
         } else {
             signIn();
+
             //signUp();
         }
+    }
+
+    private void RestoreActivityFromCloud(String gUid) {
+        mValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    ActivityInfo activityInfo = ds.getValue(ActivityInfo.class);
+                    // Check if the data from cloud existing in local DB, if not, insert into local DB.
+                    Uri uri = SlimContract.SlimDB.CONTENT_ACTIVITY_URI;
+                    uri = uri.buildUpon().appendPath(activityInfo.getActivityID()).build();
+                    Cursor cursor = getContentResolver().query(uri,null,null,null,null);
+                    if(cursor.getCount() == 0) {
+                        ContentValues contentValues;
+                        contentValues = SlimUtils.ConvertActivityContentValue(activityInfo);
+                        Uri uri1 = getContentResolver().insert(SlimContract.SlimDB.CONTENT_ACTIVITY_URI, contentValues);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+        mFirebaseDB.child("Activity").child(SlimUtils.gUid).addListenerForSingleValueEvent(mValueEventListener);
     }
 
     private void signUp() {
@@ -129,6 +164,7 @@ public class MainActivity extends AppActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
             handleSignInResponse(resultCode, data);
+
         }
     }
 
@@ -137,6 +173,10 @@ public class MainActivity extends AppActivity {
 
         // Successfully signed in
         if (resultCode == RESULT_OK) {
+            SlimUtils.gUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            // Restore data from firebase DB
+            RestoreActivityFromCloud(SlimUtils.gUid);
+
             Intent intent = new Intent(MainActivity.this, TodayActivity.class);
             //Intent intent = new Intent(MainActivity.this, FoodSearchActivity.class);
             startActivity(intent);

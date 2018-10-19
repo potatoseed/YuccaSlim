@@ -1,5 +1,6 @@
 package com.yuccaworld.yuccaslim.utilities;
 
+import android.content.ContentValues;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
@@ -10,6 +11,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
+import com.yuccaworld.yuccaslim.data.SlimContract;
 import com.yuccaworld.yuccaslim.model.ActivityInfo;
 
 import java.nio.ByteBuffer;
@@ -92,6 +94,24 @@ public class SlimUtils {
         return now.get(Calendar.YEAR) == cdate.get(Calendar.YEAR)
                 && now.get(Calendar.MONTH) == cdate.get(Calendar.MONTH)
                 && now.get(Calendar.DATE) == cdate.get(Calendar.DATE);
+    }
+
+    public static ContentValues ConvertActivityContentValue(ActivityInfo activityInfo) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, activityInfo.getActivityID());
+        contentValues.put(SlimContract.SlimDB.COLUMN_USER_ID, activityInfo.getUserID());
+        contentValues.put(SlimContract.SlimDB.COLUMN_USER_EMAIL, activityInfo.getUserEmail());
+        contentValues.put(SlimContract.SlimDB.COLUMN_ATIVITY_TYPE_ID, activityInfo.getActivityTypeID());
+        contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_TIME, activityInfo.getActivityTime());
+        contentValues.put(SlimContract.SlimDB.COLUMN_FOOD_ID, activityInfo.getFoodID());
+        contentValues.put(SlimContract.SlimDB.COLUMN_VALUE_DECIMAL, activityInfo.getValueDecimal());
+        contentValues.put(SlimContract.SlimDB.COLUMN_VALUE_INT, activityInfo.getValueInt());
+        contentValues.put(SlimContract.SlimDB.COLUMN_VALUE_TEXT, activityInfo.getValueText());
+        contentValues.put(SlimContract.SlimDB.COLUMN_HINT_ID, activityInfo.getHintID());
+        contentValues.put(SlimContract.SlimDB.COLUMN_HINT_TEXT, activityInfo.getHint());
+        contentValues.put(SlimContract.SlimDB.COLUMN_IND1, activityInfo.getInd1());
+        contentValues.put(SlimContract.SlimDB.COLUMN_IND2, activityInfo.getInd2());
+        return contentValues;
     }
 
     // Check token logic, change to method if it was required in future.

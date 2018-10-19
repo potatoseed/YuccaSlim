@@ -20,6 +20,7 @@ public class SlimContentProvider extends ContentProvider {
 
     public static final int ACTIVITY = 100;
     public static final int ACTIVITY_WITH_ID = 101;
+    public static final int ACTIVITY_WITH_ACTIVITYID = 102;
     public static final int USER = 200;
     public static final int USER_WITH_ID = 201;
     public static final int FOOD = 300;
@@ -29,7 +30,8 @@ public class SlimContentProvider extends ContentProvider {
     public static UriMatcher buildUriMatcher() {
         UriMatcher uriMatcher = new UriMatcher((UriMatcher.NO_MATCH));
         uriMatcher.addURI(SlimContract.AUTHORITY, SlimContract.PATH_ACTIVITY, ACTIVITY);
-        uriMatcher.addURI(SlimContract.AUTHORITY, SlimContract.PATH_ACTIVITY + "/*", ACTIVITY_WITH_ID);
+        uriMatcher.addURI(SlimContract.AUTHORITY, SlimContract.PATH_ACTIVITY + "/#", ACTIVITY_WITH_ID);
+        uriMatcher.addURI(SlimContract.AUTHORITY, SlimContract.PATH_ACTIVITY + "/*", ACTIVITY_WITH_ACTIVITYID);
         uriMatcher.addURI(SlimContract.AUTHORITY, SlimContract.PATH_USER, USER);
         uriMatcher.addURI(SlimContract.AUTHORITY, SlimContract.PATH_USER + "/#", USER_WITH_ID);
         uriMatcher.addURI(SlimContract.AUTHORITY, SlimContract.PATH_FOOD, FOOD);
@@ -50,6 +52,9 @@ public class SlimContentProvider extends ContentProvider {
         final SQLiteDatabase db = mSlimDBHelper.getReadableDatabase();
         int match = sUriMatcher.match(uri);
         Cursor retCursor;
+        String selectionString;
+        String[] SelectionArgsArray;
+        String id;
         switch (match) {
             case ACTIVITY:
                 retCursor = db.query(SlimContract.SlimDB.VIEW_TODAY_ACTIVITY,
@@ -64,11 +69,28 @@ public class SlimContentProvider extends ContentProvider {
             case ACTIVITY_WITH_ID:
                 // URI: content://<authority>/activity/#
                 // get(1) means the "/# "part
-                String id = uri.getPathSegments().get(1);
+                id = uri.getPathSegments().get(1);
 
-                //Selection is the _ID column = ? and the selection args = the row id from the URI
-                String selectionString = "_id=?";
-                String[] SelectionArgsArray = new String[]{id};
+                //Selection is the activity_id column = ? and the selection args = the row id from the URI
+                selectionString = "_id=?";
+                SelectionArgsArray = new String[]{id};
+                retCursor = db.query(SlimContract.SlimDB.VIEW_TODAY_ACTIVITY,
+                        projection,
+                        selectionString,
+                        SelectionArgsArray,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            case ACTIVITY_WITH_ACTIVITYID:
+                // URI: content://<authority>/activity/#
+                // get(1) means the "/# "part
+                id = uri.getPathSegments().get(1);
+
+                //Selection is the activity_id column = ? and the selection args = the row id from the URI
+                selectionString = "activity_id=?";
+                SelectionArgsArray = new String[]{id};
                 retCursor = db.query(SlimContract.SlimDB.VIEW_TODAY_ACTIVITY,
                         projection,
                         selectionString,
@@ -81,7 +103,6 @@ public class SlimContentProvider extends ContentProvider {
             case FOOD:
                 retCursor = db.query(SlimContract.SlimDB.TABLE_FOOD,projection,selection,selectionArgs,null,null,sortOrder);
                 break;
-
             default:
                 throw new UnsupportedOperationException("Unkonwn uri: " + uri);
         }
@@ -118,6 +139,7 @@ public class SlimContentProvider extends ContentProvider {
                 } else {
                     throw new android.database.SQLException("Failed to insert row into" + uri);
                 }
+                break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -153,7 +175,11 @@ public class SlimContentProvider extends ContentProvider {
         switch (match) {
             case ACTIVITY_WITH_ID:
                 String id = uri.getPathSegments().get(1);
-                activityUpdated = db.update(SlimContract.SlimDB.TABLE_ACTIVITY, contentValues, "activity_id=?", new String[]{id});
+                activityUpdated = db.update(SlimContract.SlimDB.TABLE_ACTIVITY, contentValues, "_id=?", new String[]{id});
+                break;
+            case ACTIVITY_WITH_ACTIVITYID:
+                String activityId = uri.getPathSegments().get(1);
+                activityUpdated = db.update(SlimContract.SlimDB.TABLE_ACTIVITY, contentValues, "activity_id=?", new String[]{activityId});
                 break;
             default:
                 throw new UnsupportedOperationException("Unknow uri" + uri);
