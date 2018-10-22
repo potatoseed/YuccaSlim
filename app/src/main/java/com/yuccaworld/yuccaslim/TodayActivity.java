@@ -21,8 +21,8 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -33,12 +33,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.jaygoo.widget.RangeSeekBar;
 import com.yuccaworld.yuccaslim.data.SlimContract;
 import com.yuccaworld.yuccaslim.model.ActivityInfo;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
-
-import java.util.Map;
 
 public class TodayActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, TodayAdapter.TodayAdapterOnClickHandler {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -49,6 +47,7 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
     private static Cursor mActivityData = null;
     private DatabaseReference mFirebaseDB;
     private ChildEventListener mChildEventListener;
+    private RangeSeekBar mSeekbarToday;
 
 
     @Override
@@ -60,8 +59,30 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
         SlimUtils.gUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         SlimUtils.gUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         mFirebaseDB = FirebaseDatabase.getInstance().getReference();
-
+        mSeekbarToday = findViewById(R.id.seekBarToday);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabAddWeight);
+
+        //Seekbar setup
+        mSeekbarToday.setIndicatorTextDecimalFormat("0");
+        setSeekBarValue(160);
+
+        // Disable the user operation
+        mSeekbarToday.setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
+
+        // Recycleview setup
+        mRecyclerView = (RecyclerView) findViewById(R.id.RecycleViewToday);
+        LinearLayoutManager layoutManager =
+                new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setHasFixedSize(true);
+        mTodayAdapter = new TodayAdapter(this, this);
+        mRecyclerView.setAdapter(mTodayAdapter);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -74,14 +95,6 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
 //                        .setAction("Action", null).show();
             }
         });
-
-        mRecyclerView = (RecyclerView) findViewById(R.id.RecycleViewToday);
-        LinearLayoutManager layoutManager =
-                new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setHasFixedSize(true);
-        mTodayAdapter = new TodayAdapter(this, this);
-        mRecyclerView.setAdapter(mTodayAdapter);
 
         // Handel the swap to delete
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -170,6 +183,22 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
         getSupportLoaderManager().getLoader(TODAY_ACTIVITY_LOADER_ID).forceLoad();
     }
 
+    private void setSeekBarValue(int i) {
+        mSeekbarToday.setValue(i);
+        mSeekbarToday.invalidate();
+        if (i <= 100) {
+            mSeekbarToday.getLeftSeekBar().setIndicatorBackgroundColor(getResources().getColor(R.color.green));
+            mSeekbarToday.setProgressColor(getResources().getColor(R.color.green));
+        }
+        else if (i <= 150) {
+            mSeekbarToday.getLeftSeekBar().setIndicatorBackgroundColor(getResources().getColor(R.color.yellow));
+            mSeekbarToday.setProgressColor(getResources().getColor(R.color.yellow));
+        } else {
+            mSeekbarToday.getLeftSeekBar().setIndicatorBackgroundColor(getResources().getColor(R.color.colorAccent));
+            mSeekbarToday.setProgressColor(getResources().getColor(R.color.colorAccent));
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_today_activity, menu);
@@ -189,21 +218,28 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
                 break;
-            case R.id.add_food :
-                Intent addFoodIntent = new Intent(TodayActivity.this, FoodSearchActivity.class);
-                startActivity(addFoodIntent);
-                break;
+//            case R.id.add_food :
+//                Intent addFoodIntent = new Intent(TodayActivity.this, FoodSearchActivity.class);
+//                startActivity(addFoodIntent);
+//                break;
             case R.id.menu_add_sleep :
                 Intent addSleepIntent = new Intent(TodayActivity.this, SleepActivity.class);
                 startActivity(addSleepIntent);
                 break;
+            case R.id.today :
+                mHoursToDisplay = 36;
+                getSupportLoaderManager().restartLoader(TODAY_ACTIVITY_LOADER_ID, null, TodayActivity.this);
+                getSupportLoaderManager().getLoader(TODAY_ACTIVITY_LOADER_ID).forceLoad();
+                break;
             case R.id.last_week :
                 mHoursToDisplay = 170;
                 getSupportLoaderManager().restartLoader(TODAY_ACTIVITY_LOADER_ID, null, TodayActivity.this);
+                getSupportLoaderManager().getLoader(TODAY_ACTIVITY_LOADER_ID).forceLoad();
                 break;
             case R.id.last_month :
                 mHoursToDisplay = 5208;
                 getSupportLoaderManager().restartLoader(TODAY_ACTIVITY_LOADER_ID, null, TodayActivity.this);
+                getSupportLoaderManager().getLoader(TODAY_ACTIVITY_LOADER_ID).forceLoad();
                 break;
             case R.id.logout:
                 AuthUI.getInstance().signOut(this)
@@ -236,44 +272,6 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
             default:
                 throw new RuntimeException("Loader Not Implemented: " + id);
         }
-/*
-        return new AsyncTaskLoader<Cursor>(this) {
-            // Initialize a Cursor, this will hold all the Activity data
-            Cursor mActivityData = null;
-
-            @Override
-            protected void onStartLoading() {
-                if (mActivityData != null) {
-                    deliverResult(mActivityData);
-                } else {
-                    forceLoad();
-                }
-            }
-
-            @Override
-            public Cursor loadInBackground() {
-                try {
-                    Cursor cursor =
-                            getContentResolver().query(SlimContract.SlimDB.CONTENT_ACTIVITY_URI,
-                                    null,
-                                    null,
-                                    null,
-                                    SlimContract.SlimDB.COLUMN_ACTIVITY_TIME);
-                    return cursor;
-                } catch (Exception e) {
-                    Log.e(TAG, "Failed to asynchronously load data.");
-                    e.printStackTrace();
-                    return null;
-                }
-            }
-
-            @Override
-            public void deliverResult(Cursor data) {
-                mActivityData = data;
-                super.deliverResult(data);
-            }
-        };
-*/
     }
     public static class TodayActivityAsyncTaskLoader extends AsyncTaskLoader<Cursor>{
         // Initialize a Cursor, this will hold all the Activity data

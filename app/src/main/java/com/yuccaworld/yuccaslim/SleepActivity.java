@@ -27,7 +27,9 @@ import com.yuccaworld.yuccaslim.model.ActivityInfo;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.UUID;
 
 import static com.yuccaworld.yuccaslim.data.SlimContract.SlimDB.TEXT_VALUE_WAKEUP;
@@ -79,6 +81,8 @@ public class SleepActivity extends AppActivity implements LoaderManager.LoaderCa
                 Calendar sleepTime = Calendar.getInstance();
                 sleepTime.set(Calendar.HOUR_OF_DAY, hour);
                 sleepTime.set(Calendar.MINUTE, min);
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH：mm：ss");
+                String currentDateandTime = sdf.format(new Date());
                 ToggleButton toggleButton = findViewById(R.id.toggleButtonSleep);
                 String sleepORWake;
                 if(toggleButton.isChecked())
@@ -104,7 +108,7 @@ public class SleepActivity extends AppActivity implements LoaderManager.LoaderCa
                 if ("EDIT".equals(mMode)) {
                     contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, mActivityID);
                     ActivityInfo activityInfo = new ActivityInfo(mActivityID,SlimUtils.gUid,SlimUtils.gUserEmail,3,
-                            sleepTime.getTimeInMillis(),0, 0,0,sleepORWake,0,"",0,0);
+                            sleepTime.getTimeInMillis(),0, 0,0,sleepORWake,0,"",0,0,currentDateandTime);
                     updatedRow = getContentResolver().update(mUri,contentValues,null,null);
                     if (updatedRow != 0) {
                         mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(mActivityID).setValue(activityInfo);
@@ -113,7 +117,7 @@ public class SleepActivity extends AppActivity implements LoaderManager.LoaderCa
                     String uid = UUID.randomUUID().toString();
                     contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, uid);
                     ActivityInfo activityInfo = new ActivityInfo(uid,SlimUtils.gUid,SlimUtils.gUserEmail,3,
-                            sleepTime.getTimeInMillis(),0, 0,0,sleepORWake,0,"",0,0);
+                            sleepTime.getTimeInMillis(),0, 0,0,sleepORWake,0,"",0,0,currentDateandTime);
                     uri = getContentResolver().insert(SlimContract.SlimDB.CONTENT_ACTIVITY_URI, contentValues);
                     if (uri != null) {
                         mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(uid).setValue(activityInfo);

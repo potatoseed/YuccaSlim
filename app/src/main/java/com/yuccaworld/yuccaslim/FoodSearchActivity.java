@@ -38,8 +38,10 @@ import com.yuccaworld.yuccaslim.data.SlimContract;
 import com.yuccaworld.yuccaslim.model.ActivityInfo;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -166,23 +168,16 @@ public class FoodSearchActivity extends AppActivity implements LoaderManager.Loa
 
         validator.validate();
         if (validated) {
-            ContentValues contentValues = new ContentValues();
 
 //            UUID uuid = UUID.randomUUID();
 //            byte[] activityID = SlimUtils.toByte(uuid);
 //            contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, activityID);
             String uid = UUID.randomUUID().toString();
-            contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, uid);
-
-            // Activity type id=2 for food taken
-            contentValues.put(SlimContract.SlimDB.COLUMN_ATIVITY_TYPE_ID, 2);
 
             // Get Activity Time
             Calendar inpuTime = Calendar.getInstance();
-            contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_TIME, inpuTime.getTimeInMillis());
-
-            // TODO Fill in Hint ID by other logic later
-            contentValues.put(SlimContract.SlimDB.COLUMN_HINT_ID, 1);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH：mm：ss");
+            String currentDateandTime = sdf.format(new Date());
 
             // Inputted food Qty in g
             String input = mEditTextFoodQty.getText().toString();
@@ -205,19 +200,28 @@ public class FoodSearchActivity extends AppActivity implements LoaderManager.Loa
             }
             try {
                 foodID = Integer.parseInt(input2);
-
             } catch (ParseException e) {
                 e.printStackTrace();
                 Snackbar.make(mRecyclerView, "Invalid Number Input", Snackbar.LENGTH_LONG).setAction("Action", null).show();
              }
-            contentValues.put(SlimContract.SlimDB.COLUMN_VALUE_DECIMAL, foodQty);
-            contentValues.put(SlimContract.SlimDB.COLUMN_FOOD_ID, foodID);
 
             // Insert in Sqlite DB and Upload to firebase realtime DB
             if (mActivityID == "") {mActivityID = uid.toString();}
+
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, uid);
+            contentValues.put(SlimContract.SlimDB.COLUMN_VALUE_DECIMAL, foodQty);
+            contentValues.put(SlimContract.SlimDB.COLUMN_FOOD_ID, foodID);
+            contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_TIME, inpuTime.getTimeInMillis());
+            // Activity type id=2 for food taken
+            contentValues.put(SlimContract.SlimDB.COLUMN_ATIVITY_TYPE_ID, 2);
+            // Hint ID update from cloud
+            contentValues.put(SlimContract.SlimDB.COLUMN_HINT_ID, 0);
             contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, mActivityID);
+
             ActivityInfo activityInfo = new ActivityInfo(mActivityID,SlimUtils.gUid,SlimUtils.gUserEmail,2,
-                    inpuTime.getTimeInMillis(),foodID, 0,foodQty,"",0,"",0,0);
+                    inpuTime.getTimeInMillis(),foodID, 0,foodQty,"",0,"",0,0,currentDateandTime);
+
             Uri uri = null;
             int updatedRow = 0;
             if ("EDIT".equals(mMode)) {

@@ -42,9 +42,10 @@
     <string name="text_sleep">SLEEP</string>
     <string name="text_wakeup">WAKE UP</string>
     <string name="button_add">Add</string>
+    <string name="menu_item_today">Today</string>
     <string name="menu_item_last_week">Last Week</string>
     <string name="menu_item_last_month">Last Month</string>
     <string name="text_today">Today</string>
     <string name="text_yesterday">Yesterday</string>
-
+    <string name="text_slimHintOverall">Maintain Your Daily Score Within the Green Slim Range</string>
 </resources>

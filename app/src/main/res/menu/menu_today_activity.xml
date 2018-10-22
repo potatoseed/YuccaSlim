@@ -3,30 +3,35 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/logout"
-        android:title="@string/action_logout"
+        android:id="@+id/today"
+        android:title="@string/menu_item_today"
         app:showAsAction="never" />
     <item
         android:id="@+id/last_week"
         android:title="@string/menu_item_last_week"
         app:showAsAction="never" />
+
     <item
         android:id="@+id/last_month"
         android:title="@string/menu_item_last_month"
         app:showAsAction="never" />
-    <item
-        android:id="@+id/add_food"
-        android:icon="@drawable/ic_food_24"
-        android:title="@string/action_add_food"
-        app:showAsAction="always" />
+    <!--<item-->
+        <!--android:id="@+id/add_food"-->
+        <!--android:icon="@drawable/ic_food_white_24"-->
+        <!--android:title="@string/action_add_food"-->
+        <!--app:showAsAction="always" />-->
     <item
         android:id="@+id/add_weight"
-        android:icon="@drawable/ic_meter_24dp"
+        android:icon="@drawable/ic_meter_white_24"
         android:title="@string/action_add_weight"
         app:showAsAction="always" />
     <item
         android:id="@+id/menu_add_sleep"
-        android:icon="@drawable/ic_sleep_black_48dp"
+        android:icon="@drawable/ic_sleep_24px_white"
         android:title="@string/text_sleep"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/logout"
+        android:title="@string/action_logout"
+        app:showAsAction="never" />
 </menu>

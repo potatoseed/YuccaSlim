@@ -30,6 +30,7 @@ import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.UUID;
 
 public class WeightActivity extends AppActivity implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -115,10 +116,13 @@ public class WeightActivity extends AppActivity implements LoaderManager.LoaderC
                     // Insert in Sqlite DB and Upload to firebase realtime DB
                     Uri uri = null;
                     int updatedRow = 0;
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH：mm：ss");
+                    String currentDateandTime = sdf.format(new Date());
                     if ("EDIT".equals(mMode)) {
                         contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, mActivityID);
+
                         ActivityInfo activityInfo = new ActivityInfo(mActivityID,SlimUtils.gUid,SlimUtils.gUserEmail,1,
-                                weightTime.getTimeInMillis(),0, 0,weight,"",0,"",0,0);
+                                weightTime.getTimeInMillis(),0, 0,weight,"",0,"",0,0,currentDateandTime);
                         updatedRow = getContentResolver().update(mUri,contentValues,null,null);
                         if (updatedRow != 0) {
                             mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(mActivityID).setValue(activityInfo);
@@ -129,7 +133,7 @@ public class WeightActivity extends AppActivity implements LoaderManager.LoaderC
                         uri = getContentResolver().insert(SlimContract.SlimDB.CONTENT_ACTIVITY_URI, contentValues);
                         if (uri != null) {
                             ActivityInfo activityInfo = new ActivityInfo(uid,SlimUtils.gUid,SlimUtils.gUserEmail,1,
-                                    weightTime.getTimeInMillis(),0, 0,weight,"",0,"",0,0);
+                                    weightTime.getTimeInMillis(),0, 0,weight,"",0,"",0,0,currentDateandTime);
                             mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(uid).setValue(activityInfo);
                             Snackbar.make(view, "uri : " + uri, Snackbar.LENGTH_LONG).setAction("Action", null).show();
                         } else {

@@ -41,6 +41,7 @@ dependencies {
     implementation 'com.readystatesoftware.sqliteasset:sqliteassethelper:+'
     implementation 'com.github.mancj:MaterialSearchBar:0.7.6'
     implementation 'com.google.firebase:firebase-database:16.0.1'
+    implementation 'com.github.Jay-Goo:RangeSeekBar:v2.0.4'
 }
 repositories {
     mavenCentral()

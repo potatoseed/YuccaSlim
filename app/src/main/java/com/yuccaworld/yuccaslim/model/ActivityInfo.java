@@ -1,5 +1,7 @@
 package com.yuccaworld.yuccaslim.model;
 
+import java.util.Date;
+
 /**
  * Created by Yung on 9/3/2017.
  */
@@ -19,8 +21,9 @@ public class ActivityInfo {
     private String hint;
     private int ind1;
     private int ind2;
+    private String updateDate;
 
-    public ActivityInfo(String activityID, String userID, String userEmail, int activityTypeID, long activityTime, int foodID, int valueInt, float valueDecimal, String valueText, int hintID, String hint, int ind1, int ind2) {
+    public ActivityInfo(String activityID, String userID, String userEmail, int activityTypeID, long activityTime, int foodID, int valueInt, float valueDecimal, String valueText, int hintID, String hint, int ind1, int ind2, String updateDate) {
         this.activityID = activityID;
         UserID = userID;
         UserEmail = userEmail;
@@ -34,6 +37,7 @@ public class ActivityInfo {
         this.hint = hint;
         this.ind1 = ind1;
         this.ind2 = ind2;
+        this.updateDate = updateDate;
     }
 
     public ActivityInfo() {
@@ -141,5 +145,13 @@ public class ActivityInfo {
 
     public void setInd2(int ind2) {
         this.ind2 = ind2;
+    }
+
+    public String getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(String updateDate) {
+        this.updateDate = updateDate;
     }
 }

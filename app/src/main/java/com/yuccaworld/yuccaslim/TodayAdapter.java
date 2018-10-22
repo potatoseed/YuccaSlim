@@ -137,13 +137,14 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
         valueDecimal = mCursor.getFloat(activityValueDecimalIndex);
         holder.activityTypeIcon.setImageDrawable(image);
         holder.hintView.setText(hintText);
-        holder.ActivityView.setTextColor(mContext.getResources().getColor(R.color.browser_actions_text_color));
+        holder.ActivityView.setTextColor(mContext.getResources().getColor(R.color.colorSubText));
         switch(activityTypeId){
             //TODO change to value from DB
             case 1:  //Weight
                 activityTypeDesc = mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_ATIVITY_TYPE_DESC));
-                holder.ActivityView.setText(activityTypeDesc);
-                holder.ValueView.setText(String.valueOf(valueDecimal) + " kg");
+                holder.ActivityView.setText(activityTypeDesc.toUpperCase() + " : " + String.valueOf(valueDecimal) + " kg");
+                holder.ActivityView.setTextColor(mContext.getResources().getColor(R.color.browser_actions_text_color));
+                //holder.ValueView.setText(String.valueOf(valueDecimal) + " kg");
                 break;
             case 2: // Food
                 holder.ActivityView.setText(mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_FOOD_NAME)));
@@ -151,15 +152,18 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
                 switch (ind1) {
                     case 1:
                         holder.ActivityView.setTextColor(mContext.getResources().getColor(R.color.green));
-                        holder.hintView.setTextColor(mContext.getResources().getColor(R.color.DarkGreen));
+                        //holder.hintView.setTextColor(mContext.getResources().getColor(R.color.DarkGreen));
+                        holder.hintView.setTextColor(mContext.getResources().getColor(R.color.colorSkyBlue));
                         break;
                     case 2:
                         holder.ActivityView.setTextColor(mContext.getResources().getColor(R.color.yellow));
                         holder.hintView.setTextColor(mContext.getResources().getColor(R.color.Orange));
+                        holder.hintView.setTextColor(mContext.getResources().getColor(R.color.colorSkyBlue));
                         break;
                     case 3:
                         holder.ActivityView.setTextColor(mContext.getResources().getColor(R.color.colorAccent));
                         holder.hintView.setTextColor(mContext.getResources().getColor(R.color.colorAccent));
+                        holder.hintView.setTextColor(mContext.getResources().getColor(R.color.colorSkyBlue));
                         break;
                     default:
                 }
