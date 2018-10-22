@@ -64,7 +64,7 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
 
         //Seekbar setup
         mSeekbarToday.setIndicatorTextDecimalFormat("0");
-        setSeekBarValue(160);
+        setSeekBarValue(360);
 
         // Disable the user operation
         mSeekbarToday.setOnTouchListener(new View.OnTouchListener(){
