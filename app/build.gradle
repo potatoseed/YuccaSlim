@@ -25,6 +25,7 @@ android {
 }
 
 dependencies {
+    def room_version = "1.1.1"
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.google.firebase:firebase-auth:16.0.1'
     implementation 'com.firebaseui:firebase-ui-auth:3.3.1'
@@ -42,6 +43,8 @@ dependencies {
     implementation 'com.github.mancj:MaterialSearchBar:0.7.6'
     implementation 'com.google.firebase:firebase-database:16.0.1'
     implementation 'com.github.Jay-Goo:RangeSeekBar:v2.0.4'
+    implementation "android.arch.persistence.room:runtime:$room_version"
+    annotationProcessor "android.arch.persistence.room:compiler:$room_version"
 }
 repositories {
     mavenCentral()

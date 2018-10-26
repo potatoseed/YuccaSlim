@@ -178,6 +178,8 @@ public class FoodSearchActivity extends AppActivity implements LoaderManager.Loa
             Calendar inpuTime = Calendar.getInstance();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH：mm：ss");
             String currentDateandTime = sdf.format(new Date());
+            sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String currentDate = sdf.format(new Date());
 
             // Inputted food Qty in g
             String input = mEditTextFoodQty.getText().toString();
@@ -213,6 +215,7 @@ public class FoodSearchActivity extends AppActivity implements LoaderManager.Loa
             contentValues.put(SlimContract.SlimDB.COLUMN_VALUE_DECIMAL, foodQty);
             contentValues.put(SlimContract.SlimDB.COLUMN_FOOD_ID, foodID);
             contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_TIME, inpuTime.getTimeInMillis());
+            contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_DATE, currentDate);
             // Activity type id=2 for food taken
             contentValues.put(SlimContract.SlimDB.COLUMN_ATIVITY_TYPE_ID, 2);
             // Hint ID update from cloud
@@ -220,7 +223,7 @@ public class FoodSearchActivity extends AppActivity implements LoaderManager.Loa
             contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, mActivityID);
 
             ActivityInfo activityInfo = new ActivityInfo(mActivityID,SlimUtils.gUid,SlimUtils.gUserEmail,2,
-                    inpuTime.getTimeInMillis(),foodID, 0,foodQty,"",0,"",0,0,currentDateandTime);
+                    inpuTime.getTimeInMillis(),foodID, 0,foodQty,"",0,"",0,0,currentDateandTime, currentDate);
 
             Uri uri = null;
             int updatedRow = 0;

@@ -79,3 +79,6 @@ Get childen from the firebase realtime DB
 Generate UUID
 //                UUID uuid = UUID.randomUUID();
 //                byte[] bytes = SlimUtils.toByte(uuid);
+
+android RecylerView in ConstraintLayout doesn't scroll
+https://stackoverflow.com/questions/45397199/android-recylerview-in-constraintlayout-doesnt-scroll

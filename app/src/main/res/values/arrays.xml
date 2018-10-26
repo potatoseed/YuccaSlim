@@ -8,21 +8,6 @@
         <item>200</item>
     </string-array>
 
-    <string-array name="markArray2">
-        <item>-1</item>
-        <item>-0.5</item>
-        <item>0.1</item>
-        <item>0.5</item>
-        <item>0.9</item>
-    </string-array>
-    <string-array name="negativeMarkArray">
-        <item>-100</item>
-        <item>中间</item>
-        <item>0</item>
-        <item>中间</item>
-        <item>100</item>
-    </string-array>
-
     <string-array name="wordsArray">
         <item>Lv1</item>
         <item>Lv2</item>

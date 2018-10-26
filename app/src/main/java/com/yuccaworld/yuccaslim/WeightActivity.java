@@ -97,12 +97,17 @@ public class WeightActivity extends AppActivity implements LoaderManager.LoaderC
                     Calendar weightTime = Calendar.getInstance();
                     weightTime.set(Calendar.HOUR_OF_DAY, hour);
                     weightTime.set(Calendar.MINUTE, min);
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH：mm：ss");
+                    String currentDateandTime = sdf.format(new Date());
+                    sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    String currentDate = sdf.format(new Date());
 
                     ContentValues contentValues = new ContentValues();
                     contentValues.put(SlimContract.SlimDB.COLUMN_USER_EMAIL, SlimUtils.gUid);
                     // Activity type id=1 for weight measure
                     contentValues.put(SlimContract.SlimDB.COLUMN_ATIVITY_TYPE_ID, 1);
                     contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_TIME, weightTime.getTimeInMillis());
+                    contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_DATE, currentDate);
                     contentValues.put(SlimContract.SlimDB.COLUMN_FOOD_ID, 0);
                     contentValues.put(SlimContract.SlimDB.COLUMN_VALUE_INT, 0);
                     contentValues.put(SlimContract.SlimDB.COLUMN_VALUE_DECIMAL, weight);
@@ -112,17 +117,14 @@ public class WeightActivity extends AppActivity implements LoaderManager.LoaderC
                     // Hint ID update from cloud
                     contentValues.put(SlimContract.SlimDB.COLUMN_HINT_ID, 0);
 
-
                     // Insert in Sqlite DB and Upload to firebase realtime DB
                     Uri uri = null;
                     int updatedRow = 0;
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH：mm：ss");
-                    String currentDateandTime = sdf.format(new Date());
                     if ("EDIT".equals(mMode)) {
                         contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, mActivityID);
 
                         ActivityInfo activityInfo = new ActivityInfo(mActivityID,SlimUtils.gUid,SlimUtils.gUserEmail,1,
-                                weightTime.getTimeInMillis(),0, 0,weight,"",0,"",0,0,currentDateandTime);
+                                weightTime.getTimeInMillis(),0, 0,weight,"",0,"",0,0,currentDateandTime,currentDate);
                         updatedRow = getContentResolver().update(mUri,contentValues,null,null);
                         if (updatedRow != 0) {
                             mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(mActivityID).setValue(activityInfo);
@@ -133,7 +135,7 @@ public class WeightActivity extends AppActivity implements LoaderManager.LoaderC
                         uri = getContentResolver().insert(SlimContract.SlimDB.CONTENT_ACTIVITY_URI, contentValues);
                         if (uri != null) {
                             ActivityInfo activityInfo = new ActivityInfo(uid,SlimUtils.gUid,SlimUtils.gUserEmail,1,
-                                    weightTime.getTimeInMillis(),0, 0,weight,"",0,"",0,0,currentDateandTime);
+                                    weightTime.getTimeInMillis(),0, 0,weight,"",0,"",0,0,currentDateandTime,currentDate);
                             mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(uid).setValue(activityInfo);
                             Snackbar.make(view, "uri : " + uri, Snackbar.LENGTH_LONG).setAction("Action", null).show();
                         } else {

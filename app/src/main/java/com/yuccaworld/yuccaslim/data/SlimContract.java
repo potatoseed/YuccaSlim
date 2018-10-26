@@ -13,11 +13,13 @@ public class SlimContract {
     public static final String PATH_ACTIVITY = "Activity";
     public static final String PATH_USER = "User";
     public static final String PATH_FOOD = "Food";
+    public static final String PATH_DAILY = "Daily";
     // Create an inner  class that implements the BaseColumns interface
     public static final class SlimDB implements BaseColumns {
         public static final Uri CONTENT_USER_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_USER).build();
         public static final Uri CONTENT_ACTIVITY_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_ACTIVITY).build();
         public static final Uri CONTENT_FOOD_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_FOOD).build();
+        public static final Uri CONTENT_DAILY_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_DAILY).build();
 
         // Table User
         public static final String TABLE_USER = "User";
@@ -37,6 +39,7 @@ public class SlimContract {
         public static final String COLUMN_ATIVITY_TYPE_ID = "activity_type_id";
         public static final String COLUMN_USER_EMAIL = "user_email";
         public static final String COLUMN_ACTIVITY_TIME = "activity_time";
+        public static final String COLUMN_ACTIVITY_DATE = "activity_date";
         public static final String COLUMN_HOURS_FROM_NOW = "hours_from_now";
         public static final String COLUMN_VALUE_DECIMAL = "value_decimal";
         public static final String COLUMN_VALUE_INT = "value_int";
@@ -61,6 +64,11 @@ public class SlimContract {
 
         // View TodayActivity
         public static final String VIEW_TODAY_ACTIVITY = "vTodayActivity";
+        public static final String COLUMN_DATE = "date";
+        public static final String COLUMN_SLIM_SCORE = "slim_score";
+
+        // Table Daily
+        public static final String TABLE_DAILY = "Daily";
 
         // Application Constant
         public static final String TEXT_VALUE_SLEEP = "SLEEP";

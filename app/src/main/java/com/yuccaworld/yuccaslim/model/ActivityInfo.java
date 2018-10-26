@@ -7,7 +7,6 @@ import java.util.Date;
  */
 
 public class ActivityInfo {
-    //private String activityID;
     private String activityID;
     private String UserID;
     private String UserEmail;
@@ -22,8 +21,9 @@ public class ActivityInfo {
     private int ind1;
     private int ind2;
     private String updateDate;
+    private String ActivityDate;
 
-    public ActivityInfo(String activityID, String userID, String userEmail, int activityTypeID, long activityTime, int foodID, int valueInt, float valueDecimal, String valueText, int hintID, String hint, int ind1, int ind2, String updateDate) {
+    public ActivityInfo(String activityID, String userID, String userEmail, int activityTypeID, long activityTime, int foodID, int valueInt, float valueDecimal, String valueText, int hintID, String hint, int ind1, int ind2, String updateDate, String activityDate) {
         this.activityID = activityID;
         UserID = userID;
         UserEmail = userEmail;
@@ -38,6 +38,7 @@ public class ActivityInfo {
         this.ind1 = ind1;
         this.ind2 = ind2;
         this.updateDate = updateDate;
+        ActivityDate = activityDate;
     }
 
     public ActivityInfo() {
@@ -153,5 +154,12 @@ public class ActivityInfo {
 
     public void setUpdateDate(String updateDate) {
         this.updateDate = updateDate;
+    }
+    public String getActivityDate() {
+        return ActivityDate;
+    }
+
+    public void setActivityDate(String activityDate) {
+        ActivityDate = activityDate;
     }
 }

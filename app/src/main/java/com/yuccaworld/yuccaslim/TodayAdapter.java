@@ -144,7 +144,7 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
                 activityTypeDesc = mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_ATIVITY_TYPE_DESC));
                 holder.ActivityView.setText(activityTypeDesc.toUpperCase() + " : " + String.valueOf(valueDecimal) + " kg");
                 holder.ActivityView.setTextColor(mContext.getResources().getColor(R.color.browser_actions_text_color));
-                //holder.ValueView.setText(String.valueOf(valueDecimal) + " kg");
+                holder.ValueView.setText("");
                 break;
             case 2: // Food
                 holder.ActivityView.setText(mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_FOOD_NAME)));
@@ -175,7 +175,7 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
                 } else {
                     holder.activityTypeIcon.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_wake_up_24dp));
                 }
-                //holder.ValueView.setText(String.valueOf(Math.round(valueDecimal)) + " g");
+                holder.ValueView.setText("");
                 break;
             default:
         }

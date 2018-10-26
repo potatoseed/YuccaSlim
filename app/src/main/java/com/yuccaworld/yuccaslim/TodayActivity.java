@@ -34,9 +34,16 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.jaygoo.widget.RangeSeekBar;
+import com.yuccaworld.yuccaslim.data.AppDatabase;
 import com.yuccaworld.yuccaslim.data.SlimContract;
 import com.yuccaworld.yuccaslim.model.ActivityInfo;
+import com.yuccaworld.yuccaslim.model.Daily;
+import com.yuccaworld.yuccaslim.model.DailyInfo;
+import com.yuccaworld.yuccaslim.utilities.AppExecutors;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class TodayActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, TodayAdapter.TodayAdapterOnClickHandler {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -46,14 +53,15 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
     private RecyclerView mRecyclerView;
     private static Cursor mActivityData = null;
     private DatabaseReference mFirebaseDB;
-    private ChildEventListener mChildEventListener;
     private RangeSeekBar mSeekbarToday;
-
+    private int mSlimScore = 0;
+    private AppDatabase mDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_today);
+        mDb = AppDatabase.getInstance(getApplicationContext());
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_activity_today);
         setSupportActionBar(toolbar);
         SlimUtils.gUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -64,7 +72,7 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
 
         //Seekbar setup
         mSeekbarToday.setIndicatorTextDecimalFormat("0");
-        setSeekBarValue(360);
+        setSeekBarValue(mSlimScore);
 
         // Disable the user operation
         mSeekbarToday.setOnTouchListener(new View.OnTouchListener(){
@@ -120,7 +128,8 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
             }
         }).attachToRecyclerView(mRecyclerView);
 
-        mChildEventListener = new ChildEventListener() {
+        // Get data from firebase Activity Node
+        ChildEventListener childEventListenerActivity = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
@@ -155,7 +164,7 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
 
                 Log.v(TAG, "DataInSnap:" + dataSnapshot.getValue());
 //                Log.v(TAG, "DataInMap:" + activityInfo);
-                Log.v(TAG, "DataInFields : HindID="+hintID+" ActivityID="+activityID+" ind1="+ind1+" UpdateRow="+updatedRow);
+                Log.v(TAG, "DataInFields : HindID=" + hintID + " ActivityID=" + activityID + " ind1=" + ind1 + " UpdateRow=" + updatedRow);
             }
 
             @Override
@@ -173,7 +182,59 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
 
             }
         };
-        mFirebaseDB.child("Activity").child(SlimUtils.gUid).addChildEventListener(mChildEventListener);
+        mFirebaseDB.child("Activity").child(SlimUtils.gUid).addChildEventListener(childEventListenerActivity);
+
+        // Get data from firebase Daily Node
+        ChildEventListener childEventListenerDaily = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                if (dataSnapshot == null) {
+                    return ;
+                }
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                String currentDate = sdf.format(new Date());
+                Daily daily = dataSnapshot.getValue(Daily.class);
+                mSlimScore = daily.getSlimScore();
+//                currentDate = dataSnapshot.getKey();
+//                ContentValues contentValues = new ContentValues();
+//                contentValues.put(SlimContract.SlimDB.COLUMN_DATE, currentDate);
+//                contentValues.put(SlimContract.SlimDB.COLUMN_SLIM_SCORE, mSlimScore);
+//                contentValues.put(SlimContract.SlimDB.COLUMN_USER_ID, SlimUtils.gUid);
+//                Uri uri = SlimContract.SlimDB.CONTENT_ACTIVITY_URI;
+//                uri = uri.buildUpon().appendPath(activityID).build();
+
+                final DailyInfo dailyInfo = new DailyInfo(currentDate,SlimUtils.gUid,mSlimScore,100,150,new Date());
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDb.dailyDao().insertDaily(dailyInfo);
+                    }
+                });
+                setSeekBarValue(mSlimScore);
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
+        mFirebaseDB.child("Daily").child(SlimUtils.gUid).addChildEventListener(childEventListenerDaily);
 
         /*
         Ensure a loader is initialized and active. If the loader doesn't already exist, one is
@@ -325,6 +386,8 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
     protected void onResume() {
         super.onResume();
         // re-queries for all activities
+
+        setSeekBarValue(mSlimScore);
         getSupportLoaderManager().restartLoader(TODAY_ACTIVITY_LOADER_ID, null, this);
         getSupportLoaderManager().getLoader(TODAY_ACTIVITY_LOADER_ID).forceLoad();
     }

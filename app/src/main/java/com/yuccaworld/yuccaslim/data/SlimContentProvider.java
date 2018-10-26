@@ -25,6 +25,7 @@ public class SlimContentProvider extends ContentProvider {
     public static final int USER_WITH_ID = 201;
     public static final int FOOD = 300;
     public static final int FOOD_WITH_NAME = 301;
+    public static final int DAILY = 501;
     private static UriMatcher sUriMatcher = buildUriMatcher();
 
     public static UriMatcher buildUriMatcher() {
@@ -36,6 +37,7 @@ public class SlimContentProvider extends ContentProvider {
         uriMatcher.addURI(SlimContract.AUTHORITY, SlimContract.PATH_USER + "/#", USER_WITH_ID);
         uriMatcher.addURI(SlimContract.AUTHORITY, SlimContract.PATH_FOOD, FOOD);
         uriMatcher.addURI(SlimContract.AUTHORITY, SlimContract.PATH_FOOD + "/#", FOOD_WITH_NAME);
+        uriMatcher.addURI(SlimContract.AUTHORITY, SlimContract.PATH_DAILY, FOOD);
         return uriMatcher;
     }
 
@@ -103,6 +105,9 @@ public class SlimContentProvider extends ContentProvider {
             case FOOD:
                 retCursor = db.query(SlimContract.SlimDB.TABLE_FOOD,projection,selection,selectionArgs,null,null,sortOrder);
                 break;
+            case DAILY:
+                retCursor = db.query(SlimContract.SlimDB.TABLE_DAILY,projection,selection,selectionArgs,null,null,sortOrder);
+                break;
             default:
                 throw new UnsupportedOperationException("Unkonwn uri: " + uri);
         }
@@ -136,6 +141,14 @@ public class SlimContentProvider extends ContentProvider {
                 id = database.insert(SlimContract.SlimDB.TABLE_USER, null, contentValues);
                 if (id > 0) {
                     returnUri = ContentUris.withAppendedId(SlimContract.SlimDB.CONTENT_USER_URI, id);
+                } else {
+                    throw new android.database.SQLException("Failed to insert row into" + uri);
+                }
+                break;
+            case DAILY:
+                id = database.insert(SlimContract.SlimDB.TABLE_DAILY, null, contentValues);
+                if (id > 0) {
+                    returnUri = ContentUris.withAppendedId(SlimContract.SlimDB.CONTENT_DAILY_URI, id);
                 } else {
                     throw new android.database.SQLException("Failed to insert row into" + uri);
                 }

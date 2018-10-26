@@ -26,7 +26,7 @@ public class SlimDBHelper extends SQLiteAssetHelper {
 
     // COMPLETED (3) Create a static final int called DATABASE_VERSION and set it to 1
     // If you change the database schema, you must increment the database version
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 11;
 
     public SlimDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);

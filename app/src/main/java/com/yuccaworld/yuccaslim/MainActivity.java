@@ -48,7 +48,7 @@ public class MainActivity extends AppActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
+        //FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
         mFirebaseDB = FirebaseDatabase.getInstance().getReference();
         intstantiateUser();
         //Intent intent = new Intent(MainActivity.this, RegisterationActivity.class);
@@ -89,6 +89,8 @@ public class MainActivity extends AppActivity {
                         ContentValues contentValues;
                         contentValues = SlimUtils.ConvertActivityContentValue(activityInfo);
                         Uri uri1 = getContentResolver().insert(SlimContract.SlimDB.CONTENT_ACTIVITY_URI, contentValues);
+//                        Toast.makeText(MainActivity.this, "insert in SQLite DB, uri1=" + uri1.toString(),
+//                                Toast.LENGTH_SHORT).show();
                     }
                 }
             }
