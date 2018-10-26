@@ -1,5 +1,7 @@
 package com.yuccaworld.yuccaslim;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -36,15 +38,14 @@ import java.util.UUID;
 
 import static com.yuccaworld.yuccaslim.data.SlimContract.SlimDB.TEXT_VALUE_WAKEUP;
 
-public class SleepActivity extends AppActivity implements LoaderManager.LoaderCallbacks<Cursor> {
-
+public class SleepActivity extends AppActivity {
     private String mMode = "";
     private static Uri mUri;
-    private static final int ID_SLEEP = 130;
     private String mActivityID ="";
     private DatabaseReference mFirebaseDB = FirebaseDatabase.getInstance().getReference();
     private static final String TAG = MainActivity.class.getSimpleName();
     private AppDatabase mDb;
+    private int mRowID=-1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,29 +55,30 @@ public class SleepActivity extends AppActivity implements LoaderManager.LoaderCa
         SlimUtils.gUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         SlimUtils.gUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         Intent intent = getIntent();
+        Button button = findViewById(R.id.buttonAddSleep);
         if (intent.hasExtra(Intent.EXTRA_TEXT)){
             mMode = intent.getStringExtra(Intent.EXTRA_TEXT);
             mActivityID = intent.getStringExtra(TodayActivity.EXTRA_ACTIVITY_ID);
+            mRowID = intent.getIntExtra(WeightActivity.EXTRA_ROW_ID, 0);
+            // Change or Add Button for edit or add sleep activity
+            button.setText(R.string.button_label_change);
         }
 
-        // Change or Add Button for edit or add sleep activity
-        Button button = (Button) findViewById(R.id.buttonAddSleep);
         if ("EDIT".equals(mMode)) {
-            mUri = getIntent().getData();
-            // if no Uri data in the intent, add new weight, no need to load data.
-            LoaderManager loaderManager = getSupportLoaderManager();
-            if (loaderManager == null){
-                loaderManager.initLoader(ID_SLEEP, null, this);
-            } else {
-                loaderManager.restartLoader(ID_SLEEP, null, this);
-            }
-            button.setText(R.string.button_label_change);
+            SleepViewModelFactory factory = new SleepViewModelFactory(mDb, mActivityID);
+            final SleepViewModel viewModel = ViewModelProviders.of(this,factory).get(SleepViewModel.class);
+            viewModel.getActivityLiveData().observe(this, new Observer<Activity>() {
+                @Override
+                public void onChanged(@Nullable Activity activity) {
+                    viewModel.getActivityLiveData().removeObserver(this);
+                    populateUI(activity);
+                }
+            });
         }
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Snackbar.make(view, "button clicked", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 // get time from time picker
                 TimePicker timePicker = findViewById(R.id.timePickerSleep);
                 int hour = timePicker.getCurrentHour();
@@ -94,50 +96,15 @@ public class SleepActivity extends AppActivity implements LoaderManager.LoaderCa
                     sleepORWake = SlimContract.SlimDB.TEXT_VALUE_WAKEUP;
                 else sleepORWake = SlimContract.SlimDB.TEXT_VALUE_SLEEP;
 
-                ContentValues contentValues = new ContentValues();
-                // Activity type id=3 for sleep or wake up
-                contentValues.put(SlimContract.SlimDB.COLUMN_ATIVITY_TYPE_ID, 3);
-                contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_TIME, sleepTime.getTimeInMillis());
-                contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_DATE, currentDate);
-                contentValues.put(SlimContract.SlimDB.COLUMN_VALUE_TEXT, sleepORWake);
-                contentValues.put(SlimContract.SlimDB.COLUMN_FOOD_ID, 0);
-                contentValues.put(SlimContract.SlimDB.COLUMN_VALUE_INT, 0);
-                contentValues.put(SlimContract.SlimDB.COLUMN_VALUE_DECIMAL, 0);
-                contentValues.put(SlimContract.SlimDB.COLUMN_IND1, 0);
-                contentValues.put(SlimContract.SlimDB.COLUMN_IND2, 0);
-                // Hint ID update from cloud
-                contentValues.put(SlimContract.SlimDB.COLUMN_HINT_ID, 0);
-
-                // Insert in Sqlite DB and Upload to firebase realtime DB
-                Uri uri = null;
-                int updatedRow = 0;
                 if ("EDIT".equals(mMode)) {
-                    contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, mActivityID);
-                    ActivityInfo activityInfo = new ActivityInfo(mActivityID,SlimUtils.gUid,SlimUtils.gUserEmail,3,
-                            sleepTime.getTimeInMillis(),0, 0,0,sleepORWake,0,"",0,0,currentDateandTime,currentDate);
-                    updatedRow = getContentResolver().update(mUri,contentValues,null,null);
-                    if (updatedRow != 0) {
-                        mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(mActivityID).setValue(activityInfo);
+                    Activity activity = new Activity(mRowID,mActivityID,SlimUtils.gUid,SlimUtils.gUserEmail,3,getResources().getString(R.string.activity_type_3),sleepTime.getTimeInMillis(),0,"",0,0,sleepORWake,0,"",0,0,currentDate,new Date());
+                    int i = mDb.activityDao().updateActivity(activity);
+                    if (i > 0) {
+                        mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(mActivityID).setValue(activity);
                     }
                 } else {
-//                    String uid = UUID.randomUUID().toString();
-//                    contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, uid);
-//                    ActivityInfo activityInfo = new ActivityInfo(uid,SlimUtils.gUid,SlimUtils.gUserEmail,3,
-//                            sleepTime.getTimeInMillis(),0, 0,0,sleepORWake,0,"",0,0,currentDateandTime,currentDate);
-//                    uri = getContentResolver().insert(SlimContract.SlimDB.CONTENT_ACTIVITY_URI, contentValues);
-//                    if (uri != null) {
-//                        mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(uid).setValue(activityInfo);
-//                        //Snackbar.make(view, "uri : " + uri, Snackbar.LENGTH_LONG).setAction("Action", null).show();
-//                    } else {
-//                        Snackbar.make(view, "uri is null" + uri, Snackbar.LENGTH_LONG).setAction("Action", null).show();
-//                    }
-                }
-
-                if ("EDIT".equals(mMode)) {
-
-                } else {
                     String uid = UUID.randomUUID().toString();
-                    final Activity activity = new Activity(uid,SlimUtils.gUid,SlimUtils.gUserEmail,3,getResources().getString(R.string.activity_type_3),sleepTime.getTimeInMillis(),0,"",0,0,sleepORWake,0,"",0,0,currentDate,new Date());
+                    Activity activity = new Activity(uid,SlimUtils.gUid,SlimUtils.gUserEmail,3,getResources().getString(R.string.activity_type_3),sleepTime.getTimeInMillis(),0,"",0,0,sleepORWake,0,"",0,0,currentDate,new Date());
                     long l = mDb.activityDao().insertActivity(activity);
                     if (l > 0) {
                         mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(uid).setValue(activity);
@@ -162,81 +129,26 @@ public class SleepActivity extends AppActivity implements LoaderManager.LoaderCa
         });
     }
 
-    private static class sleepAsyncTaskLoader extends AsyncTaskLoader<Cursor>{
-        private WeakReference<SleepActivity> activityWeakReference;
-
-        public sleepAsyncTaskLoader(SleepActivity context) {
-            super(context);
-            activityWeakReference = new WeakReference<SleepActivity>(context);
-        }
-
-        @Override
-        protected void onStartLoading() {
-            super.onStartLoading();
-            forceLoad();
-        }
-
-        @Nullable
-        @Override
-        public Cursor loadInBackground() {
-            // get a reference to the activity if it is still there
-            SleepActivity activity = activityWeakReference.get();
-            try {
-                Cursor cursor = activity.getContentResolver().query(mUri,null,null,null,null);
-                return cursor;
-            }catch (Exception e) {
-                Log.e(TAG, "Failed to asynchronously load data.");
-                e.printStackTrace();
-                return null;
-            }
-        }
-    }
-
-    @NonNull
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
-        switch (id) {
-            case ID_SLEEP:
-                return new sleepAsyncTaskLoader(this);
-            default:
-                throw new RuntimeException("Loader Not Implemented: " + id);
-        }
-    }
-
-    @Override
-    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+    private void populateUI(Activity activity) {
         ToggleButton toggleButton = findViewById(R.id.toggleButtonSleep);
         ImageView imageView = findViewById(R.id.imageViewSleepIcon);
-        if (data.moveToFirst()) {
-            String sleepORWakeup = data.getString(data.getColumnIndex(SlimContract.SlimDB.COLUMN_VALUE_TEXT));
-            if (sleepORWakeup.equals(TEXT_VALUE_WAKEUP)) {
-                toggleButton.setChecked(true);
-                imageView.setImageResource(R.drawable.ic_wake_up_48dp);
-            }
-            else {
-                toggleButton.setChecked(false);
-                imageView.setImageResource(R.drawable.ic_sleep_black_48dp);
-            }
-            toggleButton.requestLayout();
-            // retrieve the time from database and Set the timepicker to that time
-            long l = data.getLong(data.getColumnIndex(SlimContract.SlimDB.COLUMN_ACTIVITY_TIME));
-            Calendar c = Calendar.getInstance();
-            c.setTimeInMillis(l);
-            TimePicker timePicker = (TimePicker) findViewById(R.id.timePickerSleep);
-            timePicker.setCurrentHour(c.get(c.HOUR_OF_DAY));
-            timePicker.setCurrentMinute(c.get(c.MINUTE));
+        String sleepORWakeup = activity.getValueText();
+        if (sleepORWakeup.equals(TEXT_VALUE_WAKEUP)) {
+            toggleButton.setChecked(true);
+            imageView.setImageResource(R.drawable.ic_wake_up_48dp);
         }
-    }
+        else {
+            toggleButton.setChecked(false);
+            imageView.setImageResource(R.drawable.ic_sleep_black_48dp);
+        }
+        toggleButton.requestLayout();
 
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        ToggleButton toggleButton = findViewById(R.id.toggleButtonSleep);
+        // retrieve the time from database and Set the timepicker to that time
+        long l = activity.getActivityTime();
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(l);
+        TimePicker timePicker = (TimePicker) findViewById(R.id.timePickerSleep);
+        timePicker.setCurrentHour(c.get(c.HOUR_OF_DAY));
+        timePicker.setCurrentMinute(c.get(c.MINUTE));
     }
-
-    @Override
-    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
-        ToggleButton toggleButton = findViewById(R.id.toggleButtonSleep);
-    }
-
 }

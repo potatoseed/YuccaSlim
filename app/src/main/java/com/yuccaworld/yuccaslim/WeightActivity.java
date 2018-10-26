@@ -44,10 +44,7 @@ public class WeightActivity extends AppActivity  {
     @DecimalMin(value = 10, sequence = 1, messageResId = R.string.min_weight_validation)
     @Or
     @DecimalMax(value = 300, sequence = 2, messageResId = R.string.max_weight_validation)
-    private EditText weightInput;
     private String mMode = "";
-    private static Uri mUri;
-    private static final int ID_WEIGHT_LOADER = 101;
     public static final String EXTRA_ROW_ID = "ExtraRowID";
     private static final String TAG = MainActivity.class.getSimpleName();
     private String mActivityID ="";
@@ -63,22 +60,15 @@ public class WeightActivity extends AppActivity  {
         Intent intent = getIntent();
         SlimUtils.gUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         SlimUtils.gUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        Button button = findViewById(R.id.buttonAdd);
         if (intent.hasExtra(Intent.EXTRA_TEXT)){
             mMode = intent.getStringExtra(Intent.EXTRA_TEXT);
             mActivityID = intent.getStringExtra(TodayActivity.EXTRA_ACTIVITY_ID);
             mRowID = intent.getIntExtra(WeightActivity.EXTRA_ROW_ID, 0);
+            button.setText(R.string.button_label_change);
         }
-        Button button = (Button) findViewById(R.id.buttonAdd);
-        weightInput = (EditText) findViewById(R.id.editTextWeightInput);
+
         if ("EDIT".equals(mMode)) {
-//            mUri = getIntent().getData();
-//            // if no Uri data in the intent, add new weight, no need to load data.
-//            LoaderManager loaderManager = getSupportLoaderManager();
-//            if (loaderManager == null){
-//                loaderManager.initLoader(ID_WEIGHT_LOADER, null, this);
-//            } else {
-//                loaderManager.restartLoader(ID_WEIGHT_LOADER, null, this);
-//            }
             WeightViewModelFactory factory = new WeightViewModelFactory(mDb, mActivityID);
             final WeightViewModel viewModel = ViewModelProviders.of(this,factory).get(WeightViewModel.class);
             viewModel.getActivityLiveData().observe(this, new Observer<Activity>() {
@@ -88,7 +78,6 @@ public class WeightActivity extends AppActivity  {
                     populateUI(activity);
                 }
             });
-            button.setText(R.string.button_label_change);
         }
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -120,47 +109,6 @@ public class WeightActivity extends AppActivity  {
                     sdf = new SimpleDateFormat("yyyy-MM-dd");
                     String currentDate = sdf.format(new Date());
 
-//                    ContentValues contentValues = new ContentValues();
-//                    contentValues.put(SlimContract.SlimDB.COLUMN_USER_EMAIL, SlimUtils.gUid);
-//                    // Activity type id=1 for weight measure
-//                    contentValues.put(SlimContract.SlimDB.COLUMN_ATIVITY_TYPE_ID, 1);
-//                    contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_TIME, weightTime.getTimeInMillis());
-//                    contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_DATE, currentDate);
-//                    contentValues.put(SlimContract.SlimDB.COLUMN_FOOD_ID, 0);
-//                    contentValues.put(SlimContract.SlimDB.COLUMN_VALUE_INT, 0);
-//                    contentValues.put(SlimContract.SlimDB.COLUMN_VALUE_DECIMAL, weight);
-//                    contentValues.put(SlimContract.SlimDB.COLUMN_VALUE_TEXT, "");
-//                    contentValues.put(SlimContract.SlimDB.COLUMN_IND1, 0);
-//                    contentValues.put(SlimContract.SlimDB.COLUMN_IND2, 0);
-//                    // Hint ID update from cloud
-//                    contentValues.put(SlimContract.SlimDB.COLUMN_HINT_ID, 0);
-
-                    // Insert in Sqlite DB and Upload to firebase realtime DB
-//                    Uri uri = null;
-//                    int updatedRow = 0;
-//                    if ("EDIT".equals(mMode)) {
-//                        contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, mActivityID);
-//
-//                        ActivityInfo activityInfo = new ActivityInfo(mActivityID,SlimUtils.gUid,SlimUtils.gUserEmail,1,
-//                                weightTime.getTimeInMillis(),0, 0,weight,"",0,"",0,0,currentDateandTime,currentDate);
-//                        updatedRow = getContentResolver().update(mUri,contentValues,null,null);
-//                        if (updatedRow != 0) {
-//                            mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(mActivityID).setValue(activityInfo);
-//                        }
-//                    } else {
-//                        String uid = UUID.randomUUID().toString();
-//                        contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, uid);
-//                        uri = getContentResolver().insert(SlimContract.SlimDB.CONTENT_ACTIVITY_URI, contentValues);
-//                        if (uri != null) {
-//                            ActivityInfo activityInfo = new ActivityInfo(uid,SlimUtils.gUid,SlimUtils.gUserEmail,1,
-//                                    weightTime.getTimeInMillis(),0, 0,weight,"",0,"",0,0,currentDateandTime,currentDate);
-//                            mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(uid).setValue(activityInfo);
-//                            Snackbar.make(view, "uri : " + uri, Snackbar.LENGTH_LONG).setAction("Action", null).show();
-//                        } else {
-//                            Snackbar.make(view, "uri is null" + uri, Snackbar.LENGTH_LONG).setAction("Action", null).show();
-//                        }
-//                    }
-
                     //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                     if ("EDIT".equals(mMode)) {
                         Activity activity = new Activity(mRowID,mActivityID,SlimUtils.gUid,SlimUtils.gUserEmail,1,getResources().getString(R.string.activity_type_1),weightTime.getTimeInMillis(),0,"",0,weight,"",0,"",0,0,currentDate,new Date());
@@ -181,11 +129,8 @@ public class WeightActivity extends AppActivity  {
             }
         });
     }
-
     /**
      * populateUI would be called to populate the UI when in update mode
-     *
-     * @param task the taskEntry to populate the UI
      */
     private void populateUI(Activity activity) {
         if (activity == null) {
@@ -201,66 +146,4 @@ public class WeightActivity extends AppActivity  {
         timePicker.setCurrentHour(c.get(c.HOUR_OF_DAY));
         timePicker.setCurrentMinute(c.get(c.MINUTE));
     }
-
-//    private static class WeightAsyncTaskLoader extends AsyncTaskLoader<Cursor> {
-//        private WeakReference<WeightActivity> activityWeakReference;
-//
-//        public WeightAsyncTaskLoader(WeightActivity context) {
-//            super(context);
-//            activityWeakReference = new WeakReference<WeightActivity>(context);
-//        }
-//
-//        @Override
-//        public Cursor loadInBackground() {
-//            // get a reference to the activity if it is still there
-//            WeightActivity activity = activityWeakReference.get();
-//            try {
-//                Cursor cursor = activity.getContentResolver().query(mUri,null,null,null,null);
-//                return cursor;
-//            }catch (Exception e) {
-//                Log.e(TAG, "Failed to asynchronously load data.");
-//                e.printStackTrace();
-//                return null;
-//            }
-//        }
-//
-//        @Override
-//        protected void onStartLoading() {
-//            super.onStartLoading();
-//            forceLoad();
-//        }
-//    }
-
-//    @Override
-//    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-//        switch (id) {
-//            case ID_WEIGHT_LOADER:
-//                return new WeightAsyncTaskLoader(this);
-//            default:
-//                throw new RuntimeException("Loader Not Implemented: " + id);
-//        }
-//    }
-
-//    @Override
-//    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-////        int activityValueDecimalIndex = data.getColumnIndex(SlimContract.SlimDB.COLUMN_VALUE_DECIMAL);
-////        EditText editTextWeight = (EditText) findViewById(R.id.editTextWeightInput);
-////        if (data.moveToFirst()) {
-////            float weight = data.getFloat(activityValueDecimalIndex);
-////            editTextWeight.setText(Float.toString(weight));
-////
-////            // retrieve the time from database and Set the timepicker to that time
-////            long l = data.getLong(data.getColumnIndex(SlimContract.SlimDB.COLUMN_ACTIVITY_TIME));
-////            Calendar c = Calendar.getInstance();
-////            c.setTimeInMillis(l);
-////            TimePicker timePicker = (TimePicker) findViewById(R.id.timePickerWeightTime);
-////            timePicker.setCurrentHour(c.get(c.HOUR_OF_DAY));
-////            timePicker.setCurrentMinute(c.get(c.MINUTE));
-////        }
-//    }
-
-//    @Override
-//    public void onLoaderReset(Loader<Cursor> loader) {
-//
-//    }
 }
