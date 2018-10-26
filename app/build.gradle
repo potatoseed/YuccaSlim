@@ -22,10 +22,12 @@ android {
         }
     }
     dataBinding.enabled = true;
+//    android.databinding.enableV2=false
 }
 
 dependencies {
     def room_version = "1.1.1"
+    def lifecycle_version = "1.1.1"
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.google.firebase:firebase-auth:16.0.1'
     implementation 'com.firebaseui:firebase-ui-auth:3.3.1'
@@ -45,6 +47,8 @@ dependencies {
     implementation 'com.github.Jay-Goo:RangeSeekBar:v2.0.4'
     implementation "android.arch.persistence.room:runtime:$room_version"
     annotationProcessor "android.arch.persistence.room:compiler:$room_version"
+    implementation "android.arch.lifecycle:extensions:$lifecycle_version"
+    annotationProcessor "android.arch.lifecycle:compiler:$lifecycle_version"
 }
 repositories {
     mavenCentral()

@@ -22,7 +22,9 @@ import android.widget.ToggleButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.yuccaworld.yuccaslim.data.AppDatabase;
 import com.yuccaworld.yuccaslim.data.SlimContract;
+import com.yuccaworld.yuccaslim.model.Activity;
 import com.yuccaworld.yuccaslim.model.ActivityInfo;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
@@ -42,18 +44,19 @@ public class SleepActivity extends AppActivity implements LoaderManager.LoaderCa
     private String mActivityID ="";
     private DatabaseReference mFirebaseDB = FirebaseDatabase.getInstance().getReference();
     private static final String TAG = MainActivity.class.getSimpleName();
+    private AppDatabase mDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sleep);
-
+        mDb = AppDatabase.getInstance(getApplicationContext());
         SlimUtils.gUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         SlimUtils.gUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         Intent intent = getIntent();
         if (intent.hasExtra(Intent.EXTRA_TEXT)){
             mMode = intent.getStringExtra(Intent.EXTRA_TEXT);
-            mActivityID = intent.getStringExtra(Intent.EXTRA_UID);
+            mActivityID = intent.getStringExtra(TodayActivity.EXTRA_ACTIVITY_ID);
         }
 
         // Change or Add Button for edit or add sleep activity
@@ -117,16 +120,27 @@ public class SleepActivity extends AppActivity implements LoaderManager.LoaderCa
                         mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(mActivityID).setValue(activityInfo);
                     }
                 } else {
+//                    String uid = UUID.randomUUID().toString();
+//                    contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, uid);
+//                    ActivityInfo activityInfo = new ActivityInfo(uid,SlimUtils.gUid,SlimUtils.gUserEmail,3,
+//                            sleepTime.getTimeInMillis(),0, 0,0,sleepORWake,0,"",0,0,currentDateandTime,currentDate);
+//                    uri = getContentResolver().insert(SlimContract.SlimDB.CONTENT_ACTIVITY_URI, contentValues);
+//                    if (uri != null) {
+//                        mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(uid).setValue(activityInfo);
+//                        //Snackbar.make(view, "uri : " + uri, Snackbar.LENGTH_LONG).setAction("Action", null).show();
+//                    } else {
+//                        Snackbar.make(view, "uri is null" + uri, Snackbar.LENGTH_LONG).setAction("Action", null).show();
+//                    }
+                }
+
+                if ("EDIT".equals(mMode)) {
+
+                } else {
                     String uid = UUID.randomUUID().toString();
-                    contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, uid);
-                    ActivityInfo activityInfo = new ActivityInfo(uid,SlimUtils.gUid,SlimUtils.gUserEmail,3,
-                            sleepTime.getTimeInMillis(),0, 0,0,sleepORWake,0,"",0,0,currentDateandTime,currentDate);
-                    uri = getContentResolver().insert(SlimContract.SlimDB.CONTENT_ACTIVITY_URI, contentValues);
-                    if (uri != null) {
-                        mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(uid).setValue(activityInfo);
-                        //Snackbar.make(view, "uri : " + uri, Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                    } else {
-                        Snackbar.make(view, "uri is null" + uri, Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                    final Activity activity = new Activity(uid,SlimUtils.gUid,SlimUtils.gUserEmail,3,getResources().getString(R.string.activity_type_3),sleepTime.getTimeInMillis(),0,"",0,0,sleepORWake,0,"",0,0,currentDate,new Date());
+                    long l = mDb.activityDao().insertActivity(activity);
+                    if (l > 0) {
+                        mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(uid).setValue(activity);
                     }
                 }
                 finish();

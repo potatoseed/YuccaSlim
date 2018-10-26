@@ -34,7 +34,9 @@ import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.mobsandgeeks.saripaar.annotation.DecimalMax;
 import com.mobsandgeeks.saripaar.annotation.DecimalMin;
 import com.mobsandgeeks.saripaar.annotation.Or;
+import com.yuccaworld.yuccaslim.data.AppDatabase;
 import com.yuccaworld.yuccaslim.data.SlimContract;
+import com.yuccaworld.yuccaslim.model.Activity;
 import com.yuccaworld.yuccaslim.model.ActivityInfo;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
@@ -63,11 +65,13 @@ public class FoodSearchActivity extends AppActivity implements LoaderManager.Loa
     private static String mSearchInput = null;
     private DatabaseReference mFirebaseDB;
     private String mActivityID ="";
+    private AppDatabase mDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_search);
+        mDb = AppDatabase.getInstance(getApplicationContext());
         SlimUtils.gUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         SlimUtils.gUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         mFirebaseDB = FirebaseDatabase.getInstance().getReference();
@@ -75,7 +79,7 @@ public class FoodSearchActivity extends AppActivity implements LoaderManager.Loa
         Intent intent = getIntent();
         if (intent.hasExtra(Intent.EXTRA_TEXT)){
             mMode = intent.getStringExtra(Intent.EXTRA_TEXT);
-            mActivityID = intent.getStringExtra(Intent.EXTRA_UID);
+            mActivityID = intent.getStringExtra(TodayActivity.EXTRA_ACTIVITY_ID);
         }
         if ("EDIT".equals(mMode)) {
             mUri = getIntent().getData();
@@ -172,7 +176,7 @@ public class FoodSearchActivity extends AppActivity implements LoaderManager.Loa
 //            UUID uuid = UUID.randomUUID();
 //            byte[] activityID = SlimUtils.toByte(uuid);
 //            contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, activityID);
-            String uid = UUID.randomUUID().toString();
+
 
             // Get Activity Time
             Calendar inpuTime = Calendar.getInstance();
@@ -207,6 +211,7 @@ public class FoodSearchActivity extends AppActivity implements LoaderManager.Loa
                 Snackbar.make(mRecyclerView, "Invalid Number Input", Snackbar.LENGTH_LONG).setAction("Action", null).show();
              }
 
+            String uid = UUID.randomUUID().toString();
             // Insert in Sqlite DB and Upload to firebase realtime DB
             if (mActivityID == "") {mActivityID = uid.toString();}
 
@@ -233,15 +238,25 @@ public class FoodSearchActivity extends AppActivity implements LoaderManager.Loa
                     mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(mActivityID).setValue(activityInfo);
                 }
             } else {
-                uri = getContentResolver().insert(SlimContract.SlimDB.CONTENT_ACTIVITY_URI, contentValues);
-                if (uri == null)
-                    Toast.makeText(this, "uri is null" + uri, Toast.LENGTH_SHORT).show();
-                else {
-                    Toast.makeText(this, "Clicked" + clickedPosition + "  Input qty is: " + foodQty + " uri: " + uri, Toast.LENGTH_SHORT).show();
-                    mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(uid.toString()).setValue(activityInfo);
+//                String uid = UUID.randomUUID().toString();
+//                uri = getContentResolver().insert(SlimContract.SlimDB.CONTENT_ACTIVITY_URI, contentValues);
+//                if (uri == null)
+//                    Toast.makeText(this, "uri is null" + uri, Toast.LENGTH_SHORT).show();
+//                else {
+//                    Toast.makeText(this, "Clicked" + clickedPosition + "  Input qty is: " + foodQty + " uri: " + uri, Toast.LENGTH_SHORT).show();
+//                    mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(uid.toString()).setValue(activityInfo);
+//                }
+            }
+            if ("EDIT".equals(mMode)) {
+
+            } else {
+                uid = UUID.randomUUID().toString();
+                final Activity activity = new Activity(uid,SlimUtils.gUid,SlimUtils.gUserEmail,2, getResources().getString(R.string.activity_type_2),inpuTime.getTimeInMillis(),foodID,"",0,foodQty,"",0,"",0,0,currentDate,new Date());
+                long l = mDb.activityDao().insertActivity(activity);
+                if (l > 0) {
+                    mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(uid).setValue(activity);
                 }
             }
-
             finish();
         }
 

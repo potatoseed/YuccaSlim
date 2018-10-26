@@ -7,7 +7,7 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
-import com.yuccaworld.yuccaslim.model.DailyInfo;
+import com.yuccaworld.yuccaslim.model.Daily;
 
 import java.util.List;
 
@@ -15,17 +15,17 @@ import java.util.List;
 public interface DailyDao {
 
     @Query("SELECT * FROM Daily ORDER BY date")
-    LiveData<List<DailyInfo>> loadAllDaily();
+    LiveData<List<Daily>> loadAllDaily();
 
     @Insert
-    void insertDaily(DailyInfo dailyInfo);
+    void insertDaily(Daily daily);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    void updateDaily(DailyInfo dailyInfo);
+    void updateDaily(Daily daily);
 
     @Delete
-    void deleteDaily(DailyInfo dailyInfo);
+    void deleteDaily(Daily daily);
 
     @Query("SELECT * FROM Daily WHERE date = :date")
-    LiveData<DailyInfo> loadDailyByDate(String date);
+    LiveData<Daily> loadDailyByDate(String date);
 }

@@ -1,5 +1,7 @@
 package com.yuccaworld.yuccaslim;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -36,18 +38,21 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.jaygoo.widget.RangeSeekBar;
 import com.yuccaworld.yuccaslim.data.AppDatabase;
 import com.yuccaworld.yuccaslim.data.SlimContract;
+import com.yuccaworld.yuccaslim.model.Activity;
 import com.yuccaworld.yuccaslim.model.ActivityInfo;
 import com.yuccaworld.yuccaslim.model.Daily;
-import com.yuccaworld.yuccaslim.model.DailyInfo;
+import com.yuccaworld.yuccaslim.model.DailyOld;
 import com.yuccaworld.yuccaslim.utilities.AppExecutors;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 public class TodayActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, TodayAdapter.TodayAdapterOnClickHandler {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int TODAY_ACTIVITY_LOADER_ID = 8;
+    public static final String EXTRA_ACTIVITY_ID = "extraActivityId";
     private static int mHoursToDisplay = 36;
     private TodayAdapter mTodayAdapter;
     private RecyclerView mRecyclerView;
@@ -125,6 +130,12 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
                 mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(activityID).removeValue();
                 getSupportLoaderManager().restartLoader(TODAY_ACTIVITY_LOADER_ID, null, TodayActivity.this);
                 getSupportLoaderManager().getLoader(TODAY_ACTIVITY_LOADER_ID).forceLoad();
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+
+                    }
+                });
             }
         }).attachToRecyclerView(mRecyclerView);
 
@@ -140,31 +151,54 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
 //                for (DataSnapshot ds : dataSnapshot.getChildren()) {
 //                    Map<String, String> activityData = (Map)ds.getValue();
 //                }
-                ActivityInfo activityInfo = dataSnapshot.getValue(ActivityInfo.class);
-                // Update the Sqlite and adapter
-                String activityID = activityInfo.getActivityID();
-                String hintText = activityInfo.getHint();
-                int hintID = activityInfo.getHintID();
-                int ind1 = activityInfo.getInd1();
-                int updatedRow = 0;
+//                ActivityInfo activityInfo = dataSnapshot.getValue(ActivityInfo.class);
+//                // Update the Sqlite and adapter
+//                String activityID = activityInfo.getActivityID();
+//                String hintText = activityInfo.getHint();
+//                int hintID = activityInfo.getHintID();
+//                int ind1 = activityInfo.getInd1();
+//                int updatedRow = 0;
+//
+//                if (activityID != null) {
+//                    Uri uri = SlimContract.SlimDB.CONTENT_ACTIVITY_URI;
+//                    uri = uri.buildUpon().appendPath(activityID).build();
+//                    ContentValues contentValues = new ContentValues();
+//                    contentValues.put(SlimContract.SlimDB.COLUMN_IND1, ind1);
+//                    contentValues.put(SlimContract.SlimDB.COLUMN_HINT_ID, hintID);
+//                    contentValues.put(SlimContract.SlimDB.COLUMN_HINT_TEXT, hintText);
+//                    updatedRow = getContentResolver().update(uri, contentValues, null, null);
+//
+//                    // Force load to refresh and see the hint
+//                    getSupportLoaderManager().restartLoader(TODAY_ACTIVITY_LOADER_ID, null, TodayActivity.this);
+//                    getSupportLoaderManager().getLoader(TODAY_ACTIVITY_LOADER_ID).forceLoad();
+//                }
 
+                final Activity activity = dataSnapshot.getValue(Activity.class);
+                // Update the Sqlite and adapter
+                String activityID = activity.getActivityID();
+                String hintText = activity.getHint();
+                int hintID = activity.getHintID();
+                int ind1 = activity.getInd1();
                 if (activityID != null) {
-                    Uri uri = SlimContract.SlimDB.CONTENT_ACTIVITY_URI;
-                    uri = uri.buildUpon().appendPath(activityID).build();
-                    ContentValues contentValues = new ContentValues();
-                    contentValues.put(SlimContract.SlimDB.COLUMN_IND1, ind1);
-                    contentValues.put(SlimContract.SlimDB.COLUMN_HINT_ID, hintID);
-                    contentValues.put(SlimContract.SlimDB.COLUMN_HINT_TEXT, hintText);
-                    updatedRow = getContentResolver().update(uri, contentValues, null, null);
+                    activity.setHintID(hintID);
+                    activity.setHint(hintText);
+                    activity.setInd1(ind1);
+                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDb.activityDao().updateActivity(activity);
+                        }
+                    });
 
                     // Force load to refresh and see the hint
                     getSupportLoaderManager().restartLoader(TODAY_ACTIVITY_LOADER_ID, null, TodayActivity.this);
                     getSupportLoaderManager().getLoader(TODAY_ACTIVITY_LOADER_ID).forceLoad();
                 }
 
-                Log.v(TAG, "DataInSnap:" + dataSnapshot.getValue());
+
+//                Log.v(TAG, "DataInSnap:" + dataSnapshot.getValue());
 //                Log.v(TAG, "DataInMap:" + activityInfo);
-                Log.v(TAG, "DataInFields : HindID=" + hintID + " ActivityID=" + activityID + " ind1=" + ind1 + " UpdateRow=" + updatedRow);
+//                Log.v(TAG, "DataInFields : HindID=" + hintID + " ActivityID=" + activityID + " ind1=" + ind1 + " UpdateRow=" + updatedRow);
             }
 
             @Override
@@ -198,8 +232,8 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
                 }
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 String currentDate = sdf.format(new Date());
-                Daily daily = dataSnapshot.getValue(Daily.class);
-                mSlimScore = daily.getSlimScore();
+                DailyOld dailyOld = dataSnapshot.getValue(DailyOld.class);
+                mSlimScore = dailyOld.getSlimScore();
 //                currentDate = dataSnapshot.getKey();
 //                ContentValues contentValues = new ContentValues();
 //                contentValues.put(SlimContract.SlimDB.COLUMN_DATE, currentDate);
@@ -208,11 +242,11 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
 //                Uri uri = SlimContract.SlimDB.CONTENT_ACTIVITY_URI;
 //                uri = uri.buildUpon().appendPath(activityID).build();
 
-                final DailyInfo dailyInfo = new DailyInfo(currentDate,SlimUtils.gUid,mSlimScore,100,150,new Date());
+                final Daily daily = new Daily(currentDate,SlimUtils.gUid,mSlimScore,100,150,new Date());
                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
-                        mDb.dailyDao().insertDaily(dailyInfo);
+                        mDb.dailyDao().insertDaily(daily);
                     }
                 });
                 setSeekBarValue(mSlimScore);
@@ -234,14 +268,26 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
             }
         };
 
-        mFirebaseDB.child("Daily").child(SlimUtils.gUid).addChildEventListener(childEventListenerDaily);
+        mFirebaseDB.child("DailyOld").child(SlimUtils.gUid).addChildEventListener(childEventListenerDaily);
 
         /*
         Ensure a loader is initialized and active. If the loader doesn't already exist, one is
         created, otherwise the last created loader is re-used.
         */
-        getSupportLoaderManager().initLoader(TODAY_ACTIVITY_LOADER_ID, null, this);
-        getSupportLoaderManager().getLoader(TODAY_ACTIVITY_LOADER_ID).forceLoad();
+//        getSupportLoaderManager().initLoader(TODAY_ACTIVITY_LOADER_ID, null, this);
+//        getSupportLoaderManager().getLoader(TODAY_ACTIVITY_LOADER_ID).forceLoad();
+        setupViewModel();
+    }
+
+    private void setupViewModel() {
+        TodayViewModel viewModel = ViewModelProviders.of(this).get(TodayViewModel.class);
+        viewModel.getActivityList().observe(this, new Observer<List<Activity>>() {
+            @Override
+            public void onChanged(@Nullable List<Activity> activityList) {
+                Log.d(TAG, "Updating list of tasks from LiveData in ViewModel From TodayActivity oncreate");
+                mTodayAdapter.setActivityList(activityList);
+            }
+        });
     }
 
     private void setSeekBarValue(int i) {
@@ -354,19 +400,20 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
 
         @Override
         public Cursor loadInBackground() {
-            try {
-                Cursor cursor =
-                                getContext().getContentResolver().query(SlimContract.SlimDB.CONTENT_ACTIVITY_URI,
-                                        null,
-                                        "hours_from_now <= " + Integer.toString(mHoursToDisplay),
-                                        null,
-                                        SlimContract.SlimDB.COLUMN_ACTIVITY_TIME);
-                return cursor;
-            } catch (Exception e) {
-                Log.e(TAG, "Failed to asynchronously load data.");
-                e.printStackTrace();
-                return null;
-            }
+//            try {
+//                Cursor cursor =
+//                                getContext().getContentResolver().query(SlimContract.SlimDB.CONTENT_ACTIVITY_URI,
+//                                        null,
+//                                        "hours_from_now <= " + Integer.toString(mHoursToDisplay),
+//                                        null,
+//                                        SlimContract.SlimDB.COLUMN_ACTIVITY_TIME);
+//                return cursor;
+//            } catch (Exception e) {
+//                Log.e(TAG, "Failed to asynchronously load data.");
+//                e.printStackTrace();
+//                return null;
+//            }
+            return null;
         }
 
         @Override
@@ -398,18 +445,19 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
     }
 
     @Override
-    public void onClick(int rowID, int typeID) {
+    public void onClick(int rowID, int typeID, String activityID) {
         //Toast.makeText(this, "Clicked" + rowID, Toast.LENGTH_SHORT).show();
         String activityMode;
         Uri uriForActivityClicked;
-        String activityID = mActivityData.getString(mActivityData.getColumnIndex(SlimContract.SlimDB.COLUMN_ACTIVITY_ID));
+        //String activityID = mActivityData.getString(mActivityData.getColumnIndex(SlimContract.SlimDB.COLUMN_ACTIVITY_ID));
         switch(typeID){
             case 1:
                 Intent weightIntent = new Intent(TodayActivity.this, WeightActivity.class);
                 // set weight activity mode to "EDIT"
                 activityMode = "EDIT";
                 weightIntent.putExtra(Intent.EXTRA_TEXT, activityMode);
-                weightIntent.putExtra(Intent.EXTRA_UID, activityID);
+                weightIntent.putExtra(TodayActivity.EXTRA_ACTIVITY_ID, activityID);
+                weightIntent.putExtra(WeightActivity.EXTRA_ROW_ID, rowID);
                 uriForActivityClicked = SlimContract.SlimDB.buildWeightEdit(rowID);
                 weightIntent.setData(uriForActivityClicked);
                 startActivity(weightIntent);
@@ -418,7 +466,8 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
                 Intent foodIntent = new Intent(TodayActivity.this, FoodSearchActivity.class);
                 activityMode = "EDIT";
                 foodIntent.putExtra(Intent.EXTRA_TEXT, activityMode);
-                foodIntent.putExtra(Intent.EXTRA_UID, activityID);
+                foodIntent.putExtra(TodayActivity.EXTRA_ACTIVITY_ID, activityID);
+                foodIntent.putExtra(WeightActivity.EXTRA_ROW_ID, rowID);
                 uriForActivityClicked = SlimContract.SlimDB.buildFoodEdit(rowID);
                 foodIntent.setData(uriForActivityClicked);
                 startActivity(foodIntent);
@@ -427,7 +476,8 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
                 Intent sleepIntent = new Intent(TodayActivity.this, SleepActivity.class);
                 activityMode = "EDIT";
                 sleepIntent.putExtra(Intent.EXTRA_TEXT, activityMode);
-                sleepIntent.putExtra(Intent.EXTRA_UID, activityID);
+                sleepIntent.putExtra(TodayActivity.EXTRA_ACTIVITY_ID, activityID);
+                sleepIntent.putExtra(WeightActivity.EXTRA_ROW_ID, rowID);
                 uriForActivityClicked = SlimContract.SlimDB.buildFoodEdit(rowID);
                 sleepIntent.setData(uriForActivityClicked);
                 startActivity(sleepIntent);
@@ -441,6 +491,6 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
     @Override
     protected void onStart() {
         super.onStart();
-        getSupportLoaderManager().getLoader(TODAY_ACTIVITY_LOADER_ID).forceLoad();
+//        getSupportLoaderManager().getLoader(TODAY_ACTIVITY_LOADER_ID).forceLoad();
     }
 }

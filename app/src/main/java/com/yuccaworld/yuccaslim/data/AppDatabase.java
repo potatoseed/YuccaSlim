@@ -7,9 +7,10 @@ import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 import android.util.Log;
 
-import com.yuccaworld.yuccaslim.model.DailyInfo;
+import com.yuccaworld.yuccaslim.model.Activity;
+import com.yuccaworld.yuccaslim.model.Daily;
 
-@Database(entities = {DailyInfo.class}, version = 1, exportSchema = false)
+@Database(entities = {Daily.class, Activity.class}, version = 3, exportSchema = false)
 @TypeConverters(DateConverter.class)
 public abstract class AppDatabase extends RoomDatabase {
     private static final String LOG_TAG = AppDatabase.class.getSimpleName();
@@ -32,4 +33,5 @@ public abstract class AppDatabase extends RoomDatabase {
         return sInstance;
     }
     public abstract DailyDao dailyDao();
+    public abstract ActivityDao activityDao();
 }

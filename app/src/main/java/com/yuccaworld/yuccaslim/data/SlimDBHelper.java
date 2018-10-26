@@ -23,10 +23,11 @@ public class SlimDBHelper extends SQLiteAssetHelper {
     // COMPLETED (2) Create a static final String called DATABASE_NAME and set it to "slimDB.db"
     // The database name
     private static final String DATABASE_NAME = "slimDB.db";
+    //private static final String DATABASE_NAME = "YSDB.db";
 
     // COMPLETED (3) Create a static final int called DATABASE_VERSION and set it to 1
     // If you change the database schema, you must increment the database version
-    private static final int DATABASE_VERSION = 11;
+    private static final int DATABASE_VERSION = 1;
 
     public SlimDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);

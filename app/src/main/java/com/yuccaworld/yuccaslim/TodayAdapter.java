@@ -2,7 +2,7 @@ package com.yuccaworld.yuccaslim;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.databinding.DataBindingUtil;
+//import android.databinding.DataBindingUtil;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -16,12 +16,14 @@ import android.widget.TextView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.yuccaworld.yuccaslim.data.SlimContract;
-import com.yuccaworld.yuccaslim.databinding.TodayListItemBinding;
+//import com.yuccaworld.yuccaslim.databinding.TodayListItemBinding;
+import com.yuccaworld.yuccaslim.model.Activity;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -34,25 +36,17 @@ import static com.yuccaworld.yuccaslim.data.SlimContract.SlimDB.TEXT_VALUE_SLEEP
  */
 
 public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapterViewHolder> {
-
     private final Context mContext;
     public Cursor mCursor;
     private int mNumberItems = 20;
+    private List<Activity> mActivityList;
 
-    /*
-  * Below, we've defined an interface to handle clicks on items within this Adapter. In the
-  * constructor of our ForecastAdapter, we receive an instance of a class that has implemented
-  * said interface. We store that instance in this variable to call the onClick method whenever
-  * an item is clicked in the list.
-  */
     final private TodayAdapterOnClickHandler mClickHandler;
-
-
     /**
      * The interface that receives onClick messages.
      */
     public interface TodayAdapterOnClickHandler {
-        void onClick(int rowID, int typeID);
+        void onClick(int rowID, int typeID, String activityID);
     }
 
     /**
@@ -79,34 +73,19 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
 
     @Override
     public void onBindViewHolder(TodayAdapterViewHolder holder, final int position) {
-        //ActivityInfo activityInfo = SlimUtils.genFakeActivityInfo();
-
-        int idIndex = mCursor.getColumnIndex(SlimContract.SlimDB._ID);
-        int activityTypeIdIndex = mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_ATIVITY_TYPE_ID);
-        int activityTypeDescIndex = mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_ATIVITY_TYPE_DESC);
-        int activityTypeImagePath = mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_ICON_IMAGE_PATH);
-        int activityTimeIndex = mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_ACTIVITY_TIME);
-        int activityValueDecimalIndex = mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_VALUE_DECIMAL);
-        int activityHintIdIndex = mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_HINT_ID);
-        int foodIDIndex = mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_FOOD_ID);
-        int ind1Index = mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_IND1);
-
-        // Get data from cursor
-        mCursor.moveToPosition(position);
-        String hintText = mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_HINT_TEXT));
-        int ind1 = mCursor.getInt(ind1Index);
-        int id = mCursor.getInt(idIndex);
-        holder.itemView.setTag(id);
-        int activityTypeId = mCursor.getInt(activityTypeIdIndex);
-        int activityHintId = mCursor.getInt(activityHintIdIndex);
-        long l = 0;
-        String time = "", day = "";
-        String activityTypeDesc="";
-        float valueDecimal = 0;
-        // Get Activity time
-        l = mCursor.getLong(activityTimeIndex);
+        // Get data from list
+        Activity activity = mActivityList.get(position);
+        String hintText = activity.getHint();
+        int ind1 = activity.getInd1();
+        int id = activity.getId();
+        int activityTypeId = activity.getActivityTypeID();
+        int activityHintId = activity.getHintID();
+        String activityTypeDesc =  activity.getActivityTypeDesc();
+        float valueDecimal = activity.getValueDecimal();
+        long l = activity.getActivityTime();
         SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a");
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM");
+        String time = "", day = "";
         if (l != 0) {
             time = timeFormat.format(new Date(l));
             long nowInMS= System.currentTimeMillis();
@@ -118,30 +97,19 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
                 day = dateFormat.format(new Date(l));
             }
         }
-//            if (TimeUnit.MILLISECONDS.toHours(Math.abs(l - nowInMS)) < 24) {
-//                day = mContext.getResources().getString(R.string.text_today);
-//            } else {
-//                day = dateFormat.format(new Date(l));
-//            }
-
-        // Set activity image
-        String imagePath = mCursor.getString(activityTypeImagePath);
-        String packageName = mContext.getPackageName();
-        int imageID = mContext.getResources().getIdentifier(imagePath, null, packageName);
+        String imagePath = "@drawable/" + mContext.getResources().getString(R.string.activity_type_image) + String.valueOf(activityTypeId);
+        int imageID = mContext.getResources().getIdentifier(imagePath, null, mContext.getPackageName());
         Drawable image = mContext.getResources().getDrawable(imageID, mContext.getApplicationContext().getTheme());
 
-        //Get Activity Type Desc
-        activityTypeDesc = mCursor.getString(activityTypeDescIndex);
-
-        //Get Activity Value
-        valueDecimal = mCursor.getFloat(activityValueDecimalIndex);
+                // Set the view holder value
+        holder.itemView.setTag(id);
         holder.activityTypeIcon.setImageDrawable(image);
         holder.hintView.setText(hintText);
         holder.ActivityView.setTextColor(mContext.getResources().getColor(R.color.colorSubText));
         switch(activityTypeId){
             //TODO change to value from DB
             case 1:  //Weight
-                activityTypeDesc = mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_ATIVITY_TYPE_DESC));
+                activityTypeDesc = activity.getActivityTypeDesc();
                 holder.ActivityView.setText(activityTypeDesc.toUpperCase() + " : " + String.valueOf(valueDecimal) + " kg");
                 holder.ActivityView.setTextColor(mContext.getResources().getColor(R.color.browser_actions_text_color));
                 holder.ValueView.setText("");
@@ -169,8 +137,8 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
                 }
                 break;
             case 3: // Sleep
-                holder.ActivityView.setText(mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_VALUE_TEXT)));
-                if (mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_VALUE_TEXT)).equals(TEXT_VALUE_SLEEP)) {
+                holder.ActivityView.setText(activity.getValueText());
+                if (activity.getValueText().equals(TEXT_VALUE_SLEEP)) {
                     holder.activityTypeIcon.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_sleep_black_24dp));
                 } else {
                     holder.activityTypeIcon.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_wake_up_24dp));
@@ -182,15 +150,14 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
 
         holder.timeView.setText(time);
         holder.dayView.setText(day);
-
     }
 
     @Override
     public int getItemCount() {
-        if (mCursor == null) {
+        if (mActivityList == null) {
             return 0;
         }
-        return mCursor.getCount();
+        return mActivityList.size();
     }
 
     /**
@@ -208,6 +175,16 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
             this.notifyDataSetChanged();
         }
         return temp;
+    }
+
+    public List<Activity> getmActivityList() {return mActivityList;}
+    /**
+     * When data changes, this method updates the list of taskEntries
+     * and notifies the adapter to use the new values on it
+     */
+    public void setActivityList(List<Activity> activityEntry) {
+        mActivityList = activityEntry;
+        notifyDataSetChanged();
     }
 
     class TodayAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -234,12 +211,17 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
 
         @Override
         public void onClick(View view) {
-            int adapterPosition = getAdapterPosition();
-            mCursor.moveToPosition(adapterPosition);
-            //String activityUUID = mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_ACTIVITY_ID));
-            int rowID = mCursor.getInt(mCursor.getColumnIndex(SlimContract.SlimDB._ID));
-            int typeID = mCursor.getInt(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_ATIVITY_TYPE_ID));
-            mClickHandler.onClick(rowID, typeID);
+//            int adapterPosition = getAdapterPosition();
+//            mCursor.moveToPosition(adapterPosition);
+//            //String activityUUID = mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_ACTIVITY_ID));
+//            int rowID = mCursor.getInt(mCursor.getColumnIndex(SlimContract.SlimDB._ID));
+//            int typeID = mCursor.getInt(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_ATIVITY_TYPE_ID));
+
+            Activity activity = mActivityList.get(getAdapterPosition());
+            int rowID = activity.getId();
+            int typeID = activity.getActivityTypeID();
+            String activityID = activity.getActivityID();
+            mClickHandler.onClick(rowID, typeID, activityID);
         }
     }
 }
