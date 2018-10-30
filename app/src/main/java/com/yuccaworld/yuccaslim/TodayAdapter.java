@@ -115,8 +115,9 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
                 holder.ValueView.setText("");
                 break;
             case 2: // Food
-                holder.ActivityView.setText(mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_FOOD_NAME)));
+//                holder.ActivityView.setText(mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_FOOD_NAME)));
                 holder.ValueView.setText(String.valueOf(Math.round(valueDecimal)) + " g");
+                holder.ActivityView.setText(activity.getFoodName());
                 switch (ind1) {
                     case 1:
                         holder.ActivityView.setTextColor(mContext.getResources().getColor(R.color.green));
@@ -185,6 +186,10 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
     public void setActivityList(List<Activity> activityEntry) {
         mActivityList = activityEntry;
         notifyDataSetChanged();
+    }
+
+    public List<Activity> getActivityList(){
+        return mActivityList;
     }
 
     class TodayAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

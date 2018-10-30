@@ -117,23 +117,15 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
             }
 
             @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                int id = (int) viewHolder.itemView.getTag();
-                String stringID = Integer.toString(id);
-                Uri uri = SlimContract.SlimDB.CONTENT_ACTIVITY_URI;
-                uri = uri.buildUpon().appendPath(stringID).build();
-                getContentResolver().delete(uri,null,null);
-                int position = viewHolder.getAdapterPosition();
-                mActivityData.moveToPosition(position);
-                String activityID = mActivityData.getString(mActivityData.getColumnIndex(SlimContract.SlimDB.COLUMN_ACTIVITY_ID));
-                //mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(activityID).setValue(null);
-                mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(activityID).removeValue();
-                getSupportLoaderManager().restartLoader(TODAY_ACTIVITY_LOADER_ID, null, TodayActivity.this);
-                getSupportLoaderManager().getLoader(TODAY_ACTIVITY_LOADER_ID).forceLoad();
+            public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
-
+                        int position = viewHolder.getAdapterPosition();
+                        List<Activity> activityList = mTodayAdapter.getActivityList();
+                        mDb.activityDao().deleteActivity(activityList.get(position));
+                        //mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(activityList.get(position).getActivityID()).setValue(null);
+                        mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(activityList.get(position).getActivityID()).removeValue();
                     }
                 });
             }

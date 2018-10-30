@@ -28,6 +28,7 @@ import com.yuccaworld.yuccaslim.data.AppDatabase;
 import com.yuccaworld.yuccaslim.data.SlimContract;
 import com.yuccaworld.yuccaslim.model.Activity;
 import com.yuccaworld.yuccaslim.model.ActivityInfo;
+import com.yuccaworld.yuccaslim.utilities.AppExecutors;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
 import java.lang.ref.WeakReference;
@@ -89,27 +90,37 @@ public class SleepActivity extends AppActivity {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH：mm：ss");
                 String currentDateandTime = sdf.format(new Date());
                 sdf = new SimpleDateFormat("yyyy-MM-dd");
-                String currentDate = sdf.format(new Date());
+                final String currentDate = sdf.format(new Date());
                 ToggleButton toggleButton = findViewById(R.id.toggleButtonSleep);
                 String sleepORWake;
                 if(toggleButton.isChecked())
                     sleepORWake = SlimContract.SlimDB.TEXT_VALUE_WAKEUP;
                 else sleepORWake = SlimContract.SlimDB.TEXT_VALUE_SLEEP;
+                final String valueText = sleepORWake;
+                final long activityTime = sleepTime.getTimeInMillis();
 
-                if ("EDIT".equals(mMode)) {
-                    Activity activity = new Activity(mRowID,mActivityID,SlimUtils.gUid,SlimUtils.gUserEmail,3,getResources().getString(R.string.activity_type_3),sleepTime.getTimeInMillis(),0,"",0,0,sleepORWake,0,"",0,0,currentDate,new Date());
-                    int i = mDb.activityDao().updateActivity(activity);
-                    if (i > 0) {
-                        mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(mActivityID).setValue(activity);
+                // Update DB and Firebase
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if ("EDIT".equals(mMode)){
+                            // Update
+                            Activity activity = new Activity(mRowID,mActivityID,SlimUtils.gUid,SlimUtils.gUserEmail,3,getResources().getString(R.string.activity_type_3),activityTime,0,"",0,0,valueText,0,"",0,0,currentDate,new Date());
+                            int i = mDb.activityDao().updateActivity(activity);
+                            if (i > 0) {
+                                mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(mActivityID).setValue(activity);
+                            }
+                        } else {
+                            // Insert
+                            String uid = UUID.randomUUID().toString();
+                            Activity activity = new Activity(uid,SlimUtils.gUid,SlimUtils.gUserEmail,3,getResources().getString(R.string.activity_type_3),activityTime,0,"",0,0,valueText,0,"",0,0,currentDate,new Date());
+                            long l = mDb.activityDao().insertActivity(activity);
+                            if (l > 0) {
+                                mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(uid).setValue(activity);
+                            }
+                        }
                     }
-                } else {
-                    String uid = UUID.randomUUID().toString();
-                    Activity activity = new Activity(uid,SlimUtils.gUid,SlimUtils.gUserEmail,3,getResources().getString(R.string.activity_type_3),sleepTime.getTimeInMillis(),0,"",0,0,sleepORWake,0,"",0,0,currentDate,new Date());
-                    long l = mDb.activityDao().insertActivity(activity);
-                    if (l > 0) {
-                        mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(uid).setValue(activity);
-                    }
-                }
+                });
                 finish();
             }
         });

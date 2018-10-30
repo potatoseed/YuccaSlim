@@ -7,6 +7,7 @@ import com.yuccaworld.yuccaslim.model.Activity;
 
 public class WeightViewModel extends ViewModel {
     private LiveData<Activity> activityLiveData;
+
     public WeightViewModel(AppDatabase database, String activityId) {
         activityLiveData = database.activityDao().loadActivityByActivityId(activityId);
     }

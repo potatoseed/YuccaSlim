@@ -2,10 +2,7 @@ package com.yuccaworld.yuccaslim;
 
 
 import android.content.Context;
-import android.content.res.ColorStateList;
-import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,8 +12,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.yuccaworld.yuccaslim.data.SlimContract;
+import com.yuccaworld.yuccaslim.model.Food;
+
+import java.util.List;
 
 
 public class FoodSearchAdapter extends RecyclerView.Adapter<FoodSearchAdapter.FoodSearchViewHolder> {
@@ -24,6 +23,7 @@ public class FoodSearchAdapter extends RecyclerView.Adapter<FoodSearchAdapter.Fo
     protected Cursor mCursor;
     private int mNumberItems = 20;
     final private FoodItemClickListerner mOnClickListerner;
+    private List<Food> mFoodList;
 
 
     public FoodSearchAdapter(Context mContext, FoodItemClickListerner listerner) {
@@ -31,7 +31,7 @@ public class FoodSearchAdapter extends RecyclerView.Adapter<FoodSearchAdapter.Fo
         mOnClickListerner = listerner;
     }
     public interface FoodItemClickListerner {
-        void onItemClick(int clickedPosition);
+        void onItemClick(int clickedPosition, int foodId);
     }
 
     @NonNull
@@ -44,9 +44,11 @@ public class FoodSearchAdapter extends RecyclerView.Adapter<FoodSearchAdapter.Fo
 
     @Override
     public void onBindViewHolder(@NonNull FoodSearchViewHolder holder, int position) {
-        mCursor.moveToPosition(position);
-        holder.foodNameView.setText(mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_FOOD_NAME)));
-        holder.foodIDview.setText(mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_FOOD_ID)));
+//        mCursor.moveToPosition(position);
+        Food food = mFoodList.get(position);
+        holder.foodNameView.setText(food.getFoodName());
+        int foodId = food.getFoodId();
+        holder.foodIDview.setText(Integer.toString(foodId));
 
 //        int ind3 = mCursor.getInt(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_IND3));
 //        if(ind3 <= 10)
@@ -59,10 +61,10 @@ public class FoodSearchAdapter extends RecyclerView.Adapter<FoodSearchAdapter.Fo
 
     @Override
     public int getItemCount() {
-        if (mCursor == null) {
+        if (mFoodList == null) {
             return 0;
         }
-        return mCursor.getCount();
+        return mFoodList.size();
     }
 
     class FoodSearchViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -84,8 +86,19 @@ public class FoodSearchAdapter extends RecyclerView.Adapter<FoodSearchAdapter.Fo
         @Override
         public void onClick(View v) {
             int clickedPosition = getAdapterPosition();
-            mOnClickListerner.onItemClick(clickedPosition);
+            Food food = mFoodList.get(clickedPosition);
+            int foodId = food.getFoodId();
+            mOnClickListerner.onItemClick(clickedPosition, foodId);
         }
+    }
+
+    /**
+     * When data changes, this method updates the list of taskEntries
+     * and notifies the adapter to use the new values on it
+     */
+    public void setFoodList(List<Food> foodList) {
+        mFoodList = foodList;
+        notifyDataSetChanged();
     }
 
     /**

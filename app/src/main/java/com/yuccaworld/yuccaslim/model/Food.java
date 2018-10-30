@@ -1,28 +1,47 @@
 package com.yuccaworld.yuccaslim.model;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
+
+@Entity(tableName = "Food")
 public class Food {
-    private int foodID;
-    private String foodDesc;
+    @PrimaryKey(autoGenerate = true)
+    private int id;
+    private int foodId;
+    private String foodName;
 
-    public Food(int foodID, String foodDesc) {
-        this.foodID = foodID;
-        this.foodDesc = foodDesc;
+    public Food(int id, int foodId, String foodName) {
+        this.id = id;
+        this.foodId = foodId;
+        this.foodName = foodName;
     }
 
-    public int getFoodID() {
-        return foodID;
-    }
-    public void setFoodID(int foodID) {
-        this.foodID = foodID;
+    @Ignore
+    public Food() {
     }
 
-    public String getFoodDesc() {
-        return foodDesc;
+    public int getId() {
+        return id;
     }
 
-    public void setFoodDesc(String foodDesc) {
-        this.foodDesc = foodDesc;
+    public void setId(int id) {
+        this.id = id;
     }
 
+    public int getFoodId() {
+        return foodId;
+    }
 
+    public void setFoodId(int foodId) {
+        this.foodId = foodId;
+    }
+
+    public String getFoodName() {
+        return foodName;
+    }
+
+    public void setFoodName(String foodName) {
+        this.foodName = foodName;
+    }
 }

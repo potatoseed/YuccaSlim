@@ -34,7 +34,6 @@ public class SlimDBHelper extends SQLiteAssetHelper {
         setForcedUpgrade();
     }
 
-
     /*  Comment out as change to user SQLiteAssetHelper
     @Override
     public void onCreate(SQLiteDatabase db) {

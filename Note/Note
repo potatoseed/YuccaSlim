@@ -82,3 +82,7 @@ Generate UUID
 
 android RecylerView in ConstraintLayout doesn't scroll
 https://stackoverflow.com/questions/45397199/android-recylerview-in-constraintlayout-doesnt-scroll
+
+// conent proivder
+cursor = getContext().getContentResolver().query(SlimContract.SlimDB.CONTENT_FOOD_URI, null, null, null, SlimContract.SlimDB.COLUMN_FOOD_NAME);
+cursor = getContext().getContentResolver().query(SlimContract.SlimDB.CONTENT_FOOD_URI, null, "food_name like '%" +mSearchInput+"%'", null, SlimContract.SlimDB.COLUMN_FOOD_NAME);

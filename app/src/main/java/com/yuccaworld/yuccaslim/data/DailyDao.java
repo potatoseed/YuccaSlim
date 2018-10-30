@@ -13,7 +13,6 @@ import java.util.List;
 
 @Dao
 public interface DailyDao {
-
     @Query("SELECT * FROM Daily ORDER BY date")
     LiveData<List<Daily>> loadAllDaily();
 

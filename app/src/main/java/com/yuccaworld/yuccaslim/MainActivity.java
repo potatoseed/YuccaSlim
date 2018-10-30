@@ -84,14 +84,14 @@ public class MainActivity extends AppActivity {
                     // Check if the data from cloud existing in local DB, if not, insert into local DB.
                     Uri uri = SlimContract.SlimDB.CONTENT_ACTIVITY_URI;
                     uri = uri.buildUpon().appendPath(activityInfo.getActivityID()).build();
-                    Cursor cursor = getContentResolver().query(uri,null,null,null,null);
-                    if(cursor.getCount() == 0) {
-                        ContentValues contentValues;
-                        contentValues = SlimUtils.ConvertActivityContentValue(activityInfo);
-                        Uri uri1 = getContentResolver().insert(SlimContract.SlimDB.CONTENT_ACTIVITY_URI, contentValues);
-//                        Toast.makeText(MainActivity.this, "insert in SQLite DB, uri1=" + uri1.toString(),
-//                                Toast.LENGTH_SHORT).show();
-                    }
+//                    Cursor cursor = getContentResolver().query(uri,null,null,null,null);
+//                    if(cursor.getCount() == 0) {
+//                        ContentValues contentValues;
+//                        contentValues = SlimUtils.ConvertActivityContentValue(activityInfo);
+//                        Uri uri1 = getContentResolver().insert(SlimContract.SlimDB.CONTENT_ACTIVITY_URI, contentValues);
+////                        Toast.makeText(MainActivity.this, "insert in SQLite DB, uri1=" + uri1.toString(),
+////                                Toast.LENGTH_SHORT).show();
+//                    }
                 }
             }
 
