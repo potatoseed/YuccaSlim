@@ -22,7 +22,6 @@ android {
         }
     }
     dataBinding.enabled = true;
-//    android.databinding.enableV2=false
 }
 
 dependencies {

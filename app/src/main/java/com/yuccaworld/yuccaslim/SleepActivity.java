@@ -116,6 +116,7 @@ public class SleepActivity extends AppActivity {
                             Activity activity = new Activity(uid,SlimUtils.gUid,SlimUtils.gUserEmail,3,getResources().getString(R.string.activity_type_3),activityTime,0,"",0,0,valueText,0,"",0,0,currentDate,new Date());
                             long l = mDb.activityDao().insertActivity(activity);
                             if (l > 0) {
+                                activity.setId((int)l);
                                 mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(uid).setValue(activity);
                             }
                         }

@@ -241,6 +241,7 @@ public class FoodSearchActivity extends AppActivity implements FoodSearchAdapter
                         final Activity activity = new Activity(uid,SlimUtils.gUid,SlimUtils.gUserEmail,2, getResources().getString(R.string.activity_type_2), activityTime,foodID,foodName,0,foodQty,"",0,"",0,0,currentDate,new Date());
                         long l = mDb.activityDao().insertActivity(activity);
                         if (l > 0) {
+                            activity.setId((int)l);
                             mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(uid).setValue(activity);
                         }
                     }

@@ -1,8 +1,9 @@
 package com.yuccaworld.yuccaslim;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -38,10 +39,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.jaygoo.widget.RangeSeekBar;
 import com.yuccaworld.yuccaslim.data.AppDatabase;
 import com.yuccaworld.yuccaslim.data.SlimContract;
+import com.yuccaworld.yuccaslim.data.SlimRepository;
 import com.yuccaworld.yuccaslim.model.Activity;
-import com.yuccaworld.yuccaslim.model.ActivityInfo;
 import com.yuccaworld.yuccaslim.model.Daily;
-import com.yuccaworld.yuccaslim.model.DailyOld;
+import com.yuccaworld.yuccaslim.model.DailyFB;
 import com.yuccaworld.yuccaslim.utilities.AppExecutors;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
@@ -49,18 +50,22 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-public class TodayActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, TodayAdapter.TodayAdapterOnClickHandler {
+public class TodayActivity extends AppCompatActivity implements TodayAdapter.TodayAdapterOnClickHandler {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int TODAY_ACTIVITY_LOADER_ID = 8;
     public static final String EXTRA_ACTIVITY_ID = "extraActivityId";
-    private static int mHoursToDisplay = 36;
+    private static int mHoursToDisplay = 30;
     private TodayAdapter mTodayAdapter;
     private RecyclerView mRecyclerView;
     private static Cursor mActivityData = null;
     private DatabaseReference mFirebaseDB;
     private RangeSeekBar mSeekbarToday;
     private int mSlimScore = 0;
+    private LiveData<List<Activity>> mActivityList;
+    private LiveData<List<Activity>> mActivityListWeekHistory;
+    private LiveData<List<Activity>> mActivityListMonthHistory;
     private AppDatabase mDb;
+    private TodayViewModel mViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +83,6 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
         //Seekbar setup
         mSeekbarToday.setIndicatorTextDecimalFormat("0");
         setSeekBarValue(mSlimScore);
-
         // Disable the user operation
         mSeekbarToday.setOnTouchListener(new View.OnTouchListener(){
             @Override
@@ -143,27 +147,6 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
 //                for (DataSnapshot ds : dataSnapshot.getChildren()) {
 //                    Map<String, String> activityData = (Map)ds.getValue();
 //                }
-//                ActivityInfo activityInfo = dataSnapshot.getValue(ActivityInfo.class);
-//                // Update the Sqlite and adapter
-//                String activityID = activityInfo.getActivityID();
-//                String hintText = activityInfo.getHint();
-//                int hintID = activityInfo.getHintID();
-//                int ind1 = activityInfo.getInd1();
-//                int updatedRow = 0;
-//
-//                if (activityID != null) {
-//                    Uri uri = SlimContract.SlimDB.CONTENT_ACTIVITY_URI;
-//                    uri = uri.buildUpon().appendPath(activityID).build();
-//                    ContentValues contentValues = new ContentValues();
-//                    contentValues.put(SlimContract.SlimDB.COLUMN_IND1, ind1);
-//                    contentValues.put(SlimContract.SlimDB.COLUMN_HINT_ID, hintID);
-//                    contentValues.put(SlimContract.SlimDB.COLUMN_HINT_TEXT, hintText);
-//                    updatedRow = getContentResolver().update(uri, contentValues, null, null);
-//
-//                    // Force load to refresh and see the hint
-//                    getSupportLoaderManager().restartLoader(TODAY_ACTIVITY_LOADER_ID, null, TodayActivity.this);
-//                    getSupportLoaderManager().getLoader(TODAY_ACTIVITY_LOADER_ID).forceLoad();
-//                }
 
                 final Activity activity = dataSnapshot.getValue(Activity.class);
                 // Update the Sqlite and adapter
@@ -181,16 +164,7 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
                             mDb.activityDao().updateActivity(activity);
                         }
                     });
-
-                    // Force load to refresh and see the hint
-                    getSupportLoaderManager().restartLoader(TODAY_ACTIVITY_LOADER_ID, null, TodayActivity.this);
-                    getSupportLoaderManager().getLoader(TODAY_ACTIVITY_LOADER_ID).forceLoad();
                 }
-
-
-//                Log.v(TAG, "DataInSnap:" + dataSnapshot.getValue());
-//                Log.v(TAG, "DataInMap:" + activityInfo);
-//                Log.v(TAG, "DataInFields : HindID=" + hintID + " ActivityID=" + activityID + " ind1=" + ind1 + " UpdateRow=" + updatedRow);
             }
 
             @Override
@@ -224,16 +198,8 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
                 }
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 String currentDate = sdf.format(new Date());
-                DailyOld dailyOld = dataSnapshot.getValue(DailyOld.class);
-                mSlimScore = dailyOld.getSlimScore();
-//                currentDate = dataSnapshot.getKey();
-//                ContentValues contentValues = new ContentValues();
-//                contentValues.put(SlimContract.SlimDB.COLUMN_DATE, currentDate);
-//                contentValues.put(SlimContract.SlimDB.COLUMN_SLIM_SCORE, mSlimScore);
-//                contentValues.put(SlimContract.SlimDB.COLUMN_USER_ID, SlimUtils.gUid);
-//                Uri uri = SlimContract.SlimDB.CONTENT_ACTIVITY_URI;
-//                uri = uri.buildUpon().appendPath(activityID).build();
-
+                DailyFB dailyFB = dataSnapshot.getValue(DailyFB.class);
+                mSlimScore = dailyFB.getSlimScore();
                 final Daily daily = new Daily(currentDate,SlimUtils.gUid,mSlimScore,100,150,new Date());
                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                     @Override
@@ -259,27 +225,45 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
 
             }
         };
+        mFirebaseDB.child("DailyFB").child(SlimUtils.gUid).addChildEventListener(childEventListenerDaily);
 
-        mFirebaseDB.child("DailyOld").child(SlimUtils.gUid).addChildEventListener(childEventListenerDaily);
-
-        /*
-        Ensure a loader is initialized and active. If the loader doesn't already exist, one is
-        created, otherwise the last created loader is re-used.
-        */
-//        getSupportLoaderManager().initLoader(TODAY_ACTIVITY_LOADER_ID, null, this);
-//        getSupportLoaderManager().getLoader(TODAY_ACTIVITY_LOADER_ID).forceLoad();
         setupViewModel();
     }
 
     private void setupViewModel() {
-        TodayViewModel viewModel = ViewModelProviders.of(this).get(TodayViewModel.class);
-        viewModel.getActivityList().observe(this, new Observer<List<Activity>>() {
+        mViewModel = ViewModelProviders.of(this).get(TodayViewModel.class);
+        mActivityList = mViewModel.getActivityList();
+        mActivityList.observe(this, new Observer<List<Activity>>() {
             @Override
             public void onChanged(@Nullable List<Activity> activityList) {
                 Log.d(TAG, "Updating list of tasks from LiveData in ViewModel From TodayActivity oncreate");
                 mTodayAdapter.setActivityList(activityList);
             }
         });
+    }
+
+    private void showActivityWeekHistory(int hoursFromNow){
+        if (mActivityListWeekHistory == null) {
+            mActivityListWeekHistory = mViewModel.getActivityListHistory(hoursFromNow);
+            mActivityListWeekHistory.observe(this, new Observer<List<Activity>>() {
+                @Override
+                public void onChanged(@Nullable List<Activity> activityList) {
+                    mTodayAdapter.setActivityList(activityList);
+                }
+            });
+        } else {mTodayAdapter.setActivityList(mActivityListWeekHistory.getValue());}
+    }
+
+    private void showActivityMonthHistory(int hoursFromNow){
+        if (mActivityListMonthHistory == null) {
+            mActivityListMonthHistory = mViewModel.getActivityListHistory(hoursFromNow);
+            mActivityListMonthHistory.observe(this, new Observer<List<Activity>>() {
+                @Override
+                public void onChanged(@Nullable List<Activity> activityList) {
+                    mTodayAdapter.setActivityList(activityList);
+                }
+            });
+        } else {mTodayAdapter.setActivityList(mActivityListMonthHistory.getValue());}
     }
 
     private void setSeekBarValue(int i) {
@@ -326,19 +310,16 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
                 startActivity(addSleepIntent);
                 break;
             case R.id.today :
-                mHoursToDisplay = 36;
-                getSupportLoaderManager().restartLoader(TODAY_ACTIVITY_LOADER_ID, null, TodayActivity.this);
-                getSupportLoaderManager().getLoader(TODAY_ACTIVITY_LOADER_ID).forceLoad();
+                mHoursToDisplay = 30;
+                mTodayAdapter.setActivityList(mActivityList.getValue());
                 break;
             case R.id.last_week :
                 mHoursToDisplay = 170;
-                getSupportLoaderManager().restartLoader(TODAY_ACTIVITY_LOADER_ID, null, TodayActivity.this);
-                getSupportLoaderManager().getLoader(TODAY_ACTIVITY_LOADER_ID).forceLoad();
+                showActivityWeekHistory(mHoursToDisplay);
                 break;
             case R.id.last_month :
                 mHoursToDisplay = 5208;
-                getSupportLoaderManager().restartLoader(TODAY_ACTIVITY_LOADER_ID, null, TodayActivity.this);
-                getSupportLoaderManager().getLoader(TODAY_ACTIVITY_LOADER_ID).forceLoad();
+                showActivityMonthHistory(mHoursToDisplay);
                 break;
             case R.id.logout:
                 AuthUI.getInstance().signOut(this)
@@ -363,77 +344,12 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
         return true;
     }
 
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, final Bundle args) {
-        switch (id) {
-            case TODAY_ACTIVITY_LOADER_ID:
-                return new TodayActivityAsyncTaskLoader(this);
-            default:
-                throw new RuntimeException("Loader Not Implemented: " + id);
-        }
-    }
-    public static class TodayActivityAsyncTaskLoader extends AsyncTaskLoader<Cursor>{
-        // Initialize a Cursor, this will hold all the Activity data
-//        Cursor mActivityData = null;
 
-        public TodayActivityAsyncTaskLoader(Context context) {
-            super(context);
-        }
-
-        @Override
-        protected void onStartLoading() {
-            super.onStartLoading();
-            if (mActivityData != null) {
-                deliverResult(mActivityData);
-            } else {
-                forceLoad();
-            }
-        }
-
-        @Override
-        public Cursor loadInBackground() {
-//            try {
-//                Cursor cursor =
-//                                getContext().getContentResolver().query(SlimContract.SlimDB.CONTENT_ACTIVITY_URI,
-//                                        null,
-//                                        "hours_from_now <= " + Integer.toString(mHoursToDisplay),
-//                                        null,
-//                                        SlimContract.SlimDB.COLUMN_ACTIVITY_TIME);
-//                return cursor;
-//            } catch (Exception e) {
-//                Log.e(TAG, "Failed to asynchronously load data.");
-//                e.printStackTrace();
-//                return null;
-//            }
-            return null;
-        }
-
-        @Override
-        public void deliverResult(Cursor data) {
-            mActivityData = data;
-            super.deliverResult(data);
-        }
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        // Update the data that the adapter uses to create ViewHolders
-        mTodayAdapter.updateCursor(data);
-    }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // re-queries for all activities
-
         setSeekBarValue(mSlimScore);
-        getSupportLoaderManager().restartLoader(TODAY_ACTIVITY_LOADER_ID, null, this);
-        getSupportLoaderManager().getLoader(TODAY_ACTIVITY_LOADER_ID).forceLoad();
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-
     }
 
     @Override
@@ -480,9 +396,4 @@ public class TodayActivity extends AppCompatActivity implements LoaderManager.Lo
 
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-//        getSupportLoaderManager().getLoader(TODAY_ACTIVITY_LOADER_ID).forceLoad();
-    }
 }

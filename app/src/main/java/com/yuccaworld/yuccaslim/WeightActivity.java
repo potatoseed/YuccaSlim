@@ -119,6 +119,7 @@ public class WeightActivity extends AppActivity  {
                                 Activity activity = new Activity(uid,SlimUtils.gUid,SlimUtils.gUserEmail,1,getResources().getString(R.string.activity_type_1),activityTime,0,"",0,weight,"",0,"",0,0,currentDate,new Date());
                                 long l = mDb.activityDao().insertActivity(activity);
                                 if (l > 0) {
+                                    activity.setId((int)l);
                                     mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(uid).setValue(activity);
                                 }
                             }

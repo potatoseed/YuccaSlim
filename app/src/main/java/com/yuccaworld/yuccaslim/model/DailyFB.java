@@ -1,13 +1,13 @@
 package com.yuccaworld.yuccaslim.model;
 
-public class DailyOld {
+public class DailyFB {
     private int slimScore;
     private int targetFat;
     private int targetHeavy;
 
-    public DailyOld() {
+    public DailyFB() {
     }
-    public DailyOld(int slimScore, int targetFat, int targetHeavy) {
+    public DailyFB(int slimScore, int targetFat, int targetHeavy) {
         this.slimScore = slimScore;
         this.targetFat = targetFat;
         this.targetHeavy = targetHeavy;
