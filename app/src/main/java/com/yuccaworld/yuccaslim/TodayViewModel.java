@@ -9,6 +9,7 @@ import com.yuccaworld.yuccaslim.data.AppDatabase;
 import com.yuccaworld.yuccaslim.data.SlimRepository;
 import com.yuccaworld.yuccaslim.model.Activity;
 import com.yuccaworld.yuccaslim.model.Daily;
+import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,6 +30,7 @@ public class TodayViewModel extends AndroidViewModel {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String currentDate = sdf.format(new Date());
         mDaily = mDatabase.dailyDao().loadDailyByDate(currentDate);
+        daily = new Daily(currentDate,SlimUtils.gUid,0,150,200,new Date());
     }
 
     public LiveData<List<com.yuccaworld.yuccaslim.model.Activity>> getTodayActivityList() {
