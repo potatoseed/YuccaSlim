@@ -242,8 +242,10 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
         mTodayViewModel.getTodayDaily().observe(this, new Observer<Daily>() {
             @Override
             public void onChanged(@Nullable Daily daily) {
-                mTodayViewModel.daily = daily;
-                setSeekBarValue();
+                if (daily != null) {
+                    mTodayViewModel.daily = daily;
+                    setSeekBarValue();
+                }
             }
         });
     }
