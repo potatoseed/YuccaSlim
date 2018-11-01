@@ -17,13 +17,16 @@ public interface DailyDao {
     LiveData<List<Daily>> loadAllDaily();
 
     @Insert
-    void insertDaily(Daily daily);
+    long insertDaily(Daily daily);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateDaily(Daily daily);
 
     @Delete
     void deleteDaily(Daily daily);
+
+    @Query("DELETE  FROM Daily WHERE date = :date")
+    int deleteDailyByDate(String date);
 
     @Query("SELECT * FROM Daily WHERE date = :date")
     LiveData<Daily> loadDailyByDate(String date);

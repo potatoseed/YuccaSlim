@@ -161,8 +161,6 @@ public class FoodSearchActivity extends AppActivity implements FoodSearchAdapter
 
     private void startSearch(String s) {
         final String searchInput = s;
-        getSupportLoaderManager().getLoader(FOOD_SEARCH_ACTIVITY_LOADER_ID).forceLoad();
-        //getSupportLoaderManager().restartLoader(FOOD_SEARCH_ACTIVITY_LOADER_ID, null,this);
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {

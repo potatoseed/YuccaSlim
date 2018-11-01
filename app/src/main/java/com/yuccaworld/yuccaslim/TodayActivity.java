@@ -1,10 +1,9 @@
 package com.yuccaworld.yuccaslim;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -13,9 +12,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -39,7 +35,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.jaygoo.widget.RangeSeekBar;
 import com.yuccaworld.yuccaslim.data.AppDatabase;
 import com.yuccaworld.yuccaslim.data.SlimContract;
-import com.yuccaworld.yuccaslim.data.SlimRepository;
 import com.yuccaworld.yuccaslim.model.Activity;
 import com.yuccaworld.yuccaslim.model.Daily;
 import com.yuccaworld.yuccaslim.model.DailyFB;
@@ -60,12 +55,11 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
     private static Cursor mActivityData = null;
     private DatabaseReference mFirebaseDB;
     private RangeSeekBar mSeekbarToday;
-    private int mSlimScore = 0;
     private LiveData<List<Activity>> mActivityList;
     private LiveData<List<Activity>> mActivityListWeekHistory;
     private LiveData<List<Activity>> mActivityListMonthHistory;
     private AppDatabase mDb;
-    private TodayViewModel mViewModel;
+    private TodayViewModel mTodayViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +76,6 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
 
         //Seekbar setup
         mSeekbarToday.setIndicatorTextDecimalFormat("0");
-        setSeekBarValue(mSlimScore);
         // Disable the user operation
         mSeekbarToday.setOnTouchListener(new View.OnTouchListener(){
             @Override
@@ -197,17 +190,20 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
                     return ;
                 }
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                String currentDate = sdf.format(new Date());
-                DailyFB dailyFB = dataSnapshot.getValue(DailyFB.class);
-                mSlimScore = dailyFB.getSlimScore();
-                final Daily daily = new Daily(currentDate,SlimUtils.gUid,mSlimScore,100,150,new Date());
+                final String currentDate = sdf.format(new Date());
+                DailyFB daily = dataSnapshot.getValue(DailyFB.class);
+                final Daily dailyData = new Daily(currentDate,SlimUtils.gUid,daily.getSlimScore(),daily.getTargetFat(),daily.getTargetHeavy(),new Date());
                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
-                        mDb.dailyDao().insertDaily(daily);
+                        int i;
+                        i = mDb.dailyDao().deleteDailyByDate(currentDate);
+                        Log.v(TAG, "Daily Data deleted:" + i);
+//                        mDb.dailyDao().updateDaily(dailyData);
+                        long l = mDb.dailyDao().insertDaily(dailyData);
+                        Log.v(TAG, "Daily Data:" + dailyData.getSlimScore() + " inserted: " + l);
                     }
                 });
-                setSeekBarValue(mSlimScore);
             }
 
             @Override
@@ -225,14 +221,15 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
 
             }
         };
-        mFirebaseDB.child("DailyFB").child(SlimUtils.gUid).addChildEventListener(childEventListenerDaily);
+        mFirebaseDB.child("Daily").child(SlimUtils.gUid).addChildEventListener(childEventListenerDaily);
 
         setupViewModel();
     }
 
     private void setupViewModel() {
-        mViewModel = ViewModelProviders.of(this).get(TodayViewModel.class);
-        mActivityList = mViewModel.getActivityList();
+        // Setup Today Activity View model
+        mTodayViewModel = ViewModelProviders.of(this).get(TodayViewModel.class);
+        mActivityList = mTodayViewModel.getTodayActivityList();
         mActivityList.observe(this, new Observer<List<Activity>>() {
             @Override
             public void onChanged(@Nullable List<Activity> activityList) {
@@ -240,11 +237,20 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
                 mTodayAdapter.setActivityList(activityList);
             }
         });
+
+        // Setup Daily View model
+        mTodayViewModel.getTodayDaily().observe(this, new Observer<Daily>() {
+            @Override
+            public void onChanged(@Nullable Daily daily) {
+                mTodayViewModel.daily = daily;
+                setSeekBarValue();
+            }
+        });
     }
 
     private void showActivityWeekHistory(int hoursFromNow){
         if (mActivityListWeekHistory == null) {
-            mActivityListWeekHistory = mViewModel.getActivityListHistory(hoursFromNow);
+            mActivityListWeekHistory = mTodayViewModel.getActivityListHistory(hoursFromNow);
             mActivityListWeekHistory.observe(this, new Observer<List<Activity>>() {
                 @Override
                 public void onChanged(@Nullable List<Activity> activityList) {
@@ -256,7 +262,7 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
 
     private void showActivityMonthHistory(int hoursFromNow){
         if (mActivityListMonthHistory == null) {
-            mActivityListMonthHistory = mViewModel.getActivityListHistory(hoursFromNow);
+            mActivityListMonthHistory = mTodayViewModel.getActivityListHistory(hoursFromNow);
             mActivityListMonthHistory.observe(this, new Observer<List<Activity>>() {
                 @Override
                 public void onChanged(@Nullable List<Activity> activityList) {
@@ -266,20 +272,25 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
         } else {mTodayAdapter.setActivityList(mActivityListMonthHistory.getValue());}
     }
 
-    private void setSeekBarValue(int i) {
-        mSeekbarToday.setValue(i);
-        mSeekbarToday.invalidate();
-        if (i <= 100) {
+//    private void setSeekBarValue(int slimScore, int targetFat, int targetHeavy) {
+    private void setSeekBarValue() {
+        int slimScore, targetFat, targetHeavy;
+        slimScore = mTodayViewModel.daily.getSlimScore();
+        targetFat = mTodayViewModel.daily.getTargetFat();
+        targetHeavy = mTodayViewModel.daily.getTargetHeavy();
+        mSeekbarToday.setValue(slimScore);
+        if (slimScore <= targetFat) {
             mSeekbarToday.getLeftSeekBar().setIndicatorBackgroundColor(getResources().getColor(R.color.green));
             mSeekbarToday.setProgressColor(getResources().getColor(R.color.green));
         }
-        else if (i <= 150) {
+        else if (slimScore <= targetHeavy) {
             mSeekbarToday.getLeftSeekBar().setIndicatorBackgroundColor(getResources().getColor(R.color.yellow));
             mSeekbarToday.setProgressColor(getResources().getColor(R.color.yellow));
         } else {
             mSeekbarToday.getLeftSeekBar().setIndicatorBackgroundColor(getResources().getColor(R.color.colorAccent));
             mSeekbarToday.setProgressColor(getResources().getColor(R.color.colorAccent));
         }
+        //mSeekbarToday.invalidate();
     }
 
     @Override
@@ -349,7 +360,7 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
     @Override
     protected void onResume() {
         super.onResume();
-        setSeekBarValue(mSlimScore);
+        setSeekBarValue();
     }
 
     @Override
