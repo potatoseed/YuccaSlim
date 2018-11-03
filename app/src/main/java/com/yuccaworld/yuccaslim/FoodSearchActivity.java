@@ -13,14 +13,17 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.mancj.materialsearchbar.MaterialSearchBar;
+import com.mancj.materialsearchbar.adapter.SuggestionsAdapter;
 import com.mobsandgeeks.saripaar.annotation.DecimalMax;
 import com.mobsandgeeks.saripaar.annotation.DecimalMin;
 import com.mobsandgeeks.saripaar.annotation.Or;
@@ -57,6 +60,8 @@ public class FoodSearchActivity extends AppActivity implements FoodSearchAdapter
     private String mActivityID ="";
     private AppDatabase mDb;
     private int mRowID=-1;
+    private List<String> mSuggest;
+//    private MaterialSearchBar.OnSearchActionListener mOnSearchActionListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,57 +100,103 @@ public class FoodSearchActivity extends AppActivity implements FoodSearchAdapter
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                List<String> suggest = new ArrayList<>();
+                mSuggest = new ArrayList<>();
                 for (String search: mSuggestList){
                     if(search.toLowerCase().contains(mMaterialSearchBar.getText().toLowerCase()))
-                        suggest.add(search);
+                        mSuggest.add(search);
                 }
-                mMaterialSearchBar.setLastSuggestions(suggest);
+                mMaterialSearchBar.setLastSuggestions(mSuggest);
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-
             }
         });
+
+//        mOnSearchActionListener = new MaterialSearchBar.OnSearchActionListener() {
+//            @Override
+//            public void onSearchStateChanged(boolean enabled) {
+//                if (!enabled){
+//                    mRecyclerView.setAdapter(mAdapter);
+//
+//                }
+//                Toast.makeText(FoodSearchActivity.this, "onSearchStateChanged " + enabled, Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onSearchConfirmed(CharSequence text) {
+//  //              startSearch(text.toString());
+//                Toast.makeText(FoodSearchActivity.this, "onSearchConfirmed " + text, Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onButtonClicked(int buttonCode) {
+//                Toast.makeText(FoodSearchActivity.this, "onSearchConfirmed " + buttonCode, Toast.LENGTH_SHORT).show();
+//            }
+//        };
+//        mMaterialSearchBar.setOnSearchActionListener(mOnSearchActionListener);
         mMaterialSearchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
             @Override
             public void onSearchStateChanged(boolean enabled) {
                 if (!enabled){
                     mRecyclerView.setAdapter(mAdapter);
+                    //Toast.makeText(FoodSearchActivity.this, "onSearchStateChanged " + enabled, Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onSearchConfirmed(CharSequence text) {
                 startSearch(text.toString());
-
+//                Toast.makeText(FoodSearchActivity.this, "onSearchConfirmed " + text, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onButtonClicked(int buttonCode) {
+            }
+        });
+        mMaterialSearchBar.setSuggstionsClickListener(new SuggestionsAdapter.OnItemViewClickListener() {
+            @Override
+            public void OnItemClickListener(int position, View v) {
+                String s = mSuggest.get(position);
+                //Toast.makeText(FoodSearchActivity.this, "OnItemClickListener " + position + " s=" + s, Toast.LENGTH_SHORT).show();
+                startSearch(s);
+                mMaterialSearchBar.hideSuggestionsList();
+            }
+
+            @Override
+            public void OnItemDeleteListener(int position, View v) {
 
             }
         });
+
         setupViewModel();
     }
 
     private void setupViewModel() {
         FoodViewModel viewModel = ViewModelProviders.of(this).get(FoodViewModel.class);
-        viewModel.getFoodList().observe(this, new Observer<List<Food>>() {
+        viewModel.getFoodList().observe(this, new Observer<List<FoodFavor>>() {
             @Override
-            public void onChanged(@Nullable List<Food> foods) {
-                // Get foodFavor data and combine with Food data
-                List<Food> foodfromFoodFavor = mDb.FoodFavorDao().loadFoodFavorAsFood();
-                //foods.addAll(foodfromFoodFavor);
-                //mAdapter.setFoodList(foods);
-                foodfromFoodFavor.addAll(foods);
-                mAdapter.setFoodList(foodfromFoodFavor);
+            public void onChanged(@Nullable List<FoodFavor> foods) {
                 // init search bar suggestion list
                 for (int i=0; i<foods.size(); i++) {
                     mSuggestList.add(foods.get(i).getFoodName());
                 }
                 mMaterialSearchBar.setLastSuggestions(mSuggestList);
+                // Get foodFavor data and combine with Food data
+                List<FoodFavor> foodFavors = mDb.FoodFavorDao().loadAllFoodFavor();
+
+                foodFavors.addAll(foods);
+                mAdapter.setFoodList(foodFavors);
+            }
+        });
+        // Observe FoodFavor changes
+        viewModel.getFoodFavorList().observe(this, new Observer<List<FoodFavor>>() {
+            @Override
+            public void onChanged(@Nullable List<FoodFavor> foodFavors) {
+                // Get foodFavor data and combine with Food data
+                List<FoodFavor> foods = mDb.FoodDao().loadAllFoodToFoodFavor();
+                foodFavors.addAll(foods);
+                mAdapter.setFoodList(foodFavors);
             }
         });
     }
@@ -162,7 +213,7 @@ public class FoodSearchActivity extends AppActivity implements FoodSearchAdapter
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                final List<Food> foods = mDb.FoodDao().loadFoodLikeName(searchInput);
+                final List<FoodFavor> foods = mDb.FoodDao().loadFoodLikeName(searchInput);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -247,7 +298,7 @@ public class FoodSearchActivity extends AppActivity implements FoodSearchAdapter
                     // insert FoodFavor
                     Date date = Calendar.getInstance().getTime();
                     FoodFavor foodFavor = new FoodFavor(foodID,foodName,foodQty,1,date);
-                    long l = mDb.FoodFavorDao().addFoodFavorCountById(foodID);
+                    long l = mDb.FoodFavorDao().addFoodFavorCountById(foodID, foodQty);
                     Log.v(TAG, "Food Favor Update:" + l);
                     if (l == 0) {
                         l = mDb.FoodFavorDao().insertFoodFavor(foodFavor);

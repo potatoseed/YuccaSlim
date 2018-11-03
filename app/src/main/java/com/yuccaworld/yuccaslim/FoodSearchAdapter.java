@@ -14,16 +14,16 @@ import android.widget.TextView;
 
 import com.yuccaworld.yuccaslim.data.SlimContract;
 import com.yuccaworld.yuccaslim.model.Food;
+import com.yuccaworld.yuccaslim.model.FoodFavor;
 
 import java.util.List;
 
 
 public class FoodSearchAdapter extends RecyclerView.Adapter<FoodSearchAdapter.FoodSearchViewHolder> {
     private final Context mContext;
-    protected Cursor mCursor;
     private int mNumberItems = 20;
     final private FoodItemClickListerner mOnClickListerner;
-    private List<Food> mFoodList;
+    private List<FoodFavor> mFoodList;
 
 
     public FoodSearchAdapter(Context mContext, FoodItemClickListerner listerner) {
@@ -44,11 +44,12 @@ public class FoodSearchAdapter extends RecyclerView.Adapter<FoodSearchAdapter.Fo
 
     @Override
     public void onBindViewHolder(@NonNull FoodSearchViewHolder holder, int position) {
-        Food food = mFoodList.get(position);
-        holder.foodNameView.setText(food.getFoodName());
-        int foodId = food.getFoodId();
+        FoodFavor foodFavor = mFoodList.get(position);
+        holder.foodNameView.setText(foodFavor.getFoodName());
+        int foodId = foodFavor.getFoodId();
         holder.foodIDview.setText(Integer.toString(foodId));
-        holder.recordIDview.setText(Integer.toString(food.getId()));
+        holder.recordIDview.setText(Integer.toString(foodFavor.getId()));
+        holder.foodQtyEditText.setText(String.valueOf(foodFavor.getFoodQty()));
     }
 
     @Override
@@ -80,9 +81,9 @@ public class FoodSearchAdapter extends RecyclerView.Adapter<FoodSearchAdapter.Fo
         @Override
         public void onClick(View v) {
             int clickedPosition = getAdapterPosition();
-            Food food = mFoodList.get(clickedPosition);
-            int foodId = food.getFoodId();
-            int recordID = food.getId();
+            FoodFavor foodFavor = mFoodList.get(clickedPosition);
+            int foodId = foodFavor.getFoodId();
+            int recordID = foodFavor.getId();
             mOnClickListerner.onItemClick(clickedPosition, foodId, recordID);
         }
     }
@@ -91,7 +92,7 @@ public class FoodSearchAdapter extends RecyclerView.Adapter<FoodSearchAdapter.Fo
      * When data changes, this method updates the list of taskEntries
      * and notifies the adapter to use the new values on it
      */
-    public void setFoodList(List<Food> foodList) {
+    public void setFoodList(List<FoodFavor> foodList) {
         mFoodList = foodList;
         notifyDataSetChanged();
     }
