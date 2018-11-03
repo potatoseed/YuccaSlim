@@ -31,7 +31,7 @@ public class FoodSearchAdapter extends RecyclerView.Adapter<FoodSearchAdapter.Fo
         mOnClickListerner = listerner;
     }
     public interface FoodItemClickListerner {
-        void onItemClick(int clickedPosition, int foodId);
+        void onItemClick(int clickedPosition, int foodId, int recordID);
     }
 
     @NonNull
@@ -44,19 +44,11 @@ public class FoodSearchAdapter extends RecyclerView.Adapter<FoodSearchAdapter.Fo
 
     @Override
     public void onBindViewHolder(@NonNull FoodSearchViewHolder holder, int position) {
-//        mCursor.moveToPosition(position);
         Food food = mFoodList.get(position);
         holder.foodNameView.setText(food.getFoodName());
         int foodId = food.getFoodId();
         holder.foodIDview.setText(Integer.toString(foodId));
-
-//        int ind3 = mCursor.getInt(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_IND3));
-//        if(ind3 <= 10)
-//            holder.foodNameView.setTextColor(mContext.getResources().getColor(R.color.green));
-//        else if (ind3 <= 20)
-//            holder.foodNameView.setTextColor(mContext.getResources().getColor(R.color.yellow));
-//        else holder.foodNameView.setTextColor(mContext.getResources().getColor(R.color.colorAccent));
-
+        holder.recordIDview.setText(Integer.toString(food.getId()));
     }
 
     @Override
@@ -70,6 +62,7 @@ public class FoodSearchAdapter extends RecyclerView.Adapter<FoodSearchAdapter.Fo
     class FoodSearchViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         final TextView foodNameView;
         final TextView foodIDview;
+        final TextView recordIDview;
         final EditText foodQtyEditText;
         final ImageView addToMealImage;
 
@@ -79,6 +72,7 @@ public class FoodSearchAdapter extends RecyclerView.Adapter<FoodSearchAdapter.Fo
             foodQtyEditText = (EditText) itemView.findViewById(R.id.editTextFoodQty);
             addToMealImage = (ImageView) itemView.findViewById(R.id.imageViewAddToMeal);
             foodIDview = itemView.findViewById(R.id.textViewFoodID);
+            recordIDview = itemView.findViewById(R.id.textViewRecordID);
 
             itemView.setOnClickListener(this);
         }
@@ -88,7 +82,8 @@ public class FoodSearchAdapter extends RecyclerView.Adapter<FoodSearchAdapter.Fo
             int clickedPosition = getAdapterPosition();
             Food food = mFoodList.get(clickedPosition);
             int foodId = food.getFoodId();
-            mOnClickListerner.onItemClick(clickedPosition, foodId);
+            int recordID = food.getId();
+            mOnClickListerner.onItemClick(clickedPosition, foodId, recordID);
         }
     }
 
@@ -105,16 +100,5 @@ public class FoodSearchAdapter extends RecyclerView.Adapter<FoodSearchAdapter.Fo
      * When data changes and a re-query occurs, this function update the old Cursor
      * with a newly updated Cursor (Cursor c) that is passed in.
      */
-    public Cursor updateCursor(Cursor c) {
-        if (mCursor == c) {
-            return null; // bc nothing has changed
-        }
-        Cursor temp = mCursor;
-        this.mCursor = c; // new cursor value assigned
 
-        if (c != null) {
-            this.notifyDataSetChanged();
-        }
-        return temp;
-    }
 }

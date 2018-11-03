@@ -165,18 +165,18 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
      * When data changes and a re-query occurs, this function update the old Cursor
      * with a newly updated Cursor (Cursor c) that is passed in.
      */
-    public Cursor updateCursor(Cursor c) {
-        if (mCursor == c) {
-            return null; // bc nothing has changed
-        }
-        Cursor temp = mCursor;
-        this.mCursor = c; // new cursor value assigned
-
-        if (c != null) {
-            this.notifyDataSetChanged();
-        }
-        return temp;
-    }
+//    public Cursor updateCursor(Cursor c) {
+//        if (mCursor == c) {
+//            return null; // bc nothing has changed
+//        }
+//        Cursor temp = mCursor;
+//        this.mCursor = c; // new cursor value assigned
+//
+//        if (c != null) {
+//            this.notifyDataSetChanged();
+//        }
+//        return temp;
+//    }
 
     public List<Activity> getmActivityList() {return mActivityList;}
     /**

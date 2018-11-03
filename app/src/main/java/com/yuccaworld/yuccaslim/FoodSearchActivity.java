@@ -2,22 +2,17 @@ package com.yuccaworld.yuccaslim;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.net.ParseException;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.Loader;
-import android.content.Context;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -30,15 +25,11 @@ import com.mobsandgeeks.saripaar.annotation.DecimalMax;
 import com.mobsandgeeks.saripaar.annotation.DecimalMin;
 import com.mobsandgeeks.saripaar.annotation.Or;
 import com.yuccaworld.yuccaslim.data.AppDatabase;
-import com.yuccaworld.yuccaslim.data.FoodViewModel;
-import com.yuccaworld.yuccaslim.data.SlimContract;
 import com.yuccaworld.yuccaslim.model.Activity;
-import com.yuccaworld.yuccaslim.model.ActivityInfo;
 import com.yuccaworld.yuccaslim.model.Food;
+import com.yuccaworld.yuccaslim.model.FoodFavor;
 import com.yuccaworld.yuccaslim.utilities.AppExecutors;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
-
-import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -65,6 +56,7 @@ public class FoodSearchActivity extends AppActivity implements FoodSearchAdapter
     private DatabaseReference mFirebaseDB;
     private String mActivityID ="";
     private AppDatabase mDb;
+    private int mRowID=-1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +71,7 @@ public class FoodSearchActivity extends AppActivity implements FoodSearchAdapter
         if (intent.hasExtra(Intent.EXTRA_TEXT)){
             mMode = intent.getStringExtra(Intent.EXTRA_TEXT);
             mActivityID = intent.getStringExtra(TodayActivity.EXTRA_ACTIVITY_ID);
+            mRowID = intent.getIntExtra(TodayActivity.EXTRA_ROW_ID, 0);
         }
 
         // Setup RecycleView
@@ -142,7 +135,12 @@ public class FoodSearchActivity extends AppActivity implements FoodSearchAdapter
         viewModel.getFoodList().observe(this, new Observer<List<Food>>() {
             @Override
             public void onChanged(@Nullable List<Food> foods) {
-                mAdapter.setFoodList(foods);
+                // Get foodFavor data and combine with Food data
+                List<Food> foodfromFoodFavor = mDb.FoodFavorDao().loadFoodFavorAsFood();
+                //foods.addAll(foodfromFoodFavor);
+                //mAdapter.setFoodList(foods);
+                foodfromFoodFavor.addAll(foods);
+                mAdapter.setFoodList(foodfromFoodFavor);
                 // init search bar suggestion list
                 for (int i=0; i<foods.size(); i++) {
                     mSuggestList.add(foods.get(i).getFoodName());
@@ -182,7 +180,7 @@ public class FoodSearchActivity extends AppActivity implements FoodSearchAdapter
     }
 
     @Override
-    public void onItemClick(int clickedPosition, int foodId) {
+    public void onItemClick(int clickedPosition, int foodId, int recordID) {
         View viewItem = mRecyclerView.getLayoutManager().findViewByPosition(clickedPosition);
         mEditTextFoodQty = viewItem.findViewById(R.id.editTextFoodQty);
         mTextViewFoodID = viewItem.findViewById(R.id.textViewFoodID);
@@ -190,7 +188,6 @@ public class FoodSearchActivity extends AppActivity implements FoodSearchAdapter
 
         validator.validate();
         if (validated) {
-
 //            UUID uuid = UUID.randomUUID();
 //            byte[] activityID = SlimUtils.toByte(uuid);
 //            contentValues.put(SlimContract.SlimDB.COLUMN_ACTIVITY_ID, activityID);
@@ -215,10 +212,13 @@ public class FoodSearchActivity extends AppActivity implements FoodSearchAdapter
                 e.printStackTrace();
                 Snackbar.make(mRecyclerView, "Invalid Number Input", Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
+
+
             final int foodID = foodId;
             final long activityTime = inpuTime.getTimeInMillis();
             final float foodQty = t;
             final String uid = UUID.randomUUID().toString();
+
             // Insert in Sqlite DB and Upload to firebase realtime DB
             if (mActivityID == "") {mActivityID = uid.toString();}
 
@@ -228,20 +228,36 @@ public class FoodSearchActivity extends AppActivity implements FoodSearchAdapter
                 public void run() {
                     if ("EDIT".equals(mMode)){
                         // Update
-                        final Activity activity = new Activity(uid,SlimUtils.gUid,SlimUtils.gUserEmail,2, getResources().getString(R.string.activity_type_2), activityTime,foodID,foodName,0,foodQty,"",0,"",0,0,currentDate,new Date());
+                        Activity activity = new Activity(mRowID,mActivityID,SlimUtils.gUid,SlimUtils.gUserEmail,2, getResources().getString(R.string.activity_type_2), activityTime,foodID,foodName,0,foodQty,"",0,"",0,0,currentDate,new Date());
                         int i = mDb.activityDao().updateActivity(activity);
+                        Log.v(TAG, "Activity to Update return:" + i + " Activity ID = " + mActivityID);
                         if (i > 0) {
                             mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(mActivityID).setValue(activity);
                         }
                     } else {
-                        // Insert
-                        String uid = UUID.randomUUID().toString();
-                        final Activity activity = new Activity(uid,SlimUtils.gUid,SlimUtils.gUserEmail,2, getResources().getString(R.string.activity_type_2), activityTime,foodID,foodName,0,foodQty,"",0,"",0,0,currentDate,new Date());
+                        // Insert Activity
+//                        String uid = UUID.randomUUID().toString();
+                        final Activity activity = new Activity(mActivityID,SlimUtils.gUid,SlimUtils.gUserEmail,2, getResources().getString(R.string.activity_type_2), activityTime,foodID,foodName,0,foodQty,"",0,"",0,0,currentDate,new Date());
                         long l = mDb.activityDao().insertActivity(activity);
                         if (l > 0) {
                             activity.setId((int)l);
-                            mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(uid).setValue(activity);
+                            mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(mActivityID).setValue(activity);
                         }
+                    }
+                    // insert FoodFavor
+                    Date date = Calendar.getInstance().getTime();
+                    FoodFavor foodFavor = new FoodFavor(foodID,foodName,foodQty,1,date);
+                    long l = mDb.FoodFavorDao().addFoodFavorCountById(foodID);
+                    Log.v(TAG, "Food Favor Update:" + l);
+                    if (l == 0) {
+                        l = mDb.FoodFavorDao().insertFoodFavor(foodFavor);
+                        Log.v(TAG, "Food Favor Insert:" + l);
+                    }
+                    if (l > 0) {
+                        foodFavor = mDb.FoodFavorDao().loadFoodFavorById(foodID);
+                        String s = String.valueOf(foodID);
+                        mFirebaseDB.child("FoodFavor").child(SlimUtils.gUid).child(s).setValue(foodFavor);
+//                        Log.v(TAG, "firebase Insert Food Favor:" + date.getTime());
                     }
                 }
             });

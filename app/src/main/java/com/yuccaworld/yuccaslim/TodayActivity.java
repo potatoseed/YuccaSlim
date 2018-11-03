@@ -2,7 +2,6 @@ package com.yuccaworld.yuccaslim;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.database.Cursor;
@@ -38,6 +37,7 @@ import com.yuccaworld.yuccaslim.data.SlimContract;
 import com.yuccaworld.yuccaslim.model.Activity;
 import com.yuccaworld.yuccaslim.model.Daily;
 import com.yuccaworld.yuccaslim.model.DailyFB;
+import com.yuccaworld.yuccaslim.model.FoodFavor;
 import com.yuccaworld.yuccaslim.utilities.AppExecutors;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
@@ -49,6 +49,7 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int TODAY_ACTIVITY_LOADER_ID = 8;
     public static final String EXTRA_ACTIVITY_ID = "extraActivityId";
+    public static final String EXTRA_ROW_ID = "ExtraRowID";
     private static int mHoursToDisplay = 30;
     private TodayAdapter mTodayAdapter;
     private RecyclerView mRecyclerView;
@@ -120,9 +121,22 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
                     public void run() {
                         int position = viewHolder.getAdapterPosition();
                         List<Activity> activityList = mTodayAdapter.getActivityList();
-                        mDb.activityDao().deleteActivity(activityList.get(position));
+                        Activity activity = activityList.get(position);
+                        mDb.activityDao().deleteActivity(activity);
                         //mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(activityList.get(position).getActivityID()).setValue(null);
                         mFirebaseDB.child("Activity").child(SlimUtils.gUid).child(activityList.get(position).getActivityID()).removeValue();
+
+                        // Update Food Favor count
+                        if (activity.getActivityTypeID() == 2) {
+                            long l = mDb.FoodFavorDao().lessFoodFavorCountById(activity.getFoodID());
+                            if (l>0) {
+                                int foodID = activity.getFoodID();
+                                FoodFavor foodFavor = mDb.FoodFavorDao().loadFoodFavorById(foodID);
+                                String s = String.valueOf(foodID);
+                                foodFavor.setUpdateTime(new Date());
+                                mFirebaseDB.child("FoodFavor").child(SlimUtils.gUid).child(s).setValue(foodFavor);
+                            }
+                        }
                     }
                 });
             }
@@ -148,9 +162,6 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
                 int hintID = activity.getHintID();
                 int ind1 = activity.getInd1();
                 if (activityID != null) {
-                    activity.setHintID(hintID);
-                    activity.setHint(hintText);
-                    activity.setInd1(ind1);
                     AppExecutors.getInstance().diskIO().execute(new Runnable() {
                         @Override
                         public void run() {
@@ -280,6 +291,7 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
         slimScore = mTodayViewModel.daily.getSlimScore();
         targetFat = mTodayViewModel.daily.getTargetFat();
         targetHeavy = mTodayViewModel.daily.getTargetHeavy();
+        if (slimScore < 0  ) {slimScore = 0; }
         mSeekbarToday.setValue(slimScore);
         if (slimScore <= targetFat) {
             mSeekbarToday.getLeftSeekBar().setIndicatorBackgroundColor(getResources().getColor(R.color.green));
@@ -388,7 +400,7 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
                 activityMode = "EDIT";
                 foodIntent.putExtra(Intent.EXTRA_TEXT, activityMode);
                 foodIntent.putExtra(TodayActivity.EXTRA_ACTIVITY_ID, activityID);
-                foodIntent.putExtra(WeightActivity.EXTRA_ROW_ID, rowID);
+                foodIntent.putExtra(TodayActivity.EXTRA_ROW_ID, rowID);
                 uriForActivityClicked = SlimContract.SlimDB.buildFoodEdit(rowID);
                 foodIntent.setData(uriForActivityClicked);
                 startActivity(foodIntent);

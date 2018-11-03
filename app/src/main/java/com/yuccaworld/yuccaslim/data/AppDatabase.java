@@ -13,9 +13,10 @@ import com.huma.room_for_asset.RoomAsset;
 import com.yuccaworld.yuccaslim.model.Activity;
 import com.yuccaworld.yuccaslim.model.Daily;
 import com.yuccaworld.yuccaslim.model.Food;
-import static com.firebase.ui.auth.AuthUI.getApplicationContext;
+import com.yuccaworld.yuccaslim.model.FoodFavor;
 
-@Database(entities = {Daily.class, Activity.class, Food.class}, version = 2, exportSchema = false)
+
+@Database(entities = {Daily.class, Activity.class, Food.class, FoodFavor.class}, version = 2, exportSchema = false)
 //@Database(entities = {Daily.class, Activity.class, }, version = 1, exportSchema = false)
 @TypeConverters(DateConverter.class)
 public abstract class AppDatabase extends RoomDatabase {
@@ -37,6 +38,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 sInstance = RoomAsset.databaseBuilder(context.getApplicationContext(),
                         AppDatabase.class, AppDatabase.DATABASE_NAME)
                         .allowMainThreadQueries()
+//                        .addMigrations(AppDatabase.MIGRATION_2_3)
 //                        .fallbackToDestructiveMigration()
                         .build();
             }
@@ -47,14 +49,14 @@ public abstract class AppDatabase extends RoomDatabase {
 
     }
 
-    static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+    static final Migration MIGRATION_2_3 = new Migration(2, 3) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
-//            database.execSQL("CREATE TABLE `Fruit` (`id` INTEGER, "
-//                    + "`name` TEXT, PRIMARY KEY(`id`))");
+//            database.execSQL("CREATE TABLE `FoodFavor` (`id` INTEGER NOT NULL, `foodId` INTEGER NOT NULL, `foodName` TEXT, `foodQty` REAL NOT NULL, `sortOrder` INTEGER NOT NULL, PRIMARY KEY(`id`))");
         }
     };
     public abstract DailyDao dailyDao();
     public abstract ActivityDao activityDao();
     public abstract FoodDao FoodDao();
+    public abstract FoodFavorDao FoodFavorDao();
 }

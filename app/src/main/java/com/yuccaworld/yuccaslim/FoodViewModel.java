@@ -1,10 +1,11 @@
-package com.yuccaworld.yuccaslim.data;
+package com.yuccaworld.yuccaslim;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
+import com.yuccaworld.yuccaslim.data.AppDatabase;
 import com.yuccaworld.yuccaslim.model.Food;
 
 import java.util.List;
@@ -20,4 +21,5 @@ public class FoodViewModel extends AndroidViewModel {
     public LiveData<List<Food>> getFoodList(){
         return foodList;
     }
+
 }
