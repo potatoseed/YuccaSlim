@@ -28,8 +28,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Logger;
 import com.google.firebase.database.ValueEventListener;
-import com.yuccaworld.yuccaslim.data.SlimContract;
-import com.yuccaworld.yuccaslim.model.ActivityInfo;
+import com.yuccaworld.yuccaslim.data.AppDatabase;
+import com.yuccaworld.yuccaslim.model.Activity;
+import com.yuccaworld.yuccaslim.model.Daily;
+import com.yuccaworld.yuccaslim.model.FoodFavor;
+import com.yuccaworld.yuccaslim.utilities.AppExecutors;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
 import java.util.ArrayList;
@@ -42,12 +45,15 @@ public class MainActivity extends AppActivity {
     private FirebaseUser mFirebaseUser;
     private DatabaseReference mFirebaseDB;
     private ValueEventListener mValueEventListener;
-
+    private AppDatabase mDb;
+    private Activity mActivityFromFirebase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mDb = AppDatabase.getInstance(getApplicationContext());
+        // Set Firebase DB log level for debug purpose
         //FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
         mFirebaseDB = FirebaseDatabase.getInstance().getReference();
         intstantiateUser();
@@ -78,21 +84,20 @@ public class MainActivity extends AppActivity {
     private void RestoreActivityFromCloud(String gUid) {
         mValueEventListener = new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    ActivityInfo activityInfo = ds.getValue(ActivityInfo.class);
-                    // Check if the data from cloud existing in local DB, if not, insert into local DB.
-                    Uri uri = SlimContract.SlimDB.CONTENT_ACTIVITY_URI;
-                    uri = uri.buildUpon().appendPath(activityInfo.getActivityID()).build();
-//                    Cursor cursor = getContentResolver().query(uri,null,null,null,null);
-//                    if(cursor.getCount() == 0) {
-//                        ContentValues contentValues;
-//                        contentValues = SlimUtils.ConvertActivityContentValue(activityInfo);
-//                        Uri uri1 = getContentResolver().insert(SlimContract.SlimDB.CONTENT_ACTIVITY_URI, contentValues);
-////                        Toast.makeText(MainActivity.this, "insert in SQLite DB, uri1=" + uri1.toString(),
-////                                Toast.LENGTH_SHORT).show();
-//                    }
-                }
+            public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            Activity activity = ds.getValue(Activity.class);
+                            long l = mDb.activityDao().insertActivity(activity);
+                            if(l==0) {
+                                mDb.activityDao().updateActivity(activity);
+                            }
+                        }
+
+                    }
+                });
             }
 
             @Override
@@ -101,6 +106,53 @@ public class MainActivity extends AppActivity {
             }
         };
         mFirebaseDB.child("Activity").child(SlimUtils.gUid).addListenerForSingleValueEvent(mValueEventListener);
+
+        ValueEventListener valueEventListenerDaily = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (DataSnapshot ds : dataSnapshot.getChildren()){
+                            Daily daily = ds.getValue(Daily.class);
+                            int i;
+                            i = mDb.dailyDao().deleteDailyByDate(daily.getDate());
+                            long l = mDb.dailyDao().insertDaily(daily);
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+        mFirebaseDB.child("Daily").child(SlimUtils.gUid).addListenerForSingleValueEvent(valueEventListenerDaily);
+
+        ValueEventListener valueEventListenerFoodFavor = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (DataSnapshot ds : dataSnapshot.getChildren()){
+                            FoodFavor foodFavor = ds.getValue(FoodFavor.class);
+                            int i = mDb.FoodFavorDao().UpdateFoodFavorr(foodFavor);
+                            if (i==0) {
+                                long l = mDb.FoodFavorDao().insertFoodFavor(foodFavor);
+                            }
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+        mFirebaseDB.child("FoodFavor").child(SlimUtils.gUid).addListenerForSingleValueEvent(valueEventListenerFoodFavor);
     }
 
     private void signUp() {

@@ -7,11 +7,13 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -29,7 +31,6 @@ import java.util.concurrent.TimeUnit;
 
 import static com.yuccaworld.yuccaslim.data.SlimContract.SlimDB.TEXT_VALUE_SLEEP;
 
-//import android.icu.text.SimpleDateFormat;
 
 /**
  * Created by Yung on 9/3/2017.
@@ -37,7 +38,6 @@ import static com.yuccaworld.yuccaslim.data.SlimContract.SlimDB.TEXT_VALUE_SLEEP
 
 public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapterViewHolder> {
     private final Context mContext;
-    public Cursor mCursor;
     private int mNumberItems = 20;
     private List<Activity> mActivityList;
 
@@ -116,7 +116,7 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
                 break;
             case 2: // Food
 //                holder.ActivityView.setText(mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_FOOD_NAME)));
-                holder.ValueView.setText(String.valueOf(Math.round(valueDecimal)) + " g");
+                holder.ValueView.setText(String.valueOf(Math.round(valueDecimal)) + "g");
                 holder.ActivityView.setText(activity.getFoodName());
                 switch (ind1) {
                     case 1:
@@ -161,22 +161,6 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
         return mActivityList.size();
     }
 
-    /**
-     * When data changes and a re-query occurs, this function update the old Cursor
-     * with a newly updated Cursor (Cursor c) that is passed in.
-     */
-//    public Cursor updateCursor(Cursor c) {
-//        if (mCursor == c) {
-//            return null; // bc nothing has changed
-//        }
-//        Cursor temp = mCursor;
-//        this.mCursor = c; // new cursor value assigned
-//
-//        if (c != null) {
-//            this.notifyDataSetChanged();
-//        }
-//        return temp;
-//    }
 
     public List<Activity> getmActivityList() {return mActivityList;}
     /**
@@ -216,12 +200,10 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
 
         @Override
         public void onClick(View view) {
-//            int adapterPosition = getAdapterPosition();
-//            mCursor.moveToPosition(adapterPosition);
-//            //String activityUUID = mCursor.getString(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_ACTIVITY_ID));
-//            int rowID = mCursor.getInt(mCursor.getColumnIndex(SlimContract.SlimDB._ID));
-//            int typeID = mCursor.getInt(mCursor.getColumnIndex(SlimContract.SlimDB.COLUMN_ATIVITY_TYPE_ID));
-
+            Log.v("TodayAdapter", "onClick view.getID: " + view.getId() + " dayView.getId():" + dayView.getId());
+            if(view.getId() == dayView.getId()){
+                Log.v("TodayAdapter", "onClick dayView" );
+            }
             Activity activity = mActivityList.get(getAdapterPosition());
             int rowID = activity.getId();
             int typeID = activity.getActivityTypeID();

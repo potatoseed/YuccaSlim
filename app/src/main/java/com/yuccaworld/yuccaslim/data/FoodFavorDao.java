@@ -14,10 +14,10 @@ import java.util.List;
 
 @Dao
 public interface FoodFavorDao {
-    @Query("SELECT * FROM FoodFavor ORDER BY sortOrder DESC")
+    @Query("SELECT * FROM FoodFavor ORDER BY sortOrder, updateTime DESC")
     LiveData<List<FoodFavor>> loadAllFoodFavorLive();
 
-    @Query("SELECT * FROM FoodFavor ORDER BY sortOrder DESC")
+    @Query("SELECT * FROM FoodFavor ORDER BY sortOrder, updateTime DESC")
     List<FoodFavor> loadAllFoodFavor();
 
 

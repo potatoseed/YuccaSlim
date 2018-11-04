@@ -36,6 +36,9 @@ public class Daily {
         this.updateTime = updateTime;
     }
 
+    public Daily() {
+    }
+
     public String getDate() {
         return date;
     }

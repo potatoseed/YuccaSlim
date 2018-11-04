@@ -15,7 +15,7 @@ import com.yuccaworld.yuccaslim.model.Daily;
 import java.util.List;
 @Dao
 public interface ActivityDao {
-    @Query("SELECT * FROM Activity ORDER BY activityTime")
+    @Query("SELECT * FROM Activity ORDER BY activityTime DESC")
     LiveData<List<Activity>> loadAllActivity();
 
     @Insert
@@ -33,9 +33,9 @@ public interface ActivityDao {
     @Query("SELECT * FROM Activity WHERE activityID = :activityID")
     LiveData<Activity> loadActivityByActivityId(String activityID);
 
-    @Query("SELECT * FROM Activity WHERE (julianday(datetime('now')) - julianday(datetime(ActivityTime/1000, 'unixepoch')) )*24  <= 30 ORDER BY activityTime")
+    @Query("SELECT * FROM Activity WHERE (julianday(datetime('now')) - julianday(datetime(ActivityTime/1000, 'unixepoch')) )*24  <= 30 ORDER BY activityTime DESC")
     LiveData<List<Activity>> loadActivityToday();
 
-    @Query("SELECT * FROM Activity WHERE (julianday(datetime('now')) - julianday(datetime(ActivityTime/1000, 'unixepoch')) )*24  <= :hoursFromNow ORDER BY activityTime")
+    @Query("SELECT * FROM Activity WHERE (julianday(datetime('now')) - julianday(datetime(ActivityTime/1000, 'unixepoch')) )*24  <= :hoursFromNow ORDER BY activityTime DESC")
     LiveData<List<Activity>> loadActivityByHours(int hoursFromNow);
 }

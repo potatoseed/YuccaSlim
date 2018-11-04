@@ -36,7 +36,6 @@ import com.yuccaworld.yuccaslim.data.AppDatabase;
 import com.yuccaworld.yuccaslim.data.SlimContract;
 import com.yuccaworld.yuccaslim.model.Activity;
 import com.yuccaworld.yuccaslim.model.Daily;
-import com.yuccaworld.yuccaslim.model.DailyFB;
 import com.yuccaworld.yuccaslim.model.FoodFavor;
 import com.yuccaworld.yuccaslim.utilities.AppExecutors;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
@@ -196,23 +195,21 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
             }
 
             @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            public void onChildChanged(@NonNull final DataSnapshot dataSnapshot, @Nullable String s) {
                 if (dataSnapshot == null) {
                     return ;
                 }
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                final String currentDate = sdf.format(new Date());
-                DailyFB daily = dataSnapshot.getValue(DailyFB.class);
-                final Daily dailyData = new Daily(currentDate,SlimUtils.gUid,daily.getSlimScore(),daily.getTargetFat(),daily.getTargetHeavy(),new Date());
                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        String currentDate = sdf.format(new Date());
+                        Daily daily = dataSnapshot.getValue(Daily.class);;
                         int i;
                         i = mDb.dailyDao().deleteDailyByDate(currentDate);
                         Log.v(TAG, "Daily Data deleted:" + i);
-//                        mDb.dailyDao().updateDaily(dailyData);
-                        long l = mDb.dailyDao().insertDaily(dailyData);
-                        Log.v(TAG, "Daily Data:" + dailyData.getSlimScore() + " inserted: " + l);
+                        long l = mDb.dailyDao().insertDaily(daily);
+//                        Log.v(TAG, "Daily Data:" + daily.getSlimScore() + " inserted: " + l);
                     }
                 });
             }
@@ -246,6 +243,7 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
             public void onChanged(@Nullable List<Activity> activityList) {
                 Log.d(TAG, "Updating list of tasks from LiveData in ViewModel From TodayActivity oncreate");
                 mTodayAdapter.setActivityList(activityList);
+//                setSeekBarValue();
             }
         });
 
@@ -304,7 +302,7 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
             mSeekbarToday.getLeftSeekBar().setIndicatorBackgroundColor(getResources().getColor(R.color.colorAccent));
             mSeekbarToday.setProgressColor(getResources().getColor(R.color.colorAccent));
         }
-        //mSeekbarToday.invalidate();
+        mSeekbarToday.invalidate();
     }
 
     @Override

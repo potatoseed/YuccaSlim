@@ -36,6 +36,9 @@ public class FoodFavor {
         this.updateTime = updateTime;
     }
 
+    public FoodFavor() {
+    }
+
     public int getId() {
         return id;
     }
