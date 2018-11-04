@@ -52,12 +52,12 @@
         android:textAlignment="textEnd"
         app:layout_constraintBottom_toBottomOf="@+id/imageViewAddToMeal"
         app:layout_constraintEnd_toStartOf="@+id/textViewUnit"
-        app:layout_constraintStart_toEndOf="@+id/textViewFoodName"
+        app:layout_constraintStart_toEndOf="@+id/textViewFoodTimeFoodName"
         app:layout_constraintTop_toTopOf="@+id/imageViewAddToMeal"
         tools:text="100" />
 
     <TextView
-        android:id="@+id/textViewFoodName"
+        android:id="@+id/textViewFoodTimeFoodName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"

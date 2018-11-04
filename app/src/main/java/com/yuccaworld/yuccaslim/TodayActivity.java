@@ -93,7 +93,7 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
         mTodayAdapter = new TodayAdapter(this, this);
         mRecyclerView.setAdapter(mTodayAdapter);
 
-        fab.setOnClickListener(new View.OnClickListener() {
+         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 //                Intent addWeightIntent = new Intent(TodayActivity.this, WeightActivity.class);
@@ -412,6 +412,14 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
                 uriForActivityClicked = SlimContract.SlimDB.buildFoodEdit(rowID);
                 sleepIntent.setData(uriForActivityClicked);
                 startActivity(sleepIntent);
+                break;
+            case TodayAdapter.CHANGE_FOOD_INPUT_TIME:
+                Intent foodTimeIntent = new Intent(TodayActivity.this, FoodTimeActivity.class);
+                activityMode = "EDIT";
+                foodTimeIntent.putExtra(Intent.EXTRA_TEXT, activityMode);
+                foodTimeIntent.putExtra(TodayActivity.EXTRA_ACTIVITY_ID, activityID);
+                foodTimeIntent.putExtra(TodayActivity.EXTRA_ROW_ID, rowID);
+                startActivity(foodTimeIntent);
                 break;
             default:
                 Log.w(TAG, "No matching type");

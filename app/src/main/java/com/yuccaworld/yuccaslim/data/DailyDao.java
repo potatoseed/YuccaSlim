@@ -29,5 +29,8 @@ public interface DailyDao {
     int deleteDailyByDate(String date);
 
     @Query("SELECT * FROM Daily WHERE date = :date")
-    LiveData<Daily> loadDailyByDate(String date);
+    LiveData<Daily> loadDailyByDateLive(String date);
+
+    @Query("SELECT * FROM Daily WHERE date = :date")
+    Daily loadDailyByDate(String date);
 }

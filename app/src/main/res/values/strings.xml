@@ -52,4 +52,5 @@
     <string name="activity_type_2">FOOD</string>
     <string name="activity_type_3">SLEEP</string>
     <string name="activity_type_image">activity_type</string>
+    <string name="activity_title_food_input_time">Food Taken Time</string>
 </resources>

@@ -42,6 +42,7 @@ public class WeightActivity extends AppActivity  {
     private DatabaseReference mFirebaseDB = FirebaseDatabase.getInstance().getReference();
     private AppDatabase mDb;
     private int mRowID=-1;
+    private Activity mActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +68,7 @@ public class WeightActivity extends AppActivity  {
                 @Override
                 public void onChanged(@Nullable Activity activity) {
                     viewModel.getActivityLiveData().removeObserver(this);
+                    mActivity = activity;
                     populateUI(activity);
                 }
             });
@@ -94,6 +96,7 @@ public class WeightActivity extends AppActivity  {
                     int hour = timePicker.getCurrentHour();
                     int min = timePicker.getCurrentMinute();
                     Calendar weightTime = Calendar.getInstance();
+                    weightTime.setTimeInMillis(mActivity.getActivityTime());
                     weightTime.set(Calendar.HOUR_OF_DAY, hour);
                     weightTime.set(Calendar.MINUTE, min);
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH：mm：ss");

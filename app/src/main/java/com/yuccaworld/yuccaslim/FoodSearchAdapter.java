@@ -2,7 +2,6 @@ package com.yuccaworld.yuccaslim;
 
 
 import android.content.Context;
-import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,8 +11,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.yuccaworld.yuccaslim.data.SlimContract;
-import com.yuccaworld.yuccaslim.model.Food;
 import com.yuccaworld.yuccaslim.model.FoodFavor;
 
 import java.util.List;
@@ -69,7 +66,7 @@ public class FoodSearchAdapter extends RecyclerView.Adapter<FoodSearchAdapter.Fo
 
         public FoodSearchViewHolder(View itemView) {
             super(itemView);
-            foodNameView = (TextView) itemView.findViewById(R.id.textViewFoodName);
+            foodNameView = (TextView) itemView.findViewById(R.id.textViewFoodTimeFoodName);
             foodQtyEditText = (EditText) itemView.findViewById(R.id.editTextFoodQty);
             addToMealImage = (ImageView) itemView.findViewById(R.id.imageViewAddToMeal);
             foodIDview = itemView.findViewById(R.id.textViewFoodID);

@@ -3,10 +3,8 @@ package com.yuccaworld.yuccaslim;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 import com.yuccaworld.yuccaslim.data.AppDatabase;
-import com.yuccaworld.yuccaslim.data.SlimRepository;
 import com.yuccaworld.yuccaslim.model.Activity;
 import com.yuccaworld.yuccaslim.model.Daily;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
@@ -29,8 +27,11 @@ public class TodayViewModel extends AndroidViewModel {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String currentDate = sdf.format(new Date());
-        mDaily = mDatabase.dailyDao().loadDailyByDate(currentDate);
-        daily = new Daily(currentDate,SlimUtils.gUid,0,150,200,new Date());
+        mDaily = mDatabase.dailyDao().loadDailyByDateLive(currentDate);
+        daily = mDatabase.dailyDao().loadDailyByDate(currentDate);
+        if (daily == null) {
+            daily = new Daily(currentDate, SlimUtils.gUid, 0, 150, 200, new Date());
+        }
     }
 
     public LiveData<List<com.yuccaworld.yuccaslim.model.Activity>> getTodayActivityList() {

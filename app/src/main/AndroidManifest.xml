@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.yuccaworld.yuccaslim">
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -23,11 +25,13 @@
             android:name=".TodayActivity"
             android:label="@string/title_activity_today"
             android:theme="@style/AppTheme">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
 
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity
             android:name=".RegisterationActivity"
@@ -41,7 +45,8 @@
             android:authorities="com.yuccaworld.yuccaslim" />
 
         <activity android:name=".FoodSearchActivity" />
-        <activity android:name=".SleepActivity"></activity>
+        <activity android:name=".SleepActivity" />
+        <activity android:name=".FoodTimeActivity"></activity>
     </application>
 
 </manifest>

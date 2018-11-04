@@ -14,10 +14,10 @@ import java.util.List;
 
 @Dao
 public interface FoodFavorDao {
-    @Query("SELECT * FROM FoodFavor ORDER BY sortOrder, updateTime DESC")
+    @Query("SELECT * FROM FoodFavor ORDER BY updateTime DESC, sortOrder DESC ")
     LiveData<List<FoodFavor>> loadAllFoodFavorLive();
 
-    @Query("SELECT * FROM FoodFavor ORDER BY sortOrder, updateTime DESC")
+    @Query("SELECT * FROM FoodFavor ORDER BY updateTime DESC, sortOrder DESC")
     List<FoodFavor> loadAllFoodFavor();
 
 
@@ -33,9 +33,9 @@ public interface FoodFavorDao {
     @Query("SELECT * FROM FoodFavor WHERE foodId = :foodId")
     FoodFavor loadFoodFavorById(int foodId);
 
-    @Query("UPDATE FoodFavor SET sortOrder = sortOrder + 1, foodQty=:foodQty, updateTime = 'now' WHERE foodId = :foodId")
+    @Query("UPDATE FoodFavor SET sortOrder = sortOrder + 1, foodQty=:foodQty, updateTime = strftime('%s','now') WHERE foodId = :foodId")
     int addFoodFavorCountById(int foodId, float foodQty);
 
-    @Query("UPDATE FoodFavor SET sortOrder = sortOrder - 1, updateTime = 'now'  WHERE foodId = :foodId")
+    @Query("UPDATE FoodFavor SET sortOrder = sortOrder - 1  WHERE foodId = :foodId")
     int lessFoodFavorCountById(int foodId);
 }

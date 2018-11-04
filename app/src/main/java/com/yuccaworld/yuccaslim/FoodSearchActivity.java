@@ -13,11 +13,9 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -29,7 +27,6 @@ import com.mobsandgeeks.saripaar.annotation.DecimalMin;
 import com.mobsandgeeks.saripaar.annotation.Or;
 import com.yuccaworld.yuccaslim.data.AppDatabase;
 import com.yuccaworld.yuccaslim.model.Activity;
-import com.yuccaworld.yuccaslim.model.Food;
 import com.yuccaworld.yuccaslim.model.FoodFavor;
 import com.yuccaworld.yuccaslim.utilities.AppExecutors;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
@@ -235,7 +232,7 @@ public class FoodSearchActivity extends AppActivity implements FoodSearchAdapter
         View viewItem = mRecyclerView.getLayoutManager().findViewByPosition(clickedPosition);
         mEditTextFoodQty = viewItem.findViewById(R.id.editTextFoodQty);
         mTextViewFoodID = viewItem.findViewById(R.id.textViewFoodID);
-        TextView textViewfoodName = viewItem.findViewById(R.id.textViewFoodName);
+        TextView textViewfoodName = viewItem.findViewById(R.id.textViewFoodTimeFoodName);
 
         validator.validate();
         if (validated) {
