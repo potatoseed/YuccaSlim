@@ -28,7 +28,7 @@ public interface FoodFavorDao {
     int UpdateFoodFavorr(FoodFavor foodFavor);
 
     @Delete
-    void deleteFoodFavor(FoodFavor foodFavor);
+    int deleteFoodFavor(FoodFavor foodFavor);
 
     @Query("SELECT * FROM FoodFavor WHERE foodId = :foodId")
     FoodFavor loadFoodFavorById(int foodId);

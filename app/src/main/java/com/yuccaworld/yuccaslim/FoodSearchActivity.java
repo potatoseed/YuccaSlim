@@ -149,33 +149,62 @@ public class FoodSearchActivity extends AppActivity implements FoodSearchAdapter
         });
 
         // NO food favor change trigger from firebase at the moment, reserved for future usage
-//        ChildEventListener childEventListenerFoodFavor = new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//
-//            }
-//
-//            @Override
-//            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//
-//            }
-//
-//            @Override
-//            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        };
-//        mFirebaseDB.child("FoodFavor").child(SlimUtils.gUid).addChildEventListener(childEventListenerFoodFavor);
+        ChildEventListener childEventListenerFoodFavor = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//                final FoodFavor foodFavor = dataSnapshot.getValue(FoodFavor.class);
+                // Insert into  the Sqlite, Reserved for future
+//                if (foodFavor != null) {
+//                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            long l = mDb.FoodFavorDao().insertFoodFavor(foodFavor);
+//                            Log.v(TAG, "Food Favor onChildAdded: "+l);
+//                        }
+//                    });
+//                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//                final FoodFavor foodFavor = dataSnapshot.getValue(FoodFavor.class);
+//                // Update the Sqlite
+//                if (foodFavor != null) {
+//                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            mDb.FoodFavorDao().UpdateFoodFavorr(foodFavor);
+//                        }
+//                    });
+//                }
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                final FoodFavor foodFavor = dataSnapshot.getValue(FoodFavor.class);
+                // Update the Sqlite and adapter
+                if (foodFavor != null) {
+                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            int i = mDb.FoodFavorDao().deleteFoodFavor(foodFavor);
+                            Log.v(TAG, "Food Favor onChildRemoved: "+i);
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+        mFirebaseDB.child("FoodFavor").child(SlimUtils.gUid).addChildEventListener(childEventListenerFoodFavor);
 
         setupViewModel();
     }
