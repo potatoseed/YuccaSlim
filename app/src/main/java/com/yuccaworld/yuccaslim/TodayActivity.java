@@ -145,7 +145,21 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
         ChildEventListener childEventListenerActivity = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                // Update the Sqlite and adapter
+                final Activity activity = dataSnapshot.getValue(Activity.class);
+                String activityID = activity.getActivityID();
+                String hintText = activity.getHint();
+                int hintID = activity.getHintID();
+                int ind1 = activity.getInd1();
+                if (activityID != null) {
+                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            int i = mDb.activityDao().updateActivity(activity);
+                            if (i==0) {long l = mDb.activityDao().insertActivity(activity);}
+                        }
+                    });
+                }
             }
 
             @Override
@@ -153,7 +167,6 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
 //                for (DataSnapshot ds : dataSnapshot.getChildren()) {
 //                    Map<String, String> activityData = (Map)ds.getValue();
 //                }
-
                 final Activity activity = dataSnapshot.getValue(Activity.class);
                 // Update the Sqlite and adapter
                 String activityID = activity.getActivityID();
@@ -191,25 +204,38 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
         ChildEventListener childEventListenerDaily = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildChanged(@NonNull final DataSnapshot dataSnapshot, @Nullable String s) {
-                if (dataSnapshot == null) {
-                    return ;
-                }
+                // Update Daily data to local DB
+                final Daily daily = dataSnapshot.getValue(Daily.class);
                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                        String currentDate = sdf.format(new Date());
-                        Daily daily = dataSnapshot.getValue(Daily.class);;
+//                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//                        String currentDate = sdf.format(new Date());
                         int i;
-                        i = mDb.dailyDao().deleteDailyByDate(currentDate);
+//                        i = mDb.dailyDao().deleteDailyByDate(currentDate);
+                        i = mDb.dailyDao().deleteDailyByDate(daily.getDate());
                         Log.v(TAG, "Daily Data deleted:" + i);
                         long l = mDb.dailyDao().insertDaily(daily);
-//                        Log.v(TAG, "Daily Data:" + daily.getSlimScore() + " inserted: " + l);
+                        Log.v(TAG, "Daily Data Inserted:" + daily.getSlimScore() + " inserted: " + l);
+                    }
+                });
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                // Update Daily data to local DB
+                final Daily daily = dataSnapshot.getValue(Daily.class);
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+//                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//                        String currentDate = sdf.format(new Date());
+                        int i;
+//                        i = mDb.dailyDao().deleteDailyByDate(currentDate);
+                        i = mDb.dailyDao().deleteDailyByDate(daily.getDate());
+                        Log.v(TAG, "Daily Data deleted:" + i);
+                        long l = mDb.dailyDao().insertDaily(daily);
+                        Log.v(TAG, "Daily Data Inserted:" + daily.getSlimScore() + " inserted: " + l);
                     }
                 });
             }
@@ -302,7 +328,7 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
             mSeekbarToday.getLeftSeekBar().setIndicatorBackgroundColor(getResources().getColor(R.color.colorAccent));
             mSeekbarToday.setProgressColor(getResources().getColor(R.color.colorAccent));
         }
-        mSeekbarToday.invalidate();
+        //mSeekbarToday.invalidate();
     }
 
     @Override

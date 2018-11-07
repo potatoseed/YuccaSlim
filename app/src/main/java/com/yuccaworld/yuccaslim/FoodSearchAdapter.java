@@ -46,7 +46,7 @@ public class FoodSearchAdapter extends RecyclerView.Adapter<FoodSearchAdapter.Fo
         int foodId = foodFavor.getFoodId();
         holder.foodIDview.setText(Integer.toString(foodId));
         holder.recordIDview.setText(Integer.toString(foodFavor.getId()));
-        holder.foodQtyEditText.setText(String.valueOf(foodFavor.getFoodQty()));
+        holder.foodQtyEditText.setText(String.valueOf((int)foodFavor.getFoodQty()));
     }
 
     @Override

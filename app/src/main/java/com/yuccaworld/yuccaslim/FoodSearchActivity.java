@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.net.ParseException;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.os.Bundle;
@@ -18,6 +19,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.mancj.materialsearchbar.MaterialSearchBar;
@@ -110,28 +114,6 @@ public class FoodSearchActivity extends AppActivity implements FoodSearchAdapter
             }
         });
 
-//        mOnSearchActionListener = new MaterialSearchBar.OnSearchActionListener() {
-//            @Override
-//            public void onSearchStateChanged(boolean enabled) {
-//                if (!enabled){
-//                    mRecyclerView.setAdapter(mAdapter);
-//
-//                }
-//                Toast.makeText(FoodSearchActivity.this, "onSearchStateChanged " + enabled, Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onSearchConfirmed(CharSequence text) {
-//  //              startSearch(text.toString());
-//                Toast.makeText(FoodSearchActivity.this, "onSearchConfirmed " + text, Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onButtonClicked(int buttonCode) {
-//                Toast.makeText(FoodSearchActivity.this, "onSearchConfirmed " + buttonCode, Toast.LENGTH_SHORT).show();
-//            }
-//        };
-//        mMaterialSearchBar.setOnSearchActionListener(mOnSearchActionListener);
         mMaterialSearchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
             @Override
             public void onSearchStateChanged(boolean enabled) {
@@ -165,6 +147,35 @@ public class FoodSearchActivity extends AppActivity implements FoodSearchAdapter
 
             }
         });
+
+        // NO food favor change trigger from firebase at the moment, reserved for future usage
+//        ChildEventListener childEventListenerFoodFavor = new ChildEventListener() {
+//            @Override
+//            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//
+//            }
+//
+//            @Override
+//            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//
+//            }
+//
+//            @Override
+//            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+//
+//            }
+//
+//            @Override
+//            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        };
+//        mFirebaseDB.child("FoodFavor").child(SlimUtils.gUid).addChildEventListener(childEventListenerFoodFavor);
 
         setupViewModel();
     }
@@ -275,8 +286,9 @@ public class FoodSearchActivity extends AppActivity implements FoodSearchAdapter
                 @Override
                 public void run() {
                     if ("EDIT".equals(mMode)){
-                        // Update
+                        // Update don't change the activity time
                         Activity activity = new Activity(mRowID,mActivityID,SlimUtils.gUid,SlimUtils.gUserEmail,2, getResources().getString(R.string.activity_type_2), activityTime,foodID,foodName,0,foodQty,"",0,"",0,0,currentDate,new Date());
+//                        Activity activity = new Activity(mRowID,mActivityID,SlimUtils.gUid,SlimUtils.gUserEmail,2, getResources().getString(R.string.activity_type_2), activityTime,foodID,foodName,0,foodQty,"",0,"",0,0,currentDate,new Date());
                         int i = mDb.activityDao().updateActivity(activity);
                         Log.v(TAG, "Activity to Update return:" + i + " Activity ID = " + mActivityID);
                         if (i > 0) {

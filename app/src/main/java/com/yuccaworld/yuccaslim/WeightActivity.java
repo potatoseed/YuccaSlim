@@ -96,7 +96,7 @@ public class WeightActivity extends AppActivity  {
                     int hour = timePicker.getCurrentHour();
                     int min = timePicker.getCurrentMinute();
                     Calendar weightTime = Calendar.getInstance();
-                    weightTime.setTimeInMillis(mActivity.getActivityTime());
+                    if("EDIT".equals(mMode)) { weightTime.setTimeInMillis(mActivity.getActivityTime()); }
                     weightTime.set(Calendar.HOUR_OF_DAY, hour);
                     weightTime.set(Calendar.MINUTE, min);
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH：mm：ss");
