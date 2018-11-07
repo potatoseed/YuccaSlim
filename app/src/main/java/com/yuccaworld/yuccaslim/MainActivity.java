@@ -90,12 +90,11 @@ public class MainActivity extends AppActivity {
                     public void run() {
                         for (DataSnapshot ds : dataSnapshot.getChildren()) {
                             Activity activity = ds.getValue(Activity.class);
-                            long l = mDb.activityDao().insertActivity(activity);
-                            if(l==0) {
-                                mDb.activityDao().updateActivity(activity);
+                            int i = mDb.activityDao().updateActivity(activity);
+                            if(i==0) {
+                                long l = mDb.activityDao().insertActivity(activity);
                             }
                         }
-
                     }
                 });
             }
