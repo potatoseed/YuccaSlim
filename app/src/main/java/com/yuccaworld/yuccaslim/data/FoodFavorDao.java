@@ -33,7 +33,7 @@ public interface FoodFavorDao {
     @Query("SELECT * FROM FoodFavor WHERE foodId = :foodId")
     FoodFavor loadFoodFavorById(int foodId);
 
-    @Query("UPDATE FoodFavor SET sortOrder = sortOrder + 1, foodQty=:foodQty, updateTime = strftime('%s','now') WHERE foodId = :foodId")
+    @Query("UPDATE FoodFavor SET sortOrder = sortOrder + 1, foodQty=:foodQty, updateTime = strftime('%s','now')*1000 WHERE foodId = :foodId")
     int addFoodFavorCountById(int foodId, float foodQty);
 
     @Query("UPDATE FoodFavor SET sortOrder = sortOrder - 1  WHERE foodId = :foodId")
