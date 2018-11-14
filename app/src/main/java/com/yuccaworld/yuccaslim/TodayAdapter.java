@@ -1,34 +1,25 @@
 package com.yuccaworld.yuccaslim;
 
 import android.content.Context;
-import android.database.Cursor;
 //import android.databinding.DataBindingUtil;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.yuccaworld.yuccaslim.data.SlimContract;
 //import com.yuccaworld.yuccaslim.databinding.TodayListItemBinding;
 import com.yuccaworld.yuccaslim.model.Activity;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 import static com.yuccaworld.yuccaslim.data.SlimContract.SlimDB.TEXT_VALUE_SLEEP;
 
@@ -47,7 +38,7 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
      * The interface that receives onClick messages.
      */
     public interface TodayAdapterOnClickHandler {
-        void onClick(int rowID, int typeID, String activityID);
+        void onClick(int rowID, Activity activity, int ActivityTypeId);
     }
 
     /**
@@ -215,8 +206,7 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.TodayAdapter
             int rowID = activity.getId();
 
             String activityID = activity.getActivityID();
-            mClickHandler.onClick(rowID, typeID, activityID);
-//            clickListener.onItemClick(getAdapterPosition(), view);
+            mClickHandler.onClick(rowID, activity, typeID);
         }
     }
 }

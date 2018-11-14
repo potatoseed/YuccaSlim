@@ -62,6 +62,7 @@ public class FoodSearchActivity extends AppActivity implements FoodSearchAdapter
     private AppDatabase mDb;
     private int mRowID=-1;
     private List<String> mSuggest;
+    private long mActivityTime;
 //    private MaterialSearchBar.OnSearchActionListener mOnSearchActionListener;
 
     @Override
@@ -78,6 +79,7 @@ public class FoodSearchActivity extends AppActivity implements FoodSearchAdapter
             mMode = intent.getStringExtra(Intent.EXTRA_TEXT);
             mActivityID = intent.getStringExtra(TodayActivity.EXTRA_ACTIVITY_ID);
             mRowID = intent.getIntExtra(TodayActivity.EXTRA_ROW_ID, 0);
+            mActivityTime = intent.getLongExtra(TodayActivity.EXTRA_ACTIVITY_DATE, 0);
         }
 
         // Setup RecycleView
@@ -316,7 +318,7 @@ public class FoodSearchActivity extends AppActivity implements FoodSearchAdapter
                 public void run() {
                     if ("EDIT".equals(mMode)){
                         // Update don't change the activity time
-                        Activity activity = new Activity(mRowID,mActivityID,SlimUtils.gUid,SlimUtils.gUserEmail,2, getResources().getString(R.string.activity_type_2), activityTime,foodID,foodName,0,foodQty,"",0,"",0,0,currentDate,new Date());
+                        Activity activity = new Activity(mRowID,mActivityID,SlimUtils.gUid,SlimUtils.gUserEmail,2, getResources().getString(R.string.activity_type_2), mActivityTime,foodID,foodName,0,foodQty,"",0,"",0,0,currentDate,new Date());
 //                        Activity activity = new Activity(mRowID,mActivityID,SlimUtils.gUid,SlimUtils.gUserEmail,2, getResources().getString(R.string.activity_type_2), activityTime,foodID,foodName,0,foodQty,"",0,"",0,0,currentDate,new Date());
                         int i = mDb.activityDao().updateActivity(activity);
                         Log.v(TAG, "Activity to Update return:" + i + " Activity ID = " + mActivityID);

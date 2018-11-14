@@ -40,7 +40,6 @@ import com.yuccaworld.yuccaslim.model.FoodFavor;
 import com.yuccaworld.yuccaslim.utilities.AppExecutors;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -49,6 +48,7 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
     private static final int TODAY_ACTIVITY_LOADER_ID = 8;
     public static final String EXTRA_ACTIVITY_ID = "extraActivityId";
     public static final String EXTRA_ROW_ID = "ExtraRowID";
+    public static final String EXTRA_ACTIVITY_DATE = "ExtraActivityDate";
     private static int mHoursToDisplay = 30;
     private TodayAdapter mTodayAdapter;
     private RecyclerView mRecyclerView;
@@ -402,29 +402,30 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
     }
 
     @Override
-    public void onClick(int rowID, int typeID, String activityID) {
+    public void onClick(int rowID, Activity activity, int ActivityTypeId) {
         //Toast.makeText(this, "Clicked" + rowID, Toast.LENGTH_SHORT).show();
         String activityMode;
         Uri uriForActivityClicked;
         //String activityID = mActivityData.getString(mActivityData.getColumnIndex(SlimContract.SlimDB.COLUMN_ACTIVITY_ID));
-        switch(typeID){
+        switch(ActivityTypeId){
             case 1:
                 Intent weightIntent = new Intent(TodayActivity.this, WeightActivity.class);
                 // set weight activity mode to "EDIT"
                 activityMode = "EDIT";
                 weightIntent.putExtra(Intent.EXTRA_TEXT, activityMode);
-                weightIntent.putExtra(TodayActivity.EXTRA_ACTIVITY_ID, activityID);
+                weightIntent.putExtra(TodayActivity.EXTRA_ACTIVITY_ID, activity.getActivityID());
                 weightIntent.putExtra(WeightActivity.EXTRA_ROW_ID, rowID);
                 uriForActivityClicked = SlimContract.SlimDB.buildWeightEdit(rowID);
                 weightIntent.setData(uriForActivityClicked);
                 startActivity(weightIntent);
                 break;
-            case 2:
+            case 2: // Food Activity
                 Intent foodIntent = new Intent(TodayActivity.this, FoodSearchActivity.class);
                 activityMode = "EDIT";
                 foodIntent.putExtra(Intent.EXTRA_TEXT, activityMode);
-                foodIntent.putExtra(TodayActivity.EXTRA_ACTIVITY_ID, activityID);
+                foodIntent.putExtra(TodayActivity.EXTRA_ACTIVITY_ID, activity.getActivityID());
                 foodIntent.putExtra(TodayActivity.EXTRA_ROW_ID, rowID);
+                foodIntent.putExtra(TodayActivity.EXTRA_ACTIVITY_DATE, activity.getActivityTime());
                 uriForActivityClicked = SlimContract.SlimDB.buildFoodEdit(rowID);
                 foodIntent.setData(uriForActivityClicked);
                 startActivity(foodIntent);
@@ -433,7 +434,7 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
                 Intent sleepIntent = new Intent(TodayActivity.this, SleepActivity.class);
                 activityMode = "EDIT";
                 sleepIntent.putExtra(Intent.EXTRA_TEXT, activityMode);
-                sleepIntent.putExtra(TodayActivity.EXTRA_ACTIVITY_ID, activityID);
+                sleepIntent.putExtra(TodayActivity.EXTRA_ACTIVITY_ID, activity.getActivityID());
                 sleepIntent.putExtra(WeightActivity.EXTRA_ROW_ID, rowID);
                 uriForActivityClicked = SlimContract.SlimDB.buildFoodEdit(rowID);
                 sleepIntent.setData(uriForActivityClicked);
@@ -443,7 +444,7 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
                 Intent foodTimeIntent = new Intent(TodayActivity.this, FoodTimeActivity.class);
                 activityMode = "EDIT";
                 foodTimeIntent.putExtra(Intent.EXTRA_TEXT, activityMode);
-                foodTimeIntent.putExtra(TodayActivity.EXTRA_ACTIVITY_ID, activityID);
+                foodTimeIntent.putExtra(TodayActivity.EXTRA_ACTIVITY_ID, activity.getActivityID());
                 foodTimeIntent.putExtra(TodayActivity.EXTRA_ROW_ID, rowID);
                 startActivity(foodTimeIntent);
                 break;
