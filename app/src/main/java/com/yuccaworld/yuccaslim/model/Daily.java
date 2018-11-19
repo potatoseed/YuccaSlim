@@ -4,6 +4,8 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Date;
 
 @Entity(tableName = "Daily")
@@ -15,24 +17,44 @@ public class Daily {
     private int slimScore;
     private int targetFat;
     private int targetHeavy;
+    @Nullable
+    private int hintId1;
+    private String hint1 = "";
     private Date updateTime;
 
-    public Daily(int id, String date, String userID, int slimScore, int targetFat, int targetHeavy, Date updateTime) {
+//    public Daily(int id, String date, String userID, int slimScore, int targetFat, int targetHeavy, String hint1, Date updateTime) {
+//        this.id = id;
+//        this.date = date;
+//        this.userID = userID;
+//        this.slimScore = slimScore;
+//        this.targetFat = targetFat;
+//        this.targetHeavy = targetHeavy;
+//        this.hint1 = hint1;
+//        this.updateTime = updateTime;
+//    }
+
+
+    public Daily(int id, String date, String userID, int slimScore, int targetFat, int targetHeavy, int hintId1, String hint1, Date updateTime) {
         this.id = id;
         this.date = date;
         this.userID = userID;
         this.slimScore = slimScore;
         this.targetFat = targetFat;
         this.targetHeavy = targetHeavy;
+        this.hintId1 = hintId1;
+        this.hint1 = hint1;
         this.updateTime = updateTime;
     }
+
     @Ignore
-    public Daily(String date, String userID, int slimScore, int targetFat, int targetHeavy, Date updateTime) {
+    public Daily(String date, String userID, int slimScore, int targetFat, int targetHeavy, int hintId1, String hint1, Date updateTime) {
         this.date = date;
         this.userID = userID;
         this.slimScore = slimScore;
         this.targetFat = targetFat;
         this.targetHeavy = targetHeavy;
+        this.hintId1 = hintId1;
+        this.hint1 = hint1;
         this.updateTime = updateTime;
     }
 
@@ -93,5 +115,21 @@ public class Daily {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getHint1() {
+        return hint1;
+    }
+
+    public void setHint1(String hint1) {
+        this.hint1 = hint1;
+    }
+
+    public int getHintId1() {
+        return hintId1;
+    }
+
+    public void setHintId1(int hintId1) {
+        this.hintId1 = hintId1;
     }
 }

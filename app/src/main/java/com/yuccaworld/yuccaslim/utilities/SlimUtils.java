@@ -16,6 +16,7 @@ import com.yuccaworld.yuccaslim.model.ActivityInfo;
 
 import java.nio.ByteBuffer;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
@@ -32,6 +33,13 @@ public class SlimUtils {
         activityInfo.setHint("Dummy Hint");
         long now = System.currentTimeMillis();
         return activityInfo;
+    }
+
+
+    public static String getCurrentDateString() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String currentDate = sdf.format(new Date());
+        return currentDate;
     }
 
     // Get activity type icon

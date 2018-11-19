@@ -45,8 +45,6 @@ public abstract class AppDatabase extends RoomDatabase {
         }
         Log.d(LOG_TAG, "Getting the database instance");
         return sInstance;
-
-
     }
 
     static final Migration MIGRATION_2_3 = new Migration(2, 3) {

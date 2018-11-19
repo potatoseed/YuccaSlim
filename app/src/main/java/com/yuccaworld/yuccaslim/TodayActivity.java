@@ -21,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -40,11 +41,12 @@ import com.yuccaworld.yuccaslim.model.FoodFavor;
 import com.yuccaworld.yuccaslim.utilities.AppExecutors;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 public class TodayActivity extends AppCompatActivity implements TodayAdapter.TodayAdapterOnClickHandler {
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = TodayActivity.class.getSimpleName();
     private static final int TODAY_ACTIVITY_LOADER_ID = 8;
     public static final String EXTRA_ACTIVITY_ID = "extraActivityId";
     public static final String EXTRA_ROW_ID = "ExtraRowID";
@@ -96,6 +98,10 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
          fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Refresh ViewModel Daily data if date changed.
+                if (!SlimUtils.getCurrentDateString().equals(mTodayViewModel.todayDate)){
+                    refreshViewModelDaily();
+                }
 //                Intent addWeightIntent = new Intent(TodayActivity.this, WeightActivity.class);
 //                addWeightIntent.putExtra(Intent.EXTRA_TEXT, weightActivityMode);
                 Intent addFoodIntent = new Intent(TodayActivity.this, FoodSearchActivity.class);
@@ -115,6 +121,9 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
 
             @Override
             public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
+                if (!SlimUtils.getCurrentDateString().equals(mTodayViewModel.todayDate)){
+                    refreshViewModelDaily();
+                }
                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
@@ -217,6 +226,8 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
                         Log.v(TAG, "Daily Data deleted:" + i);
                         long l = mDb.dailyDao().insertDaily(daily);
                         Log.v(TAG, "Daily Data Inserted:" + daily.getSlimScore() + " inserted: " + l);
+                        mTodayViewModel.daily = daily;
+//                        setSeekBarValue();
                     }
                 });
             }
@@ -236,6 +247,7 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
                         Log.v(TAG, "Daily Data deleted:" + i);
                         long l = mDb.dailyDao().insertDaily(daily);
                         Log.v(TAG, "Daily Data Inserted:" + daily.getSlimScore() + " inserted: " + l);
+                        mTodayViewModel.daily = daily;
                     }
                 });
             }
@@ -280,6 +292,21 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
                 if (daily != null) {
                     mTodayViewModel.daily = daily;
                     setSeekBarValue();
+                    setDailyHint();
+                }
+            }
+        });
+    }
+
+    private void refreshViewModelDaily() {
+        // Refresh Daily View model
+        mTodayViewModel.getTodayDaily().observe(this, new Observer<Daily>() {
+            @Override
+            public void onChanged(@Nullable Daily daily) {
+                if (daily != null) {
+                    mTodayViewModel.daily = daily;
+                    setSeekBarValue();
+                    setDailyHint();
                 }
             }
         });
@@ -315,6 +342,7 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
         slimScore = mTodayViewModel.daily.getSlimScore();
         targetFat = mTodayViewModel.daily.getTargetFat();
         targetHeavy = mTodayViewModel.daily.getTargetHeavy();
+
         if (slimScore < 0  ) {slimScore = 0; }
         mSeekbarToday.setValue(slimScore);
         if (slimScore <= targetFat) {
@@ -328,7 +356,18 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
             mSeekbarToday.getLeftSeekBar().setIndicatorBackgroundColor(getResources().getColor(R.color.colorAccent));
             mSeekbarToday.setProgressColor(getResources().getColor(R.color.colorAccent));
         }
+
         //mSeekbarToday.invalidate();
+    }
+
+    private void setDailyHint() {
+        String hint1 = mTodayViewModel.daily.getHint1();
+        TextView textViewOverallHint = findViewById(R.id.textViewOverallHint);
+        if(hint1 != "") {
+            textViewOverallHint.setText(hint1);
+        } else {
+            textViewOverallHint.setText(getResources().getString(R.string.text_slimHintOverall));
+        }
     }
 
     @Override
@@ -340,6 +379,11 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int menuItemSelected = item.getItemId();
+        // Refresh the daily in viewmodel when date changed
+        if (!SlimUtils.getCurrentDateString().equals(mTodayViewModel.todayDate)){
+//            Log.v(TAG, SlimUtils.getCurrentDateString() + "  Inside view model today:" + mTodayViewModel.todayDate);
+            refreshViewModelDaily();
+        }
         switch (menuItemSelected) {
             case R.id.add_weight :
                 Intent addWeightIntent = new Intent(TodayActivity.this, WeightActivity.class);
@@ -393,12 +437,11 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
         return true;
     }
 
-
-
     @Override
     protected void onResume() {
         super.onResume();
         setSeekBarValue();
+        setDailyHint();
     }
 
     @Override
@@ -407,6 +450,7 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
         String activityMode;
         Uri uriForActivityClicked;
         //String activityID = mActivityData.getString(mActivityData.getColumnIndex(SlimContract.SlimDB.COLUMN_ACTIVITY_ID));
+
         switch(ActivityTypeId){
             case 1:
                 Intent weightIntent = new Intent(TodayActivity.this, WeightActivity.class);
