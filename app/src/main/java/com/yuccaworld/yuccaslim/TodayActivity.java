@@ -41,7 +41,6 @@ import com.yuccaworld.yuccaslim.model.FoodFavor;
 import com.yuccaworld.yuccaslim.utilities.AppExecutors;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -50,6 +49,7 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
     private static final int TODAY_ACTIVITY_LOADER_ID = 8;
     public static final String EXTRA_ACTIVITY_ID = "extraActivityId";
     public static final String EXTRA_ROW_ID = "ExtraRowID";
+    public static final String EXTRA_ACTIVITY_TIME = "ExtraActivityTime";
     public static final String EXTRA_ACTIVITY_DATE = "ExtraActivityDate";
     private static int mHoursToDisplay = 30;
     private TodayAdapter mTodayAdapter;
@@ -469,7 +469,8 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
                 foodIntent.putExtra(Intent.EXTRA_TEXT, activityMode);
                 foodIntent.putExtra(TodayActivity.EXTRA_ACTIVITY_ID, activity.getActivityID());
                 foodIntent.putExtra(TodayActivity.EXTRA_ROW_ID, rowID);
-                foodIntent.putExtra(TodayActivity.EXTRA_ACTIVITY_DATE, activity.getActivityTime());
+                foodIntent.putExtra(TodayActivity.EXTRA_ACTIVITY_TIME, activity.getActivityTime());
+                foodIntent.putExtra(TodayActivity.EXTRA_ACTIVITY_DATE, activity.getActivityDate());
                 uriForActivityClicked = SlimContract.SlimDB.buildFoodEdit(rowID);
                 foodIntent.setData(uriForActivityClicked);
                 startActivity(foodIntent);
