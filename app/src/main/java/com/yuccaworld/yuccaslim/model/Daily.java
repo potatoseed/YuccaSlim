@@ -58,6 +58,7 @@ public class Daily {
         this.updateTime = updateTime;
     }
 
+    @Ignore
     public Daily() {
     }
 

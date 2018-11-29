@@ -53,4 +53,20 @@
     <string name="activity_type_3">SLEEP</string>
     <string name="activity_type_image">activity_type</string>
     <string name="activity_title_food_input_time">Food Taken Time</string>
+    <string name="menu_item_guide">Guide</string>
+    <string name="key_show_guide_on_start" translatable="false">show_guide_on_start</string>
+    <string name="pref_show_guide_on_start">Show Guide On Start</string>
+    <string name="label_show">Show</string>
+    <string name="label_hide">Hide</string>
+    <string name="text_guide_1">1. Input your weight every day when you wake up and before breakfast.</string>
+    <string name="text_guide_2">2. Input your sleep (including nap) and wake up time.</string>
+    <string name="text_guide_3">3. Input the food (including drink) you eat, with the internet connection, The Cloud AI Advisor will provide the following hints: </string>
+    <string name="text_guide_4">a. Slim hints </string>
+    <string name="text_guide_5">b. The slim score was calculated in daily basis, it will be reset each day after 24:00. </string>
+    <string name="text_guide_6">c. Keep your daily slim score below 100 every day and you will soon start losing weight! </string>
+    <string name="text_guide_7">4. Food color advice</string>
+    <string name="text_guide_8">a. Green: Low slim score food, good food to keep slim </string>
+    <string name="text_guide_9">b. Yellow: High slim score food, the food will make you fat </string>
+    <string name="text_guide_10">c. Red: Ultra high slim score food, Do not eat </string>
+    <string name="text_guide_title">Guide</string>
 </resources>

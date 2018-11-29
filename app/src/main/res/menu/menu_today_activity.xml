@@ -31,6 +31,10 @@
         android:title="@string/text_sleep"
         app:showAsAction="always" />
     <item
+        android:id="@+id/guide"
+        app:showAsAction="never"
+        android:title="@string/menu_item_guide" />
+    <item
         android:id="@+id/logout"
         android:title="@string/action_logout"
         app:showAsAction="never" />

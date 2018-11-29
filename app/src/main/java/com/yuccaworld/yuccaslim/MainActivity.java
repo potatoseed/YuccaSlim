@@ -2,10 +2,13 @@ package com.yuccaworld.yuccaslim;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.Menu;
@@ -46,7 +49,7 @@ public class MainActivity extends AppActivity {
     private DatabaseReference mFirebaseDB;
     private ValueEventListener mValueEventListener;
     private AppDatabase mDb;
-    private Activity mActivityFromFirebase;
+    private String mMode="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,20 +63,37 @@ public class MainActivity extends AppActivity {
         //Intent intent = new Intent(MainActivity.this, RegisterationActivity.class);
         //Intent intent = new Intent(MainActivity.this, WeightActivity.class);
         //startActivity(intent);
+
+        Intent intent = getIntent();
+        if (intent.hasExtra(Intent.EXTRA_TEXT)){
+            mMode = intent.getStringExtra(Intent.EXTRA_TEXT);
+        }
         setupInitalView();
 /*        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);*/
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.floatingActionButtonMain);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent todayIntent = new Intent(MainActivity.this, TodayActivity.class);
+                startActivity(todayIntent);
+            }
+        });
 
     }
 
     private void setupInitalView() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean b = sharedPreferences.getBoolean(getString(R.string.key_show_guide_on_start),true);
         if (mFirebaseUser != null) {
             // user is sign in
             Toast.makeText(MainActivity.this, "you are now singed in",
                     Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(MainActivity.this, TodayActivity.class);
-            //Intent intent = new Intent(MainActivity.this, SleepActivity.class);
-            startActivity(intent);
+            if (b == false && !mMode.equals("USER")) {
+                Intent intent = new Intent(MainActivity.this, TodayActivity.class);
+                //Intent intent = new Intent(MainActivity.this, SleepActivity.class);
+                startActivity(intent);
+            }
         } else {
             signIn();
 

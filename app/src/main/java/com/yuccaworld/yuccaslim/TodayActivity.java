@@ -414,6 +414,11 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
                 mHoursToDisplay = 5208;
                 showActivityMonthHistory(mHoursToDisplay);
                 break;
+            case R.id.guide :
+                Intent mainIntent = new Intent(TodayActivity.this, MainActivity.class);
+                mainIntent.putExtra(Intent.EXTRA_TEXT, "USER");
+                startActivity(mainIntent);
+                break;
             case R.id.logout:
                 AuthUI.getInstance().signOut(this)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {

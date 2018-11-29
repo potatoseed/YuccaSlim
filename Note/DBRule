@@ -1,0 +1,24 @@
+{
+  "rules": {
+    //".read": true,
+    //".write": true,
+    "Activity":{
+      "$uid":{
+        ".write":"$uid === auth.uid"
+      ,".read":"$uid === auth.uid"
+      }
+    }
+  ,
+    "Daily":{
+      "$uid":{
+        ".write":"$uid === auth.uid"
+      ,".read":"$uid === auth.uid"
+      ,".indexOn":["date","hintId1","userID"]
+      }
+    }
+  ,
+    "Food":{
+      ".read":true
+    }
+  }
+}

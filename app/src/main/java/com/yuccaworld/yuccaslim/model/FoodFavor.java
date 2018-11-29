@@ -36,6 +36,7 @@ public class FoodFavor {
         this.updateTime = updateTime;
     }
 
+    @Ignore
     public FoodFavor() {
     }
 
