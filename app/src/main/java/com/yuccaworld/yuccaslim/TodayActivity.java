@@ -415,7 +415,7 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
                 showActivityMonthHistory(mHoursToDisplay);
                 break;
             case R.id.guide :
-                Intent mainIntent = new Intent(TodayActivity.this, MainActivity.class);
+                Intent mainIntent = new Intent(TodayActivity.this, GuideActivity.class);
                 mainIntent.putExtra(Intent.EXTRA_TEXT, "USER");
                 startActivity(mainIntent);
                 break;

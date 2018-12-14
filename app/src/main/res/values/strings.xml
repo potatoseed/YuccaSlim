@@ -69,4 +69,13 @@
     <string name="text_guide_9">b. Yellow: High slim score food, the food will make you fat </string>
     <string name="text_guide_10">c. Red: Ultra high slim score food, Do not eat </string>
     <string name="text_guide_title">Guide</string>
+    <string name="button_buy">Buy</string>
+    <string name="alert_already_purchased">Item is already purchased</string>
+    <string name="content_description_app_loading_image">App loading image</string>
+    <string name="button_purchase">Purchase</string>
+    <string name="error_no_skus"><![CDATA[We didn\\\'t find any SKUs to display&#8230;]]></string>
+    <string name="error_billing_unavailable">Billing unavailable</string>
+    <string name="error_billing_default">Billing unavailable. Please check your device.</string>
+    <string name="header_inapp">One-time deals</string>
+    <string name="header_subscriptions">Subscriptions</string>
 </resources>

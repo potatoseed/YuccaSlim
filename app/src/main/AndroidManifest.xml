@@ -3,6 +3,7 @@
     package="com.yuccaworld.yuccaslim">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.android.vending.BILLING" />
 
     <application
         android:allowBackup="true"
@@ -46,7 +47,8 @@
 
         <activity android:name=".FoodSearchActivity" />
         <activity android:name=".SleepActivity" />
-        <activity android:name=".FoodTimeActivity"></activity>
+        <activity android:name=".FoodTimeActivity" />
+        <activity android:name=".GuideActivity"></activity>
     </application>
 
 </manifest>

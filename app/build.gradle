@@ -4,14 +4,23 @@ apply plugin: 'kotlin-android-extensions'
 
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('D:/Development/AP/Google Play/yuccaslim.jks')
+            storePassword 'palazzo5%'
+            keyAlias 'key0'
+            keyPassword 'palazzo5%'
+        }
+    }
+
     compileSdkVersion 26
     buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.yuccaworld.yuccaslim"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         resConfigs "en" // And any other languages you support
     }
@@ -19,6 +28,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     dataBinding.enabled = true;
@@ -27,7 +37,7 @@ android {
 dependencies {
     def room_version = "1.1.1"
     def lifecycle_version = "1.1.1"
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.google.firebase:firebase-auth:16.0.5'
     implementation 'com.firebaseui:firebase-ui-auth:3.3.1'
     implementation 'com.google.firebase:firebase-database:16.0.1'
@@ -50,6 +60,7 @@ dependencies {
     annotationProcessor "android.arch.lifecycle:compiler:$lifecycle_version"
     implementation 'com.github.humazed:RoomAsset:1.0.3'
     implementation 'com.android.support:preference-v7:26.1.0'
+    implementation 'com.android.billingclient:billing:1.2'
 }
 repositories {
     mavenCentral()

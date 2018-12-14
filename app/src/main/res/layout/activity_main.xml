@@ -4,44 +4,76 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.yuccaworld.yuccaslim.RegisterationActivity">
+    tools:context=".MainActivity">
 
-    <fragment
-        android:id="@+id/fragment_guide"
-        android:name="com.yuccaworld.yuccaslim.GuideFragment"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toTopOf="@id/fragment_setting"
+
+    <TextView
+        android:id="@+id/textViewMainTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:background="@color/colorPrimary"
+        android:padding="4dp"
+        android:gravity="center"
+        android:elevation="0dp"
+        style="@style/YSTextHeading"
+        android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/fragment_setting"
-        android:name="com.yuccaworld.yuccaslim.SettingFragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_guide" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/floatingActionButtonMain"
+    <ImageView
+        android:id="@+id/imageViewLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="24dp"
-        android:clickable="true"
-        app:layout_constraintBottom_toBottomOf="@+id/fragment_guide"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewMainTitle"
+        app:layout_constraintVertical_bias="0.100000024"
+        app:srcCompat="@drawable/ic_login_black_36dp" />
+
+    <Button
+        android:id="@+id/buttonLogin"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:elevation="4dp"
+        android:text="Login"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageViewLogin"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_back_vector" />
+        app:layout_constraintStart_toEndOf="@+id/imageViewLogin"
+        app:layout_constraintTop_toTopOf="@+id/imageViewLogin" />
+
+    <ImageView
+        android:id="@+id/imageViewShop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="48dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewLogin"
+        app:srcCompat="@drawable/ic_shop_black_36dp" />
+
+    <Button
+        android:id="@+id/buttonJoin"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:elevation="4dp"
+        android:text="Join"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageViewShop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageViewShop"
+        app:layout_constraintTop_toTopOf="@+id/imageViewShop" />
 
 </android.support.constraint.ConstraintLayout>
 
