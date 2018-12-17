@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.UiThread;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -55,6 +57,7 @@ public class MainActivity extends AppActivity implements BillingProvider {
     private BillingManager mBillingManager;
     private AcquireFragment mAcquireFragment;
     private MainViewController mViewController;
+    private View mScreenWait, mScreenMain;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +86,9 @@ public class MainActivity extends AppActivity implements BillingProvider {
 
         // Create and initialize BillingManager which talks to BillingLibrary
         mBillingManager = new BillingManager(this, mViewController.getUpdateListener());
+        mScreenWait = findViewById(R.id.screen_wait);
+//        mScreenMain = findViewById(R.id.screen_main);
+
         // Specify purchase and drive buttons listeners
         Button buttonJoin = findViewById(R.id.buttonJoin);
         buttonJoin.setOnClickListener(new View.OnClickListener() {
@@ -369,5 +375,27 @@ public class MainActivity extends AppActivity implements BillingProvider {
     @Override
     public boolean is3MonthsSubscribed() {
         return false;
+    }
+
+    public void showRefreshedUi() {
+        setWaitScreen(false);
+        updateUi();
+        if (mAcquireFragment != null) {
+            mAcquireFragment.refreshUI();
+        }
+    }
+
+    /**
+     * Update UI to reflect model
+     */
+    @UiThread
+    private void updateUi() {
+        Log.d(TAG, "Updating the UI. Thread: " + Thread.currentThread().getName());
+
+    }
+
+    private void setWaitScreen(boolean set) {
+        mScreenMain.setVisibility(set ? View.GONE : View.VISIBLE);
+//        mScreenWait.setVisibility(set ? View.VISIBLE : View.GONE);
     }
 }
