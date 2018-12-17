@@ -25,7 +25,7 @@ import java.util.ArrayList;
  * Handles Ui specific to "monthly gas" - subscription row
  */
 public class Yuccaslim3MonthsSubscriptionDelegate extends UiManagingDelegate {
-    public static final String SKU_ID = "gold_monthly";
+    public static final String SKU_ID = "yuccaslim_3_months_subscription";
 
     public Yuccaslim3MonthsSubscriptionDelegate(BillingProvider billingProvider) {
         super(billingProvider);
@@ -46,7 +46,7 @@ public class Yuccaslim3MonthsSubscriptionDelegate extends UiManagingDelegate {
             holder.button.setText(R.string.button_buy);
         }
         // TODO change the icon
-        holder.skuIcon.setImageResource(R.drawable.ic_food_24);
+        holder.skuIcon.setImageResource(R.drawable.ic_yuccaslim_logo_24);
     }
 
     @Override

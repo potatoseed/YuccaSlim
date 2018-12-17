@@ -6,7 +6,7 @@ apply plugin: 'kotlin-android-extensions'
 android {
     signingConfigs {
         release {
-            storeFile file('D:/Development/AP/Google Play/yuccaslim.jks')
+            storeFile file('F:/Dev/AP/Google Play/yuccaslim.jks')
             storePassword 'palazzo5%'
             keyAlias 'key0'
             keyPassword 'palazzo5%'
