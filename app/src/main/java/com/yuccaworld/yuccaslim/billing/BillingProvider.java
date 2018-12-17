@@ -22,5 +22,6 @@ package com.yuccaworld.yuccaslim.billing;
  */
 public interface BillingProvider {
     BillingManager getBillingManager();
+    boolean is3MonthsSubscribed();
 }
 

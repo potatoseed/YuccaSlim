@@ -32,7 +32,7 @@ public class UiDelegatesFactory {
 
     public UiDelegatesFactory(BillingProvider provider) {
         uiDelegates = new HashMap<>();
-//        uiDelegates.put(GasDelegate.SKU_ID, new GasDelegate(provider));
+        uiDelegates.put(Yuccaslim3MonthsSubscriptionDelegate.SKU_ID, new Yuccaslim3MonthsSubscriptionDelegate(provider));
 //        uiDelegates.put(GoldMonthlyDelegate.SKU_ID, new GoldMonthlyDelegate(provider));
 //        uiDelegates.put(GoldYearlyDelegate.SKU_ID, new GoldYearlyDelegate(provider));
 //        uiDelegates.put(PremiumDelegate.SKU_ID, new PremiumDelegate(provider));

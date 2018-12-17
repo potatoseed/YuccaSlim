@@ -78,4 +78,5 @@
     <string name="error_billing_default">Billing unavailable. Please check your device.</string>
     <string name="header_inapp">One-time deals</string>
     <string name="header_subscriptions">Subscriptions</string>
+    <string name="button_own">Own</string>
 </resources>

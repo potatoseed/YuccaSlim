@@ -42,7 +42,7 @@ import java.util.List;
 import static com.yuccaworld.yuccaslim.billing.BillingManager.BILLING_MANAGER_NOT_INITIALIZED;
 
 public class MainActivity extends AppActivity implements BillingProvider {
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "YSMainActivity";
     // Tag for a dialog that allows us to find it when screen was rotated
     private static final String DIALOG_TAG = "dialog";
     private static final int RC_SIGN_IN = 333;
@@ -66,7 +66,7 @@ public class MainActivity extends AppActivity implements BillingProvider {
         mFirebaseDB = FirebaseDatabase.getInstance().getReference();
         intstantiateUser();
         //Intent intent = new Intent(MainActivity.this, RegisterationActivity.class);
-        //Intent intent = new Intent(MainActivity.this, WeightActivity.class);
+        //Intent intent = new Intent(MainActivity.this, WeightActivity.cl  ass);
         //startActivity(intent);
 
         Intent intent = getIntent();
@@ -364,5 +364,10 @@ public class MainActivity extends AppActivity implements BillingProvider {
     @Override
     public BillingManager getBillingManager() {
         return mBillingManager;
+    }
+
+    @Override
+    public boolean is3MonthsSubscribed() {
+        return false;
     }
 }
