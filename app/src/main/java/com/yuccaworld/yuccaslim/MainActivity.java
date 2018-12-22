@@ -395,7 +395,7 @@ public class MainActivity extends AppActivity implements BillingProvider {
     }
 
     private void setWaitScreen(boolean set) {
-        mScreenMain.setVisibility(set ? View.GONE : View.VISIBLE);
+//        mScreenMain.setVisibility(set ? View.GONE : View.VISIBLE);
 //        mScreenWait.setVisibility(set ? View.VISIBLE : View.GONE);
     }
 }
