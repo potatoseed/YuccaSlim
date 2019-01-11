@@ -382,6 +382,7 @@ public class MainActivity extends AppActivity implements BillingProvider {
         updateUi();
         if (mAcquireFragment != null) {
             mAcquireFragment.refreshUI();
+            mAcquireFragment.dismiss();
         }
     }
 

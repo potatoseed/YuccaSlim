@@ -72,6 +72,7 @@ public class AcquireFragment extends DialogFragment {
         if (mAdapter != null) {
             mAdapter.notifyDataSetChanged();
         }
+
     }
 
     /**
