@@ -26,14 +26,13 @@ import java.util.UUID;
  */
 
 public class SlimUtils {
+    public static String gUserRegistrationEmail="";
+    public static String gRegistrationPassword="";
     public static String gUid;
     public static String gUserEmail;
-    public static ActivityInfo genFakeActivityInfo() {
-        ActivityInfo activityInfo = new ActivityInfo();
-        activityInfo.setHint("Dummy Hint");
-        long now = System.currentTimeMillis();
-        return activityInfo;
-    }
+    public static final String EXTRA_PURCHASE_RESULT = "ExtraPurchaseResult";
+    public static final String EXTRA_REGISTRATION_EMAIL = "ExtraRegistrationEmail";
+    public static final String EXTRA_REGISTRATION_PASSWORD = "ExtraRegistrationPassword";
 
 
     public static String getCurrentDateString() {

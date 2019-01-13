@@ -79,4 +79,15 @@
     <string name="header_inapp">One-time deals</string>
     <string name="header_subscriptions">Subscriptions</string>
     <string name="button_own">Own</string>
+    <string name="registration_confirm_email">Confirm Email</string>
+    <string name="registration_password">Password</string>
+    <string name="registration_password_confirm">Confirm Password</string>
+    <string name="title_registration">Registration</string>
+    <string name="button_label_purchase">Purchase</string>
+    <string name="validation_password_number">Password must be minimum 6 numbers</string>
+    <string name="message_purchase_successful">Purchase successful, please login with your registered email and password</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
+

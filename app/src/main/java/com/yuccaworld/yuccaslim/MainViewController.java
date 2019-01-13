@@ -1,5 +1,6 @@
 package com.yuccaworld.yuccaslim;
 
+import android.content.Intent;
 import android.util.Log;
 
 import com.android.billingclient.api.BillingClient;
@@ -12,12 +13,12 @@ import java.util.List;
 public class MainViewController {
     private static final String TAG = "MainViewController";
     private final UpdateListener mUpdateListener;
-    private MainActivity mActivity;
+    private UserRegistrationActivity mActivity;
     // Tracks if we currently own subscriptions SKUs
     private boolean m3MonthsSubscription;
     public boolean is3MonthsSubscription(){return m3MonthsSubscription;}
 
-    public MainViewController(MainActivity mActivity) {
+    public MainViewController(UserRegistrationActivity mActivity) {
         this.mUpdateListener = new UpdateListener();
         this.mActivity = mActivity;
     }
@@ -29,7 +30,7 @@ public class MainViewController {
     private class UpdateListener implements BillingManager.BillingUpdatesListener {
         @Override
         public void onBillingClientSetupFinished() {
-
+            mActivity.onBillingManagerSetupFinished();
         }
 
         @Override
@@ -44,10 +45,15 @@ public class MainViewController {
                 switch (purchase.getSku()) {
                     case Yuccaslim3MonthsSubscriptionDelegate.SKU_ID:
                         m3MonthsSubscription = true;
+                        mActivity.showRefreshedUi();
+                        mActivity.onPurchaseSuccess();
                     break;
                 }
             }
-            mActivity.showRefreshedUi();
         }
+    }
+
+    public boolean is3MonthsSubscribed() {
+        return m3MonthsSubscription;
     }
 }

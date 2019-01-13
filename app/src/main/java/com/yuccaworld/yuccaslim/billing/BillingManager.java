@@ -252,12 +252,15 @@ public class BillingManager implements PurchasesUpdatedListener {
      * @param purchase Purchase to be handled
      */
     private void handlePurchase(Purchase purchase) {
+        // For YuccaSlim Move the checking to server
+        /*
         if (!verifyValidSignature(purchase.getOriginalJson(), purchase.getSignature())) {
             Log.i(TAG, "Got a purchase: " + purchase + "; but signature is bad. Skipping...");
             return;
         }
 
         Log.d(TAG, "Got a verified purchase: " + purchase);
+        */
 
         mPurchases.add(purchase);
     }

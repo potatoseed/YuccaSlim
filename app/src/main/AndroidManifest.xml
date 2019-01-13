@@ -48,7 +48,8 @@
         <activity android:name=".FoodSearchActivity" />
         <activity android:name=".SleepActivity" />
         <activity android:name=".FoodTimeActivity" />
-        <activity android:name=".GuideActivity"></activity>
+        <activity android:name=".GuideActivity" />
+        <activity android:name=".UserRegistrationActivity"></activity>
     </application>
 
 </manifest>

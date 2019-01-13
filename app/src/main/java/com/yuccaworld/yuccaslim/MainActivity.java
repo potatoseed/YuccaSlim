@@ -1,12 +1,20 @@
 package com.yuccaworld.yuccaslim;
 
+import android.app.AlertDialog;
+import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.annotation.UiThread;
-import android.support.v4.content.ContextCompat;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,8 +36,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.yuccaworld.yuccaslim.billing.BillingManager;
-import com.yuccaworld.yuccaslim.billing.BillingProvider;
 import com.yuccaworld.yuccaslim.data.AppDatabase;
 import com.yuccaworld.yuccaslim.model.Activity;
 import com.yuccaworld.yuccaslim.model.Daily;
@@ -41,23 +47,21 @@ import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.yuccaworld.yuccaslim.billing.BillingManager.BILLING_MANAGER_NOT_INITIALIZED;
-
-public class MainActivity extends AppActivity implements BillingProvider {
+public class MainActivity extends AppActivity {
     private static final String TAG = "YSMainActivity";
     // Tag for a dialog that allows us to find it when screen was rotated
-    private static final String DIALOG_TAG = "dialog";
+
     private static final int RC_SIGN_IN = 333;
+    private static final int RC_REGISRATION = 1516;
+    private static final String REG_DIALOG_TAG = "registration_fragment";
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
     private DatabaseReference mFirebaseDB;
     private ValueEventListener mValueEventListener;
     private AppDatabase mDb;
     private String mMode="";
-    private BillingManager mBillingManager;
-    private AcquireFragment mAcquireFragment;
-    private MainViewController mViewController;
-    private View mScreenWait, mScreenMain;
+    private String mPurcahseResult="FAIL";
+    private RegisterationFragment mRegistrationFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,19 +79,14 @@ public class MainActivity extends AppActivity implements BillingProvider {
         Intent intent = getIntent();
         if (intent.hasExtra(Intent.EXTRA_TEXT)){
             mMode = intent.getStringExtra(Intent.EXTRA_TEXT);
+            mPurcahseResult = intent.getStringExtra(SlimUtils.EXTRA_PURCHASE_RESULT);
         }
+
         setupInitalView();
 /*        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);*/
 
-        // Billing section
-        // Start the controller and load data
-        mViewController = new MainViewController(this);
 
-        // Create and initialize BillingManager which talks to BillingLibrary
-        mBillingManager = new BillingManager(this, mViewController.getUpdateListener());
-        mScreenWait = findViewById(R.id.screen_wait);
-//        mScreenMain = findViewById(R.id.screen_main);
 
         // Specify purchase and drive buttons listeners
         Button buttonJoin = findViewById(R.id.buttonJoin);
@@ -113,41 +112,39 @@ public class MainActivity extends AppActivity implements BillingProvider {
 
     private void onJoinButtonClicked(final View view) {
         Log.d(TAG, "Join button clicked.");
+        Intent registerIntent = new Intent(MainActivity.this, UserRegistrationActivity.class);
+//        startActivity(registerIntent);
+        startActivityForResult(registerIntent, RC_REGISRATION);
+    }
 
-        if (mAcquireFragment == null) {
-            mAcquireFragment = new AcquireFragment();
-        }
-
-        if (!isAcquireFragmentShown()) {
-            mAcquireFragment.show(getSupportFragmentManager(), DIALOG_TAG);
-            if (mBillingManager != null
-                    && mBillingManager.getBillingClientResponseCode()
-                    > BILLING_MANAGER_NOT_INITIALIZED) {
-                mAcquireFragment.onManagerReady(this);
-            }
-        }
+    private boolean isRegisterationFragmentShown() {
+        return mRegistrationFragment != null && mRegistrationFragment.isVisible();
     }
 
 
     private void setupInitalView() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        Boolean b = sharedPreferences.getBoolean(getString(R.string.key_show_guide_on_start),true);
+        Boolean bShowGuideOnStart = sharedPreferences.getBoolean(getString(R.string.key_show_guide_on_start),true);
         if (mFirebaseUser != null) {
             // user is sign in
             Toast.makeText(MainActivity.this, "you are now singed in",
                     Toast.LENGTH_SHORT).show();
 //            if (b == false && !mMode.equals("USER")) {
-            if (b == false) {
-                Intent intent = new Intent(MainActivity.this, TodayActivity.class);
-                startActivity(intent);
+            if (bShowGuideOnStart == false) {
+                Intent todayIntent = new Intent(MainActivity.this, TodayActivity.class);
+                startActivity(todayIntent);
             } else {
-                Intent intent = new Intent(MainActivity.this, GuideActivity.class);
-                startActivity(intent);
+                Intent guideIntent = new Intent(MainActivity.this, GuideActivity.class);
+                startActivity(guideIntent);
             }
         } else {
 //            signIn();
-
             //signUp();
+            if (mPurcahseResult == "OK"){
+                signIn();
+
+
+            }
         }
     }
 
@@ -286,10 +283,25 @@ public class MainActivity extends AppActivity implements BillingProvider {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RC_SIGN_IN) {
-            handleSignInResponse(resultCode, data);
-
+        switch (requestCode) {
+            case (RC_SIGN_IN) :
+                handleSignInResponse(resultCode, data);
+                break;
+            case RC_REGISRATION:
+//                Snackbar.make(getWindow().getDecorView().getRootView(), R.string.message_purchase_successful, Snackbar.LENGTH_LONG).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(R.string.message_purchase_successful)
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                signIn();
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+                break;
         }
+
     }
 
     private void handleSignInResponse(int resultCode, Intent data) {
@@ -362,41 +374,26 @@ public class MainActivity extends AppActivity implements BillingProvider {
         return super.onOptionsItemSelected(item);
     }
 
-
-    private boolean isAcquireFragmentShown() {
-        return mAcquireFragment != null && mAcquireFragment.isVisible();
-    }
-
-    @Override
-    public BillingManager getBillingManager() {
-        return mBillingManager;
-    }
-
-    @Override
-    public boolean is3MonthsSubscribed() {
-        return false;
-    }
-
-    public void showRefreshedUi() {
-        setWaitScreen(false);
-        updateUi();
-        if (mAcquireFragment != null) {
-            mAcquireFragment.refreshUI();
-            mAcquireFragment.dismiss();
-        }
-    }
-
     /**
-     * Update UI to reflect model
+     * Show an alert dialog to the user
+     * @param messageId String id to display inside the alert dialog
+     * @param optionalParam Optional attribute for the string
      */
     @UiThread
-    private void updateUi() {
-        Log.d(TAG, "Updating the UI. Thread: " + Thread.currentThread().getName());
+    void alert(@StringRes int messageId, @Nullable Object optionalParam) {
+        if (Looper.getMainLooper().getThread() != Thread.currentThread()) {
+            throw new RuntimeException("Dialog could be shown only from the main thread");
+        }
 
-    }
+        AlertDialog.Builder bld = new AlertDialog.Builder(this);
+        bld.setPositiveButton("OK", null);
 
-    private void setWaitScreen(boolean set) {
-//        mScreenMain.setVisibility(set ? View.GONE : View.VISIBLE);
-//        mScreenWait.setVisibility(set ? View.VISIBLE : View.GONE);
+        if (optionalParam == null) {
+            bld.setMessage(messageId);
+        } else {
+            bld.setMessage(getResources().getString(messageId, optionalParam));
+        }
+
+        bld.create().show();
     }
 }

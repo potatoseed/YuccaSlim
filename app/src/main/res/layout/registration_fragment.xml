@@ -2,23 +2,23 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/screen_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.yuccaworld.yuccaslim.MainActivity">
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/titleRegisteration"
         style="@style/YSTextHeading"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginTop="0dp"
         android:background="@color/colorPrimary"
         android:elevation="0dp"
         android:gravity="center"
         android:padding="4dp"
-        android:text="Ready"
+        android:text="@string/title_registration"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -29,10 +29,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title"
+        app:layout_constraintTop_toBottomOf="@+id/titleRegisteration"
         app:srcCompat="@drawable/ic_assignment_black_36px" />
 
     <android.support.design.widget.TextInputLayout
@@ -40,11 +39,8 @@
         style="@style/YSTextBody"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginLeft="24dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/imageButton"
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintLeft_toRightOf="@+id/imageButton"
@@ -52,46 +48,8 @@
         app:layout_constraintTop_toTopOf="@+id/imageButton">
 
         <EditText
-            android:id="@+id/editTextName"
-            style="@style/YSTextBody"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/registration_name"
-            android:inputType="text" />
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/textInputLayoutWeight"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="16dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="@+id/TextInputLayoutName"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout">
-
-        <EditText
-            android:id="@+id/editTextWeight"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/registration_weight"
-            android:inputType="numberDecimal" />
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/textInputLayoutMail"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/TextInputLayoutName"
-        app:layout_constraintLeft_toLeftOf="@+id/TextInputLayoutName">
-
-        <EditText
             android:id="@+id/editTextMail"
+            style="@style/YSTextBody"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/registration_email"
@@ -99,72 +57,88 @@
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
-        android:id="@+id/TextInputLayoutAge"
+        android:id="@+id/textInputLayoutMail"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/TextInputLayoutName"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutWeight">
+        app:layout_constraintTop_toBottomOf="@+id/TextInputLayoutName">
 
         <EditText
-            android:id="@+id/editTextAge"
+            android:id="@+id/editTextConfrimEmail"
+            style="@style/YSTextBody"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/registration_age"
-            android:inputType="numberDecimal" />
+            android:hint="@string/registration_confirm_email"
+            android:inputType="textEmailAddress" />
     </android.support.design.widget.TextInputLayout>
 
-    <Switch
-        android:id="@+id/switchMale"
-        style="@style/YSTextBody"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:checked="false"
-        android:splitTrack="false"
-        android:text="Male"
-        android:textOff="Off"
-        app:layout_constraintLeft_toLeftOf="@+id/TextInputLayoutName"
-        app:layout_constraintTop_toBottomOf="@+id/TextInputLayoutAge"
-        tools:checked="false" />
-
-    <Switch
-        android:id="@+id/switchFemale"
-        style="@style/YSTextBody"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="24dp"
-        android:text="Female"
-        app:layout_constraintHorizontal_bias="0.504"
-        app:layout_constraintLeft_toRightOf="@+id/switchMale"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/TextInputLayoutAge"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="16dp" />
-
     <android.support.design.widget.TextInputLayout
-        android:id="@+id/textInputLayout"
+        android:id="@+id/textInputLayoutPassword"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+        android:hint="@string/validation_password_number"
+        app:hintAnimationEnabled="true"
+        app:hintEnabled="true"
         app:layout_constraintLeft_toLeftOf="@+id/TextInputLayoutName"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayoutMail">
 
         <EditText
-            android:id="@+id/editTextConfrimEmail"
+            android:id="@+id/editTextPassword"
+            style="@style/YSTextBody"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Confirm Email" />
+            android:hint="@string/registration_password"
+            android:inputType="numberPassword" />
     </android.support.design.widget.TextInputLayout>
 
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/textInputLayoutPasswordConfirm"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintLeft_toLeftOf="@+id/TextInputLayoutName"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutPassword">
+
+        <EditText
+            android:id="@+id/editTextPasswordConfirm"
+            style="@style/YSTextBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/registration_password_confirm"
+            android:inputType="numberPassword" />
+    </android.support.design.widget.TextInputLayout>
+
+    <Button
+        android:id="@+id/buttonPurchase"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/button_label_purchase"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageButton"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutPasswordConfirm" />
+
+    <include
+        layout="@layout/loading_indicator"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

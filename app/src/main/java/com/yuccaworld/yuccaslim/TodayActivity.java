@@ -415,9 +415,9 @@ public class TodayActivity extends AppCompatActivity implements TodayAdapter.Tod
                 showActivityMonthHistory(mHoursToDisplay);
                 break;
             case R.id.guide :
-                Intent mainIntent = new Intent(TodayActivity.this, GuideActivity.class);
-                mainIntent.putExtra(Intent.EXTRA_TEXT, "USER");
-                startActivity(mainIntent);
+                Intent guideIntent = new Intent(TodayActivity.this, GuideActivity.class);
+                guideIntent.putExtra(Intent.EXTRA_TEXT, "USER");
+                startActivity(guideIntent);
                 break;
             case R.id.logout:
                 AuthUI.getInstance().signOut(this)

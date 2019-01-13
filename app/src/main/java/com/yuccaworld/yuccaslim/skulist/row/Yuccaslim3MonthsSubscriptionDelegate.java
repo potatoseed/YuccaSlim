@@ -43,7 +43,9 @@ public class Yuccaslim3MonthsSubscriptionDelegate extends UiManagingDelegate {
         if (mBillingProvider.is3MonthsSubscribed()) {
             holder.button.setText(R.string.button_own);
         } else {
-            holder.button.setText(R.string.button_buy);
+            int textId = mBillingProvider.is3MonthsSubscribed()
+                    ? R.string.button_label_change : R.string.button_buy;
+            holder.button.setText(textId);
         }
         // TODO change the icon
         holder.skuIcon.setImageResource(R.drawable.ic_yuccaslim_logo_24);
