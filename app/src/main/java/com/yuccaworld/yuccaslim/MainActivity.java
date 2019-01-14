@@ -288,17 +288,8 @@ public class MainActivity extends AppActivity {
                 handleSignInResponse(resultCode, data);
                 break;
             case RC_REGISRATION:
-//                Snackbar.make(getWindow().getDecorView().getRootView(), R.string.message_purchase_successful, Snackbar.LENGTH_LONG).show();
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(R.string.message_purchase_successful)
-                        .setCancelable(false)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                signIn();
-                            }
-                        });
-                AlertDialog alert = builder.create();
-                alert.show();
+                Snackbar.make(getWindow().getDecorView().getRootView(), R.string.message_purchase_successful, Snackbar.LENGTH_LONG).show();
+
                 break;
         }
 

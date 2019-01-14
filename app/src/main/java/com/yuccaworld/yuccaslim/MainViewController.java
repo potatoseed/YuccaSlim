@@ -46,7 +46,7 @@ public class MainViewController {
                     case Yuccaslim3MonthsSubscriptionDelegate.SKU_ID:
                         m3MonthsSubscription = true;
                         mActivity.showRefreshedUi();
-                        mActivity.onPurchaseSuccess();
+                        mActivity.onPurchaseSuccess(purchase);
                     break;
                 }
             }

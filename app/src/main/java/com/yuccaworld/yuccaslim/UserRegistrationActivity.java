@@ -2,8 +2,10 @@ package com.yuccaworld.yuccaslim;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.annotation.UiThread;
@@ -15,6 +17,11 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.android.billingclient.api.BillingClient;
+import com.android.billingclient.api.Purchase;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.HttpsCallableResult;
 import com.mobsandgeeks.saripaar.annotation.ConfirmEmail;
 import com.mobsandgeeks.saripaar.annotation.ConfirmPassword;
 import com.mobsandgeeks.saripaar.annotation.Email;
@@ -23,6 +30,9 @@ import com.yuccaworld.yuccaslim.billing.BillingManager;
 import com.yuccaworld.yuccaslim.billing.BillingProvider;
 import com.yuccaworld.yuccaslim.skulist.AcquireFragment;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
+
+import java.util.HashMap;
+import java.util.List;
 
 import static com.yuccaworld.yuccaslim.billing.BillingManager.BILLING_MANAGER_NOT_INITIALIZED;
 
@@ -167,7 +177,7 @@ public class UserRegistrationActivity extends AppActivity implements BillingProv
         return mViewController.is3MonthsSubscribed();
     }
 
-    public void onPurchaseSuccess() {
+    public void onPurchaseSuccess(Purchase purchase) {
 //        alert(R.string.message_purchase_successful,null);
 
 //        Intent purchaseIntent = new Intent(UserRegistrationActivity.this, MainActivity.class);
@@ -176,7 +186,32 @@ public class UserRegistrationActivity extends AppActivity implements BillingProv
         if (mAcquireFragment != null) {
             mAcquireFragment.dismiss();
         }
-        setResult(Activity.RESULT_OK, purchaseIntent);
-        finish();
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        builder.setMessage(R.string.message_purchase_successful)
+//                .setCancelable(false)
+//                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//
+//                    }
+//                });
+//        AlertDialog alert = builder.create();
+//        alert.show();
+        registerSubscription(purchase);
+//        setResult(Activity.RESULT_OK, purchaseIntent);
+//        finish();
+    }
+
+    private void registerSubscription(Purchase purchase) {
+        HashMap data = new HashMap();
+        data.put("sku", purchase.getSku());
+        data.put("token", purchase.getPurchaseToken());
+        FirebaseFunctions.getInstance().getHttpsCallable("subscription_status")
+                .call(data)
+                .addOnCompleteListener(new OnCompleteListener<HttpsCallableResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<HttpsCallableResult> task) {
+                        Snackbar.make(getWindow().getDecorView().getRootView(), "complete firebase reg, Successful?:" + task.isSuccessful() , Snackbar.LENGTH_LONG).show();
+                    }
+                });
     }
 }
