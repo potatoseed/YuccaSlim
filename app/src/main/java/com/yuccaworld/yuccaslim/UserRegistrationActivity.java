@@ -1,13 +1,8 @@
 package com.yuccaworld.yuccaslim;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Looper;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
 import android.support.annotation.UiThread;
 import android.support.design.widget.Snackbar;
 import android.os.Bundle;
@@ -15,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.Purchase;
@@ -28,11 +24,13 @@ import com.mobsandgeeks.saripaar.annotation.Email;
 import com.mobsandgeeks.saripaar.annotation.Password;
 import com.yuccaworld.yuccaslim.billing.BillingManager;
 import com.yuccaworld.yuccaslim.billing.BillingProvider;
+import com.yuccaworld.yuccaslim.billing.SubscriptionStatus;
 import com.yuccaworld.yuccaslim.skulist.AcquireFragment;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.yuccaworld.yuccaslim.billing.BillingManager.BILLING_MANAGER_NOT_INITIALIZED;
 
@@ -57,6 +55,7 @@ public class UserRegistrationActivity extends AppActivity implements BillingProv
     private View mScreenWait, mScreenMain;
     private static final String DIALOG_TAG = "dialog";
     private View mMainLayout;
+    private TextView mRegistrationStatusMessage;
 
 
     @Override
@@ -111,6 +110,7 @@ public class UserRegistrationActivity extends AppActivity implements BillingProv
         passwordConfirm = findViewById(R.id.editTextPasswordConfirm);
         purchaseButton = findViewById(R.id.buttonPurchase);
         mMainLayout = findViewById(R.id.registrationMainLayout);
+        mRegistrationStatusMessage = findViewById(R.id.textViewRegistrationMessage);
         if (!SlimUtils.gUserRegistrationEmail.isEmpty()){
             Email.setText(SlimUtils.gUserRegistrationEmail);
             confirmEmail.setText(SlimUtils.gUserRegistrationEmail);
@@ -181,11 +181,12 @@ public class UserRegistrationActivity extends AppActivity implements BillingProv
 //        alert(R.string.message_purchase_successful,null);
 
 //        Intent purchaseIntent = new Intent(UserRegistrationActivity.this, MainActivity.class);
-        Intent purchaseIntent = new Intent();
-        purchaseIntent.putExtra(SlimUtils.EXTRA_PURCHASE_RESULT, "OK");
+
         if (mAcquireFragment != null) {
             mAcquireFragment.dismiss();
         }
+        mRegistrationStatusMessage.setVisibility(View.VISIBLE);
+        mRegistrationStatusMessage.setText(R.string.message_purchase_successful);
 //        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 //        builder.setMessage(R.string.message_purchase_successful)
 //                .setCancelable(false)
@@ -196,21 +197,35 @@ public class UserRegistrationActivity extends AppActivity implements BillingProv
 //                });
 //        AlertDialog alert = builder.create();
 //        alert.show();
-        registerSubscription(purchase);
-//        setResult(Activity.RESULT_OK, purchaseIntent);
-//        finish();
+        verifySubscriptionRegistration(purchase);
     }
 
-    private void registerSubscription(Purchase purchase) {
+    private void verifySubscriptionRegistration(Purchase purchase) {
         HashMap data = new HashMap();
         data.put("sku", purchase.getSku());
         data.put("token", purchase.getPurchaseToken());
-        FirebaseFunctions.getInstance().getHttpsCallable("subscription_status")
+        FirebaseFunctions.getInstance().getHttpsCallable("verify_subscription_purchase")
                 .call(data)
                 .addOnCompleteListener(new OnCompleteListener<HttpsCallableResult>() {
                     @Override
                     public void onComplete(@NonNull Task<HttpsCallableResult> task) {
                         Snackbar.make(getWindow().getDecorView().getRootView(), "complete firebase reg, Successful?:" + task.isSuccessful() , Snackbar.LENGTH_LONG).show();
+                        List resultList;
+                        if (task.isSuccessful()){
+                            if (task.getResult() != null) {
+                                Map result = (Map) task.getResult().getData();
+                                if (result != null) {
+                                    resultList = SubscriptionStatus.Companion.listFromMap(result);
+                                    if (((SubscriptionStatus) resultList.get(0)).isEntitlementActive()) {
+                                        mRegistrationStatusMessage.setText(R.string.message_registration_successful);
+                                        Intent purchaseIntent = new Intent();
+                                        purchaseIntent.putExtra(SlimUtils.EXTRA_PURCHASE_RESULT, "OK");
+                                        setResult(Activity.RESULT_OK, purchaseIntent);
+                                        finish();
+                                    }
+                                }
+                            }
+                        }
                     }
                 });
     }

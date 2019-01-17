@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -62,6 +63,7 @@ public class MainActivity extends AppActivity {
     private String mMode="";
     private String mPurcahseResult="FAIL";
     private RegisterationFragment mRegistrationFragment;
+    private TextView mLoginMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +125,7 @@ public class MainActivity extends AppActivity {
 
 
     private void setupInitalView() {
+        mLoginMessage = findViewById(R.id.textViewLoginMessage);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         Boolean bShowGuideOnStart = sharedPreferences.getBoolean(getString(R.string.key_show_guide_on_start),true);
         if (mFirebaseUser != null) {
@@ -289,7 +292,8 @@ public class MainActivity extends AppActivity {
                 break;
             case RC_REGISRATION:
                 Snackbar.make(getWindow().getDecorView().getRootView(), R.string.message_purchase_successful, Snackbar.LENGTH_LONG).show();
-
+                mLoginMessage.setVisibility(View.VISIBLE);
+                mLoginMessage.setText(R.string.message_registration_successful);
                 break;
         }
 

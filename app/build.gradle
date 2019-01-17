@@ -63,6 +63,7 @@ dependencies {
     implementation 'com.github.humazed:RoomAsset:1.0.3'
     implementation 'com.android.support:preference-v7:26.1.0'
     implementation 'com.android.billingclient:billing:1.2'
+    implementation 'com.google.code.gson:gson:2.8.5'
 }
 repositories {
     mavenCentral()
