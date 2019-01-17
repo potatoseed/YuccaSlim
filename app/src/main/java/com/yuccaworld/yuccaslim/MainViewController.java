@@ -39,6 +39,19 @@ public class MainViewController {
         }
 
         @Override
+        public void onUpdateUI(List<Purchase> purchases) {
+            m3MonthsSubscription = false;
+            for (Purchase purchase : purchases) {
+                switch (purchase.getSku()) {
+                    case Yuccaslim3MonthsSubscriptionDelegate.SKU_ID:
+                        m3MonthsSubscription = true;
+                        mActivity.showRefreshedUi();
+                        break;
+                }
+            }
+        }
+
+        @Override
         public void onPurchasesUpdated(List<Purchase> purchaseList) {
             m3MonthsSubscription = false;
             for (Purchase purchase : purchaseList) {

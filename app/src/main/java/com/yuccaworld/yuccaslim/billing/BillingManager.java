@@ -88,6 +88,7 @@ public class BillingManager implements PurchasesUpdatedListener {
         void onBillingClientSetupFinished();
         void onConsumeFinished(String token, @BillingResponse int result);
         void onPurchasesUpdated(List<Purchase> purchases);
+        void onUpdateUI(List<Purchase> purchases);
     }
 
     /**
@@ -120,6 +121,19 @@ public class BillingManager implements PurchasesUpdatedListener {
         });
     }
 
+    /** Handle UI refresh after query successful */
+    public void UpdateUI (int resultCode, List<Purchase> purchases) {
+        if (resultCode == BillingResponse.OK) {
+            for (Purchase purchase : purchases) {
+                handlePurchase(purchase);
+            }
+            mBillingUpdatesListener.onUpdateUI(mPurchases);
+        } else if (resultCode == BillingResponse.USER_CANCELED) {
+            Log.i(TAG, "onPurchasesUpdated() - user cancelled the purchase flow - skipping");
+        } else {
+            Log.w(TAG, "onPurchasesUpdated() got unknown resultCode: " + resultCode);
+        }
+    }
     /**
      * Handle a callback that purchases were updated from the Billing library
      */
@@ -129,12 +143,13 @@ public class BillingManager implements PurchasesUpdatedListener {
             for (Purchase purchase : purchases) {
                 handlePurchase(purchase);
             }
-            mBillingUpdatesListener.onPurchasesUpdated(mPurchases);
+//            mBillingUpdatesListener.onPurchasesUpdated(mPurchases);
         } else if (resultCode == BillingResponse.USER_CANCELED) {
             Log.i(TAG, "onPurchasesUpdated() - user cancelled the purchase flow - skipping");
         } else {
             Log.w(TAG, "onPurchasesUpdated() got unknown resultCode: " + resultCode);
         }
+        mBillingUpdatesListener.onPurchasesUpdated(mPurchases);
     }
 
     /**
@@ -261,7 +276,6 @@ public class BillingManager implements PurchasesUpdatedListener {
 
         Log.d(TAG, "Got a verified purchase: " + purchase);
         */
-
         mPurchases.add(purchase);
     }
 
@@ -280,7 +294,8 @@ public class BillingManager implements PurchasesUpdatedListener {
 
         // Update the UI and purchases inventory with new list of purchases
         mPurchases.clear();
-        onPurchasesUpdated(BillingResponse.OK, result.getPurchasesList());
+//        onPurchasesUpdated(BillingResponse.OK, result.getPurchasesList());
+        UpdateUI(BillingResponse.OK, result.getPurchasesList());
     }
 
     /**

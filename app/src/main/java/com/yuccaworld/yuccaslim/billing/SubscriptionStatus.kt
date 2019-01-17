@@ -41,7 +41,8 @@ data class SubscriptionStatus (
         var activeUntilMillisec: Long = 0,
         var isFreeTrial: Boolean = false,
         var isGracePeriod: Boolean = false,
-        var isAccountHold: Boolean = false
+        var isAccountHold: Boolean = false,
+        var purchaseType: Int = 0
 ) {
 
     data class SubscriptionStatusList (

@@ -25,6 +25,7 @@ import com.mobsandgeeks.saripaar.annotation.Password;
 import com.yuccaworld.yuccaslim.billing.BillingManager;
 import com.yuccaworld.yuccaslim.billing.BillingProvider;
 import com.yuccaworld.yuccaslim.billing.SubscriptionStatus;
+import com.yuccaworld.yuccaslim.model.ResponseToClient;
 import com.yuccaworld.yuccaslim.skulist.AcquireFragment;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
@@ -204,6 +205,8 @@ public class UserRegistrationActivity extends AppActivity implements BillingProv
         HashMap data = new HashMap();
         data.put("sku", purchase.getSku());
         data.put("token", purchase.getPurchaseToken());
+        data.put("Email", SlimUtils.gUserRegistrationEmail);
+        data.put("password", SlimUtils.gRegistrationPassword);
         FirebaseFunctions.getInstance().getHttpsCallable("verify_subscription_purchase")
                 .call(data)
                 .addOnCompleteListener(new OnCompleteListener<HttpsCallableResult>() {
@@ -217,11 +220,13 @@ public class UserRegistrationActivity extends AppActivity implements BillingProv
                                 if (result != null) {
                                     resultList = SubscriptionStatus.Companion.listFromMap(result);
                                     if (((SubscriptionStatus) resultList.get(0)).isEntitlementActive()) {
-                                        mRegistrationStatusMessage.setText(R.string.message_registration_successful);
-                                        Intent purchaseIntent = new Intent();
-                                        purchaseIntent.putExtra(SlimUtils.EXTRA_PURCHASE_RESULT, "OK");
-                                        setResult(Activity.RESULT_OK, purchaseIntent);
-                                        finish();
+                                        if(((SubscriptionStatus) resultList.get(0)).getPurchaseType() == 1) {
+                                            mRegistrationStatusMessage.setText(R.string.message_registration_successful);
+                                            Intent purchaseIntent = new Intent();
+                                            purchaseIntent.putExtra(SlimUtils.EXTRA_PURCHASE_RESULT, "OK");
+                                            setResult(Activity.RESULT_OK, purchaseIntent);
+                                            finish();
+                                        }
                                     }
                                 }
                             }
