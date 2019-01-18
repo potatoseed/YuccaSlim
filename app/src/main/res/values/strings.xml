@@ -86,7 +86,9 @@
     <string name="button_label_purchase">Purchase</string>
     <string name="validation_password_number">Password must be minimum 6 numbers</string>
     <string name="message_purchase_successful">Purchase successful, registering your account, please wait for registration result. You may contact the support if you have any issue</string>
-    <string name="message_registration_successful">Account registration successful, please login with your registered email and password. If you forget your login email and password, please email to yuccasupport@yuccaworld.com</string>
+    <string name="message_registration_successful">Account registration successful! please login with your registered email and password. If you forget your login email and password, please email to yuccasupport@yuccaworld.com</string>
+    <string name="message_registration_fail">Account registration failed! please check if your subscription is active, you may email to yuccasupport@yuccaworld.com for further support</string>
+    <string name="message_registration_exists">Account already exists! please proceed to login. you can email to yuccasupport@yuccaworld.com for further support</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

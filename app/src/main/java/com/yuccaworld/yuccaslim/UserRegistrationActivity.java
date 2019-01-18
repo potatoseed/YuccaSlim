@@ -1,6 +1,5 @@
 package com.yuccaworld.yuccaslim;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;
@@ -25,7 +24,6 @@ import com.mobsandgeeks.saripaar.annotation.Password;
 import com.yuccaworld.yuccaslim.billing.BillingManager;
 import com.yuccaworld.yuccaslim.billing.BillingProvider;
 import com.yuccaworld.yuccaslim.billing.SubscriptionStatus;
-import com.yuccaworld.yuccaslim.model.ResponseToClient;
 import com.yuccaworld.yuccaslim.skulist.AcquireFragment;
 import com.yuccaworld.yuccaslim.utilities.SlimUtils;
 
@@ -187,6 +185,7 @@ public class UserRegistrationActivity extends AppActivity implements BillingProv
             mAcquireFragment.dismiss();
         }
         mRegistrationStatusMessage.setVisibility(View.VISIBLE);
+        mRegistrationStatusMessage.setTextColor(getResources().getColor(R.color.browser_actions_text_color));
         mRegistrationStatusMessage.setText(R.string.message_purchase_successful);
 //        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 //        builder.setMessage(R.string.message_purchase_successful)
@@ -220,12 +219,29 @@ public class UserRegistrationActivity extends AppActivity implements BillingProv
                                 if (result != null) {
                                     resultList = SubscriptionStatus.Companion.listFromMap(result);
                                     if (((SubscriptionStatus) resultList.get(0)).isEntitlementActive()) {
-                                        if(((SubscriptionStatus) resultList.get(0)).getPurchaseType() == 1) {
-                                            mRegistrationStatusMessage.setText(R.string.message_registration_successful);
-                                            Intent purchaseIntent = new Intent();
-                                            purchaseIntent.putExtra(SlimUtils.EXTRA_PURCHASE_RESULT, "OK");
-                                            setResult(Activity.RESULT_OK, purchaseIntent);
-                                            finish();
+                                        int loginCreationStatus = ((SubscriptionStatus) resultList.get(0)).getLoginCreationStatus();
+                                        Intent purchaseIntent = new Intent();
+                                        switch ( loginCreationStatus) {
+                                            case 1:
+                                                mRegistrationStatusMessage.setTextColor(getResources().getColor(R.color.green));
+                                                mRegistrationStatusMessage.setText(R.string.message_registration_successful);
+                                                purchaseIntent.putExtra(SlimUtils.EXTRA_PURCHASE_RESULT, "OK");
+                                                setResult(MainActivity.RC_REGISRATION, purchaseIntent);
+                                                finish();
+                                                break;
+                                            case 2:
+                                                mRegistrationStatusMessage.setTextColor(getResources().getColor(R.color.green));
+                                                mRegistrationStatusMessage.setText(R.string.message_registration_exists);
+                                                purchaseIntent.putExtra(SlimUtils.EXTRA_PURCHASE_RESULT, "OK");
+                                                setResult(MainActivity.RC_REGISRATION, purchaseIntent);
+                                                finish();
+                                                break;
+                                            case 0:
+                                                break;
+                                            case -1:
+                                                mRegistrationStatusMessage.setTextColor(getResources().getColor(R.color.colorAccent));
+                                                mRegistrationStatusMessage.setText(R.string.message_registration_fail);
+                                                break;
                                         }
                                     }
                                 }
@@ -233,5 +249,9 @@ public class UserRegistrationActivity extends AppActivity implements BillingProv
                         }
                     }
                 });
+    }
+
+    public void showFailureMessage() {
+        Snackbar.make(getWindow().getDecorView().getRootView(), "Purchase not successful, please check your google play account!"  , Snackbar.LENGTH_LONG).show();
     }
 }

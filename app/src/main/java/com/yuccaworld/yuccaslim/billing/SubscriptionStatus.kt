@@ -42,7 +42,7 @@ data class SubscriptionStatus (
         var isFreeTrial: Boolean = false,
         var isGracePeriod: Boolean = false,
         var isAccountHold: Boolean = false,
-        var purchaseType: Int = 0
+        var loginCreationStatus: Int = 0
 ) {
 
     data class SubscriptionStatusList (
@@ -60,6 +60,7 @@ data class SubscriptionStatus (
         const val IS_FREE_TRIAL_KEY = "isFreeTrial"
         const val IS_GRACE_PERIOD_KEY = "isGracePeriod"
         const val IS_ACCOUNT_HOLD_KEY = "isAccountHold"
+        const val LOGIN_CREATION_STATUS = "LoginCreationStatus"
 
         /**
          * Parse subscription data from Map and return null if data is not valid.
@@ -94,6 +95,9 @@ data class SubscriptionStatus (
                     }
                     (subStatus[IS_ACCOUNT_HOLD_KEY] as? Boolean)?.let {
                         isAccountHold = it
+                    }
+                    (subStatus[LOGIN_CREATION_STATUS] as? Int)?.let {
+                        loginCreationStatus = it
                     }
                 })
             }

@@ -52,6 +52,11 @@ public class MainViewController {
         }
 
         @Override
+        public void onPurchaseFailure() {
+            mActivity.showFailureMessage();
+        }
+
+        @Override
         public void onPurchasesUpdated(List<Purchase> purchaseList) {
             m3MonthsSubscription = false;
             for (Purchase purchase : purchaseList) {

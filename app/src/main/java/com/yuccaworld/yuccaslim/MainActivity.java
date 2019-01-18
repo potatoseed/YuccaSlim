@@ -53,7 +53,7 @@ public class MainActivity extends AppActivity {
     // Tag for a dialog that allows us to find it when screen was rotated
 
     private static final int RC_SIGN_IN = 333;
-    private static final int RC_REGISRATION = 1516;
+    public static final int RC_REGISRATION = 1516;
     private static final String REG_DIALOG_TAG = "registration_fragment";
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
@@ -145,8 +145,6 @@ public class MainActivity extends AppActivity {
             //signUp();
             if (mPurcahseResult == "OK"){
                 signIn();
-
-
             }
         }
     }
@@ -294,6 +292,10 @@ public class MainActivity extends AppActivity {
                 Snackbar.make(getWindow().getDecorView().getRootView(), R.string.message_purchase_successful, Snackbar.LENGTH_LONG).show();
                 mLoginMessage.setVisibility(View.VISIBLE);
                 mLoginMessage.setText(R.string.message_registration_successful);
+                mLoginMessage.setTextColor(getResources().getColor(R.color.browser_actions_text_color));
+                mPurcahseResult = data.getStringExtra(SlimUtils.EXTRA_PURCHASE_RESULT);
+                if ("OK".equals(mPurcahseResult)) {
+                    signIn();}
                 break;
         }
 
