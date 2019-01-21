@@ -55,6 +55,7 @@ public class MainActivity extends AppActivity {
     private static final int RC_SIGN_IN = 333;
     public static final int RC_REGISRATION = 1516;
     private static final String REG_DIALOG_TAG = "registration_fragment";
+    private static final int RC_GUIDE = 1555 ;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
     private DatabaseReference mFirebaseDB;
@@ -138,7 +139,7 @@ public class MainActivity extends AppActivity {
                 startActivity(todayIntent);
             } else {
                 Intent guideIntent = new Intent(MainActivity.this, GuideActivity.class);
-                startActivity(guideIntent);
+                startActivityForResult(guideIntent, RC_GUIDE);
             }
         } else {
 //            signIn();
@@ -296,6 +297,10 @@ public class MainActivity extends AppActivity {
                 mPurcahseResult = data.getStringExtra(SlimUtils.EXTRA_PURCHASE_RESULT);
                 if ("OK".equals(mPurcahseResult)) {
                     signIn();}
+                break;
+            case RC_GUIDE:
+                Intent todayIntent = new Intent(MainActivity.this, TodayActivity.class);
+                startActivity(todayIntent);
                 break;
         }
 

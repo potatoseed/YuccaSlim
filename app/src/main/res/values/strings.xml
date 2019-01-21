@@ -58,16 +58,16 @@
     <string name="pref_show_guide_on_start">Show Guide On Start</string>
     <string name="label_show">Show</string>
     <string name="label_hide">Hide</string>
-    <string name="text_guide_1">1. Input your weight every day when you wake up and before breakfast.</string>
-    <string name="text_guide_2">2. Input your sleep (including nap) and wake up time.</string>
-    <string name="text_guide_3">3. Input the food (including drink) you eat, with the internet connection, The Cloud AI Advisor will provide the following hints: </string>
-    <string name="text_guide_4">a. Slim hints </string>
-    <string name="text_guide_5">b. The slim score was calculated in daily basis, it will be reset each day after 24:00. </string>
-    <string name="text_guide_6">c. Keep your daily slim score below 100 every day and you will soon start losing weight! </string>
-    <string name="text_guide_7">4. Food color advice</string>
-    <string name="text_guide_8">a. Green: Low slim score food, good food to keep slim </string>
-    <string name="text_guide_9">b. Yellow: High slim score food, the food will make you fat </string>
-    <string name="text_guide_10">c. Red: Ultra high slim score food, Do not eat </string>
+    <string name="text_guide_1">Input your weight every day when you wake up and before breakfast.</string>
+    <string name="text_guide_2">Input your sleep (including nap) and wake up time every day.</string>
+    <string name="text_guide_3">Input the food (including drink) you plan to eat, follow the advice from Cloud AI to choose food and keep daily slim score below 100.</string>
+    <string name="text_guide_4">Food color advice:</string>
+    <string name="text_guide_5">Green: Low slim score food, slim food, free to eat!</string>
+    <string name="text_guide_6">Yellow: High slim score food, eat less!</string>
+    <string name="text_guide_7">Red: Ultra high slim score food, Do not eat!</string>
+    <string name="text_guide_8">Keep your daily slim score below 100 every day and you will soon start losing weight!</string>
+    <string name="text_guide_9"> </string>
+    <string name="text_guide_10"> </string>
     <string name="text_guide_title">Guide</string>
     <string name="button_buy">Buy</string>
     <string name="alert_already_purchased">Item is already purchased</string>
@@ -92,5 +92,8 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="text_guide_1_2">1. Weight Every Morning</string>
+    <string name="text_guide_2_1">2. Time Sleep and Awake</string>
+    <string name="text_guide_3_1">3. Eat To Slim</string>
 </resources>
 

@@ -20,8 +20,9 @@ public class GuideActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent todayIntent = new Intent(GuideActivity.this, TodayActivity.class);
-                startActivity(todayIntent);
+                finish();
+//                Intent todayIntent = new Intent(GuideActivity.this, TodayActivity.class);
+//                startActivity(todayIntent);
             }
         });
     }
