@@ -290,13 +290,17 @@ public class MainActivity extends AppActivity {
                 handleSignInResponse(resultCode, data);
                 break;
             case RC_REGISRATION:
-                Snackbar.make(getWindow().getDecorView().getRootView(), R.string.message_purchase_successful, Snackbar.LENGTH_LONG).show();
-                mLoginMessage.setVisibility(View.VISIBLE);
-                mLoginMessage.setText(R.string.message_registration_successful);
-                mLoginMessage.setTextColor(getResources().getColor(R.color.browser_actions_text_color));
-                mPurcahseResult = data.getStringExtra(SlimUtils.EXTRA_PURCHASE_RESULT);
-                if ("OK".equals(mPurcahseResult)) {
-                    signIn();}
+                if (data != null) {
+                    Snackbar.make(getWindow().getDecorView().getRootView(), R.string.message_purchase_successful, Snackbar.LENGTH_LONG).show();
+                    mLoginMessage.setVisibility(View.VISIBLE);
+                    mLoginMessage.setText(R.string.message_registration_successful);
+//                    mLoginMessage.setTextColor(getResources().getColor(R.color.browser_actions_text_color));
+                    mLoginMessage.setTextColor(getResources().getColor(R.color.browser_actions_text_color));
+                    mPurcahseResult = data.getStringExtra(SlimUtils.EXTRA_PURCHASE_RESULT);
+                    if ("OK".equals(mPurcahseResult)) {
+                        signIn();
+                    }
+                }
                 break;
             case RC_GUIDE:
                 Intent todayIntent = new Intent(MainActivity.this, TodayActivity.class);

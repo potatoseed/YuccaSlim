@@ -30,9 +30,10 @@ public class SlimUtils {
     public static String gRegistrationPassword="";
     public static String gUid;
     public static String gUserEmail;
-    public static final String EXTRA_PURCHASE_RESULT = "ExtraPurchaseResult";
+
     public static final String EXTRA_REGISTRATION_EMAIL = "ExtraRegistrationEmail";
     public static final String EXTRA_REGISTRATION_PASSWORD = "ExtraRegistrationPassword";
+    public static final String EXTRA_PURCHASE_RESULT = "ExtraPurchaseResult";
 
 
     public static String getCurrentDateString() {
